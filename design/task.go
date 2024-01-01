@@ -25,19 +25,19 @@ var _ = Service("task", func() {
 		})
 	})
 
-	Method("show", func() {
-		Description("Show a task")
-		Payload(func() {
-			Attribute("id", UInt32, "ID of task to show")
-			Required("id")
-		})
-		Result(func() {
-			Attribute("task", StoredTask, "task to show")
-		})
+	// Method("show", func() {
+	// 	Description("Show a task")
+	// 	Payload(func() {
+	// 		Attribute("id", UInt32, "ID of task to show")
+	// 		Required("id")
+	// 	})
+	// 	Result(func() {
+	// 		Attribute("task", StoredTask, "task to show")
+	// 	})
 
-		HTTP(func() {
-			GET("/tasks/{id}")
-			Response(StatusOK)
-		})
-	})
+	// 	HTTP(func() {
+	// 		GET("/tasks/{id}")
+	// 		Response(StatusOK)
+	// 	})
+	// })
 })

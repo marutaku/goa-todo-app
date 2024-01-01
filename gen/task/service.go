@@ -15,8 +15,6 @@ import (
 type Service interface {
 	// List all tasks
 	List(context.Context, *ListPayload) (res *ListResult, err error)
-	// Show a task
-	Show(context.Context, *ShowPayload) (res *ShowResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -27,7 +25,7 @@ const ServiceName = "task"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"list", "show"}
+var MethodNames = [1]string{"list"}
 
 // A task
 type BackendStoredTask struct {
@@ -63,16 +61,4 @@ type ListPayload struct {
 type ListResult struct {
 	// List of tasks
 	Tasks BackendStoredTaskCollection
-}
-
-// ShowPayload is the payload type of the task service show method.
-type ShowPayload struct {
-	// ID of task to show
-	ID uint32
-}
-
-// ShowResult is the result type of the task service show method.
-type ShowResult struct {
-	// task to show
-	Task *BackendStoredTask
 }

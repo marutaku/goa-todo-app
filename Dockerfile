@@ -17,11 +17,14 @@ FROM alpine:3.13
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/todo .
-COPY --from=builder /app/dist/todo-cli .
+COPY --from=builder /app/dist/task .
+COPY --from=builder /app/dist/task-cli .
+COPY --from=builder /app/wait-for.sh .
+
+RUN chmod +x /app/wait-for.sh
 
 COPY .env .env
 
 EXPOSE 8000
 
-CMD [ "/app/todo" ]
+CMD [ "/app/task" ]

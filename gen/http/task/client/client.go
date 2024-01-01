@@ -20,9 +20,6 @@ type Client struct {
 	// List Doer is the HTTP client used to make requests to the list endpoint.
 	ListDoer goahttp.Doer
 
-	// Show Doer is the HTTP client used to make requests to the show endpoint.
-	ShowDoer goahttp.Doer
-
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -44,7 +41,6 @@ func NewClient(
 ) *Client {
 	return &Client{
 		ListDoer:            doer,
-		ShowDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -72,25 +68,6 @@ func (c *Client) List() goa.Endpoint {
 		resp, err := c.ListDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("task", "list", err)
-		}
-		return decodeResponse(resp)
-	}
-}
-
-// Show returns an endpoint that makes HTTP requests to the task service show
-// server.
-func (c *Client) Show() goa.Endpoint {
-	var (
-		decodeResponse = DecodeShowResponse(c.decoder, c.RestoreResponseBody)
-	)
-	return func(ctx context.Context, v any) (any, error) {
-		req, err := c.BuildShowRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := c.ShowDoer.Do(req)
-		if err != nil {
-			return nil, goahttp.ErrRequestError("task", "show", err)
 		}
 		return decodeResponse(resp)
 	}

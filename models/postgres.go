@@ -1,16 +1,18 @@
 package models
 
 import (
+	task "backend/gen/task"
+
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewPostgresDatabase(config *config) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(config.dsn()), &gorm.Config{})
+func NewPostgresDatabase(config *Config) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(config.Dsn()), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate(&Task{})
+	db.AutoMigrate(&task.BackendStoredTask{})
 	return db, nil
 }

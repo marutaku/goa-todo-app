@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type config struct {
+type Config struct {
 	host     string
 	port     string
 	user     string
@@ -13,8 +13,8 @@ type config struct {
 	dbname   string
 }
 
-func newPostgresConfig() *config {
-	return &config{
+func NewPostgresConfig() *Config {
+	return &Config{
 		host:     os.Getenv("POSTGRES_HOST"),
 		port:     os.Getenv("POSTGRES_PORT"),
 		user:     os.Getenv("POSTGRES_USER"),
@@ -23,13 +23,13 @@ func newPostgresConfig() *config {
 	}
 }
 
-func (c *config) dsn() string {
+func (c *Config) Dsn() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		c.user,
+		c.password,
 		c.host,
 		c.port,
-		c.user,
 		c.dbname,
-		c.password,
 	)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	cli "backend/gen/http/cli/tasks"
+	cli "backend/gen/http/cli/task"
 	"net/http"
 	"time"
 

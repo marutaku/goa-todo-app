@@ -20,8 +20,8 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LoginRequestBody'
                         example:
-                            password: Et molestiae molestias aut odio optio enim.
-                            username: Autem quibusdam quibusdam soluta unde quibusdam.
+                            password: Soluta unde quibusdam aut et.
+                            username: Cupiditate autem quibusdam.
             responses:
                 "200":
                     description: OK response.
@@ -30,7 +30,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/LoginResponseBody'
                             example:
-                                token: Optio recusandae non officiis ipsam unde.
+                                token: Molestias aut odio.
     /logout:
         post:
             tags:
@@ -45,7 +45,7 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LogoutRequestBody'
                         example:
-                            token: Corrupti explicabo voluptate aut.
+                            token: Voluptas deleniti earum praesentium non dolorum laboriosam.
             responses:
                 "200":
                     description: OK response.
@@ -63,8 +63,8 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LoginRequestBody'
                         example:
-                            password: Quam voluptas deleniti earum praesentium non dolorum.
-                            username: Reprehenderit rerum dicta reiciendis.
+                            password: Distinctio reprehenderit rerum.
+                            username: Enim nisi optio recusandae non officiis ipsam.
             responses:
                 "200":
                     description: OK response.
@@ -73,7 +73,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/LoginResponseBody'
                             example:
-                                token: Fugit nesciunt.
+                                token: Reiciendis est.
     /tasks:
         get:
             tags:
@@ -143,40 +143,6 @@ paths:
                                       doneBy: Vitae aperiam eaque qui voluptas nihil.
                                       id: 268402415
                                       name: Id labore ipsa.
-    /tasks/{id}:
-        get:
-            tags:
-                - task
-            summary: show task
-            description: Show a task
-            operationId: task#show
-            parameters:
-                - name: id
-                  in: path
-                  description: ID of task to show
-                  required: true
-                  schema:
-                    type: integer
-                    description: ID of task to show
-                    example: 1050549851
-                  example: 3509754107
-            responses:
-                "200":
-                    description: OK response.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ShowResponseBody'
-                            example:
-                                task:
-                                    createdAt: Sunt autem.
-                                    createdBy: Beatae eaque.
-                                    description: Dolores voluptate dolores quas.
-                                    done: true
-                                    doneAt: Est voluptatem molestiae.
-                                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                    id: 268402415
-                                    name: Id labore ipsa.
 components:
     schemas:
         BackendStoredTask:
@@ -331,21 +297,6 @@ components:
                 token: Quisquam voluptas consequuntur dolorem libero.
             required:
                 - token
-        ShowResponseBody:
-            type: object
-            properties:
-                task:
-                    $ref: '#/components/schemas/BackendStoredTask'
-            example:
-                task:
-                    createdAt: Sunt autem.
-                    createdBy: Beatae eaque.
-                    description: Dolores voluptate dolores quas.
-                    done: true
-                    doneAt: Est voluptatem molestiae.
-                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                    id: 268402415
-                    name: Id labore ipsa.
 tags:
     - name: auth
       description: The auth service manages authentication

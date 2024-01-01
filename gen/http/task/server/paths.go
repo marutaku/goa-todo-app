@@ -7,16 +7,7 @@
 
 package server
 
-import (
-	"fmt"
-)
-
 // ListTaskPath returns the URL path to the task service list HTTP endpoint.
 func ListTaskPath() string {
 	return "/tasks"
-}
-
-// ShowTaskPath returns the URL path to the task service show HTTP endpoint.
-func ShowTaskPath(id uint32) string {
-	return fmt.Sprintf("/tasks/%v", id)
 }

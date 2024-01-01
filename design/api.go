@@ -56,7 +56,7 @@ var StoredTask = ResultType("applicaiton/vnd.backend.stored-task", func() {
 var _ = API("Task", func() {
 	Title("Task Service")
 	Description("Service for managing tasks")
-	Server("tasks", func() {
+	Server("task", func() {
 		Host("local", func() {
 			URI("http://0.0.0.0:8000")
 		})

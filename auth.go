@@ -1,4 +1,4 @@
-package todoapi
+package taskapi
 
 import (
 	auth "backend/gen/auth"
@@ -31,6 +31,7 @@ func (s *authsrvc) Register(ctx context.Context, p *auth.RegisterPayload) (res *
 	return
 }
 
+// Logout of the system
 func (s *authsrvc) Logout(ctx context.Context, p *auth.LogoutPayload) (err error) {
 	s.logger.Print("auth.logout")
 	return

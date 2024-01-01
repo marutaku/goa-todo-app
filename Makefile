@@ -7,5 +7,5 @@ gen:
 
 build:
 	mkdir -p ./dist && \
-	go build -o ./dist/todo ./cmd/todo && \
-	go build -o ./dist/todo-cli ./cmd/todo-cli
+	go build -o ./dist/task ./cmd/task && \
+	go build -o ./dist/task-cli ./cmd/task-cli

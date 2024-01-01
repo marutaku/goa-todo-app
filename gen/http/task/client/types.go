@@ -20,13 +20,6 @@ type ListResponseBody struct {
 	Tasks BackendStoredTaskCollectionResponseBody `form:"tasks,omitempty" json:"tasks,omitempty" xml:"tasks,omitempty"`
 }
 
-// ShowResponseBody is the type of the "task" service "show" endpoint HTTP
-// response body.
-type ShowResponseBody struct {
-	// task to show
-	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
-}
-
 // BackendStoredTaskCollectionResponseBody is used to define fields on response
 // body types.
 type BackendStoredTaskCollectionResponseBody []*BackendStoredTaskResponseBody
@@ -66,31 +59,10 @@ func NewListResultOK(body *ListResponseBody) *task.ListResult {
 	return v
 }
 
-// NewShowResultOK builds a "task" service "show" endpoint result from a HTTP
-// "OK" response.
-func NewShowResultOK(body *ShowResponseBody) *task.ShowResult {
-	v := &task.ShowResult{}
-	if body.Task != nil {
-		v.Task = unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask(body.Task)
-	}
-
-	return v
-}
-
 // ValidateListResponseBody runs the validations defined on ListResponseBody
 func ValidateListResponseBody(body *ListResponseBody) (err error) {
 	if body.Tasks != nil {
 		if err2 := ValidateBackendStoredTaskCollectionResponseBody(body.Tasks); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
-	}
-	return
-}
-
-// ValidateShowResponseBody runs the validations defined on ShowResponseBody
-func ValidateShowResponseBody(body *ShowResponseBody) (err error) {
-	if body.Task != nil {
-		if err2 := ValidateBackendStoredTaskResponseBody(body.Task); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}

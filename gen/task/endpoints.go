@@ -16,21 +16,18 @@ import (
 // Endpoints wraps the "task" service endpoints.
 type Endpoints struct {
 	List goa.Endpoint
-	Show goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "task" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
 		List: NewListEndpoint(s),
-		Show: NewShowEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "task" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.List = m(e.List)
-	e.Show = m(e.Show)
 }
 
 // NewListEndpoint returns an endpoint function that calls the method "list" of
@@ -39,14 +36,5 @@ func NewListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req any) (any, error) {
 		p := req.(*ListPayload)
 		return s.List(ctx, p)
-	}
-}
-
-// NewShowEndpoint returns an endpoint function that calls the method "show" of
-// service "task".
-func NewShowEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req any) (any, error) {
-		p := req.(*ShowPayload)
-		return s.Show(ctx, p)
 	}
 }
