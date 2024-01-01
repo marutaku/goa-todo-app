@@ -1,0 +1,369 @@
+openapi: 3.0.3
+info:
+    title: Todo Service
+    description: Service for managing todos
+    version: "1.0"
+servers:
+    - url: http://localhost:8000
+paths:
+    /login:
+        post:
+            tags:
+                - auth
+            summary: login auth
+            description: Login to the system
+            operationId: auth#login
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequestBody'
+                        example:
+                            password: Eaque nihil dolore corrupti odit enim.
+                            username: Molestias assumenda ea quia rerum enim.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginResponseBody'
+                            example:
+                                token: Itaque eveniet consequatur aut ipsam et.
+    /logout:
+        post:
+            tags:
+                - auth
+            summary: logout auth
+            description: Logout of the system
+            operationId: auth#logout
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LogoutRequestBody'
+                        example:
+                            token: Quia et est expedita.
+            responses:
+                "200":
+                    description: OK response.
+    /register:
+        post:
+            tags:
+                - auth
+            summary: register auth
+            description: Register a new user
+            operationId: auth#register
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequestBody'
+                        example:
+                            password: Iure dolore.
+                            username: Officia vero fugiat cumque.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginResponseBody'
+                            example:
+                                token: Est voluptatibus cum et quasi magni.
+    /todos:
+        get:
+            tags:
+                - todo
+            summary: list todo
+            description: List all todos
+            operationId: todo#list
+            parameters:
+                - name: limit
+                  in: query
+                  description: Maximum number of todos to return
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Maximum number of todos to return
+                    default: 20
+                    example: 2016891426
+                  example: 3198069095
+                - name: offset
+                  in: query
+                  description: Offset into the list of todos to start at
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Offset into the list of todos to start at
+                    default: 0
+                    example: 2729512865
+                  example: 1534187271
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListResponseBody'
+                            example:
+                                todos:
+                                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                                      createdBy: Deserunt velit ea.
+                                      description: Quasi facere.
+                                      done: false
+                                      doneAt: Mollitia accusantium ut quis voluptatem.
+                                      doneBy: Libero debitis molestias.
+                                      id: 2856466262
+                                      name: Numquam distinctio.
+                                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                                      createdBy: Deserunt velit ea.
+                                      description: Quasi facere.
+                                      done: false
+                                      doneAt: Mollitia accusantium ut quis voluptatem.
+                                      doneBy: Libero debitis molestias.
+                                      id: 2856466262
+                                      name: Numquam distinctio.
+                                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                                      createdBy: Deserunt velit ea.
+                                      description: Quasi facere.
+                                      done: false
+                                      doneAt: Mollitia accusantium ut quis voluptatem.
+                                      doneBy: Libero debitis molestias.
+                                      id: 2856466262
+                                      name: Numquam distinctio.
+                                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                                      createdBy: Deserunt velit ea.
+                                      description: Quasi facere.
+                                      done: false
+                                      doneAt: Mollitia accusantium ut quis voluptatem.
+                                      doneBy: Libero debitis molestias.
+                                      id: 2856466262
+                                      name: Numquam distinctio.
+    /todos/{id}:
+        get:
+            tags:
+                - todo
+            summary: show todo
+            description: Show a todo
+            operationId: todo#show
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of todo to show
+                  required: true
+                  schema:
+                    type: integer
+                    description: ID of todo to show
+                    example: 1739747138
+                  example: 1545203997
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ShowResponseBody'
+                            example:
+                                todo:
+                                    createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                                    createdBy: Deserunt velit ea.
+                                    description: Quasi facere.
+                                    done: false
+                                    doneAt: Mollitia accusantium ut quis voluptatem.
+                                    doneBy: Libero debitis molestias.
+                                    id: 2856466262
+                                    name: Numquam distinctio.
+components:
+    schemas:
+        ListResponseBody:
+            type: object
+            properties:
+                todos:
+                    $ref: '#/components/schemas/TodoCollection'
+            example:
+                todos:
+                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                      createdBy: Deserunt velit ea.
+                      description: Quasi facere.
+                      done: false
+                      doneAt: Mollitia accusantium ut quis voluptatem.
+                      doneBy: Libero debitis molestias.
+                      id: 2856466262
+                      name: Numquam distinctio.
+                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                      createdBy: Deserunt velit ea.
+                      description: Quasi facere.
+                      done: false
+                      doneAt: Mollitia accusantium ut quis voluptatem.
+                      doneBy: Libero debitis molestias.
+                      id: 2856466262
+                      name: Numquam distinctio.
+                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                      createdBy: Deserunt velit ea.
+                      description: Quasi facere.
+                      done: false
+                      doneAt: Mollitia accusantium ut quis voluptatem.
+                      doneBy: Libero debitis molestias.
+                      id: 2856466262
+                      name: Numquam distinctio.
+                    - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                      createdBy: Deserunt velit ea.
+                      description: Quasi facere.
+                      done: false
+                      doneAt: Mollitia accusantium ut quis voluptatem.
+                      doneBy: Libero debitis molestias.
+                      id: 2856466262
+                      name: Numquam distinctio.
+        LoginRequestBody:
+            type: object
+            properties:
+                password:
+                    type: string
+                    description: Password to login with
+                    example: Sit ex et.
+                username:
+                    type: string
+                    description: Username to login with
+                    example: Aspernatur et possimus voluptatem.
+            example:
+                password: Totam est distinctio facilis sint.
+                username: Dolores quis rerum laudantium voluptatem magni.
+            required:
+                - username
+                - password
+        LoginResponseBody:
+            type: object
+            properties:
+                token:
+                    type: string
+                    description: JWT token to use for authentication
+                    example: Aut eaque maiores distinctio laudantium corrupti autem.
+            example:
+                token: Nulla qui ipsa molestiae delectus.
+        LogoutRequestBody:
+            type: object
+            properties:
+                token:
+                    type: string
+                    description: JWT token to use for authentication
+                    example: Aliquam iure corrupti alias culpa nobis est.
+            example:
+                token: Dolor et maiores autem quae esse.
+            required:
+                - token
+        ShowResponseBody:
+            type: object
+            properties:
+                todo:
+                    $ref: '#/components/schemas/Todo'
+            example:
+                todo:
+                    createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                    createdBy: Deserunt velit ea.
+                    description: Quasi facere.
+                    done: false
+                    doneAt: Mollitia accusantium ut quis voluptatem.
+                    doneBy: Libero debitis molestias.
+                    id: 2856466262
+                    name: Numquam distinctio.
+        Todo:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                    description: When the todo was created in ISO format
+                    example: Ut laudantium.
+                createdBy:
+                    type: string
+                    description: Who created the todo
+                    example: Voluptatum a.
+                description:
+                    type: string
+                    description: Description of the todo
+                    example: Dolor eius vel cupiditate magnam saepe mollitia.
+                done:
+                    type: boolean
+                    description: Whether or not the todo is done
+                    default: false
+                    example: true
+                doneAt:
+                    type: string
+                    description: When the todo was done in ISO format
+                    default: ""
+                    example: Dolore quidem ut.
+                doneBy:
+                    type: string
+                    description: Who did the todo
+                    default: ""
+                    example: Itaque quae commodi porro maxime.
+                id:
+                    type: integer
+                    description: Unique ID
+                    example: 2841167859
+                name:
+                    type: string
+                    description: Name of the todo
+                    example: A ipsam delectus qui ducimus enim.
+            description: Todo describes a todo item
+            example:
+                createdAt: Voluptate ab.
+                createdBy: Voluptas ut ipsam id.
+                description: Enim fugiat doloribus aut.
+                done: false
+                doneAt: Blanditiis veritatis nihil ab voluptatum quia.
+                doneBy: Est sed.
+                id: 3142237193
+                name: Perspiciatis esse ut sapiente et voluptatem.
+            required:
+                - id
+                - name
+                - description
+                - done
+                - createdAt
+                - createdBy
+        TodoCollection:
+            type: array
+            items:
+                $ref: '#/components/schemas/Todo'
+            example:
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+tags:
+    - name: auth
+      description: The auth service manages authentication
+    - name: todo
+      description: The todo service manages todo lists

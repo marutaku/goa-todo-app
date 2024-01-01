@@ -1,0 +1,341 @@
+swagger: "2.0"
+info:
+    title: Todo Service
+    description: Service for managing todos
+    version: ""
+host: localhost:8000
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /login:
+        post:
+            tags:
+                - auth
+            summary: login auth
+            description: Login to the system
+            operationId: auth#login
+            parameters:
+                - name: LoginRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/AuthLoginRequestBody'
+                    required:
+                        - username
+                        - password
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/AuthLoginResponseBody'
+            schemes:
+                - http
+    /logout:
+        post:
+            tags:
+                - auth
+            summary: logout auth
+            description: Logout of the system
+            operationId: auth#logout
+            parameters:
+                - name: LogoutRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/AuthLogoutRequestBody'
+                    required:
+                        - token
+            responses:
+                "200":
+                    description: OK response.
+            schemes:
+                - http
+    /register:
+        post:
+            tags:
+                - auth
+            summary: register auth
+            description: Register a new user
+            operationId: auth#register
+            parameters:
+                - name: RegisterRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/AuthRegisterRequestBody'
+                    required:
+                        - username
+                        - password
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/AuthRegisterResponseBody'
+            schemes:
+                - http
+    /todos:
+        get:
+            tags:
+                - todo
+            summary: list todo
+            description: List all todos
+            operationId: todo#list
+            parameters:
+                - name: limit
+                  in: query
+                  description: Maximum number of todos to return
+                  required: false
+                  type: integer
+                  default: 20
+                - name: offset
+                  in: query
+                  description: Offset into the list of todos to start at
+                  required: false
+                  type: integer
+                  default: 0
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TodoListResponseBody'
+            schemes:
+                - http
+    /todos/{id}:
+        get:
+            tags:
+                - todo
+            summary: show todo
+            description: Show a todo
+            operationId: todo#show
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of todo to show
+                  required: true
+                  type: integer
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TodoShowResponseBody'
+            schemes:
+                - http
+definitions:
+    AuthLoginRequestBody:
+        title: AuthLoginRequestBody
+        type: object
+        properties:
+            password:
+                type: string
+                description: Password to login with
+                example: Qui aut rerum eos quia rem.
+            username:
+                type: string
+                description: Username to login with
+                example: Enim dignissimos voluptas.
+        example:
+            password: Dolorum cupiditate est error magni fugit.
+            username: At aut vero.
+        required:
+            - username
+            - password
+    AuthLoginResponseBody:
+        title: AuthLoginResponseBody
+        type: object
+        properties:
+            token:
+                type: string
+                description: JWT token to use for authentication
+                example: Quia exercitationem sit porro et quas.
+        example:
+            token: Molestiae molestias rem exercitationem vel officia consequatur.
+    AuthLogoutRequestBody:
+        title: AuthLogoutRequestBody
+        type: object
+        properties:
+            token:
+                type: string
+                description: JWT token to use for authentication
+                example: Qui ea aut labore vel est.
+        example:
+            token: Repellendus cum pariatur.
+        required:
+            - token
+    AuthRegisterRequestBody:
+        title: AuthRegisterRequestBody
+        type: object
+        properties:
+            password:
+                type: string
+                description: Password to register with
+                example: Quam voluptatem sit voluptatem officia est.
+            username:
+                type: string
+                description: Username to register with
+                example: Provident voluptates natus.
+        example:
+            password: Qui sit omnis molestiae similique.
+            username: Ex voluptatibus autem.
+        required:
+            - username
+            - password
+    AuthRegisterResponseBody:
+        title: AuthRegisterResponseBody
+        type: object
+        properties:
+            token:
+                type: string
+                description: JWT token to use for authentication
+                example: Itaque optio.
+        example:
+            token: Sapiente voluptas vitae ex quas voluptates.
+    TodoListResponseBody:
+        title: TodoListResponseBody
+        type: object
+        properties:
+            todos:
+                $ref: '#/definitions/TodoResponseBodyCollection'
+        example:
+            todos:
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+                - createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                  createdBy: Deserunt velit ea.
+                  description: Quasi facere.
+                  done: false
+                  doneAt: Mollitia accusantium ut quis voluptatem.
+                  doneBy: Libero debitis molestias.
+                  id: 2856466262
+                  name: Numquam distinctio.
+    TodoResponseBody:
+        title: 'Mediatype identifier: todo; view=default'
+        type: object
+        properties:
+            createdAt:
+                type: string
+                description: When the todo was created in ISO format
+                example: Ad dolores nisi est accusantium.
+            createdBy:
+                type: string
+                description: Who created the todo
+                example: Odit consectetur.
+            description:
+                type: string
+                description: Description of the todo
+                example: Voluptates omnis exercitationem recusandae natus molestiae.
+            done:
+                type: boolean
+                description: Whether or not the todo is done
+                default: false
+                example: false
+            doneAt:
+                type: string
+                description: When the todo was done in ISO format
+                default: ""
+                example: Aliquid odit velit fugiat.
+            doneBy:
+                type: string
+                description: Who did the todo
+                default: ""
+                example: Velit quis incidunt ut.
+            id:
+                type: integer
+                description: Unique ID
+                example: 1193518638
+                format: int32
+            name:
+                type: string
+                description: Name of the todo
+                example: Impedit officiis et repellat.
+        description: Todo describes a todo item (default view)
+        example:
+            createdAt: Placeat officia assumenda ut ut.
+            createdBy: Error rerum sed voluptatem qui assumenda.
+            description: Totam earum illo fugit placeat possimus quo.
+            done: false
+            doneAt: Voluptas doloremque.
+            doneBy: Aut inventore laudantium fugiat iusto.
+            id: 1198939891
+            name: Earum illum.
+        required:
+            - id
+            - name
+            - description
+            - done
+            - createdAt
+            - createdBy
+    TodoResponseBodyCollection:
+        title: 'Mediatype identifier: todo; type=collection; view=default'
+        type: array
+        items:
+            $ref: '#/definitions/TodoResponseBody'
+        description: TodoCollectionResponseBody is the result type for an array of TodoResponseBody (default view)
+        example:
+            - createdAt: Corporis et sed.
+              createdBy: Eum ipsum quam recusandae fuga velit.
+              description: Illo amet architecto aut culpa quisquam assumenda.
+              done: false
+              doneAt: Culpa ipsum optio at.
+              doneBy: Ea nulla saepe et sapiente.
+              id: 3705913717
+              name: Dolorem non assumenda aliquid perspiciatis voluptatem.
+            - createdAt: Corporis et sed.
+              createdBy: Eum ipsum quam recusandae fuga velit.
+              description: Illo amet architecto aut culpa quisquam assumenda.
+              done: false
+              doneAt: Culpa ipsum optio at.
+              doneBy: Ea nulla saepe et sapiente.
+              id: 3705913717
+              name: Dolorem non assumenda aliquid perspiciatis voluptatem.
+            - createdAt: Corporis et sed.
+              createdBy: Eum ipsum quam recusandae fuga velit.
+              description: Illo amet architecto aut culpa quisquam assumenda.
+              done: false
+              doneAt: Culpa ipsum optio at.
+              doneBy: Ea nulla saepe et sapiente.
+              id: 3705913717
+              name: Dolorem non assumenda aliquid perspiciatis voluptatem.
+    TodoShowResponseBody:
+        title: TodoShowResponseBody
+        type: object
+        properties:
+            todo:
+                $ref: '#/definitions/TodoResponseBody'
+        example:
+            todo:
+                createdAt: Aperiam in praesentium totam voluptatibus adipisci eos.
+                createdBy: Deserunt velit ea.
+                description: Quasi facere.
+                done: false
+                doneAt: Mollitia accusantium ut quis voluptatem.
+                doneBy: Libero debitis molestias.
+                id: 2856466262
+                name: Numquam distinctio.
