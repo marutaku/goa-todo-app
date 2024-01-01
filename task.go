@@ -4,6 +4,7 @@ import (
 	task "backend/gen/task"
 	"backend/models"
 	"context"
+	"fmt"
 	"log"
 
 	"gorm.io/gorm"
@@ -31,7 +32,7 @@ func (s *tasksrvc) List(ctx context.Context, p *task.ListPayload) (res *task.Lis
 	res = &task.ListResult{}
 
 	s.logger.Print("task.list")
-	tasks := []*task.BackendStoredTask{}
+	var tasks []*task.BackendStoredTask
 	result := s.db.WithContext(ctx).Find(&tasks)
 	if result.Error != nil {
 		return nil, result.Error
@@ -40,9 +41,19 @@ func (s *tasksrvc) List(ctx context.Context, p *task.ListPayload) (res *task.Lis
 	return res, nil
 }
 
-// // Show a task
-// func (s *tasksrvc) Show(ctx context.Context, p *task.ShowPayload) (res *task.ShowResult, err error) {
-// 	res = &task.ShowResult{}
-// 	s.logger.Print("task.show")
-// 	return
-// }
+// Show a task
+func (s *tasksrvc) Show(ctx context.Context, p *task.ShowPayload) (res *task.ShowResult, err error) {
+	res = &task.ShowResult{}
+	s.logger.Print("task.show")
+
+	var returnTask *task.BackendStoredTask
+	result := s.db.WithContext(ctx).First(&returnTask, p.ID)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, task.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		}
+		return nil, result.Error
+	}
+	res.Task = returnTask
+	return res, nil
+}

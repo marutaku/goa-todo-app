@@ -24,17 +24,17 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `auth (login|register|logout)
-task list
+task (list|show)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Soluta unde quibusdam aut et.",
-      "username": "Cupiditate autem quibusdam."
+      "password": "Et molestiae molestias aut odio optio enim.",
+      "username": "Autem quibusdam quibusdam soluta unde quibusdam."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 2612157465 --offset 1756068594` + "\n" +
+		os.Args[0] + ` task list --limit 2879474180 --offset 2696750844` + "\n" +
 		""
 }
 
@@ -64,6 +64,9 @@ func ParseEndpoint(
 		taskListFlags      = flag.NewFlagSet("list", flag.ExitOnError)
 		taskListLimitFlag  = taskListFlags.String("limit", "20", "")
 		taskListOffsetFlag = taskListFlags.String("offset", "", "")
+
+		taskShowFlags  = flag.NewFlagSet("show", flag.ExitOnError)
+		taskShowIDFlag = taskShowFlags.String("id", "REQUIRED", "ID of task to show")
 	)
 	authFlags.Usage = authUsage
 	authLoginFlags.Usage = authLoginUsage
@@ -72,6 +75,7 @@ func ParseEndpoint(
 
 	taskFlags.Usage = taskUsage
 	taskListFlags.Usage = taskListUsage
+	taskShowFlags.Usage = taskShowUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -125,6 +129,9 @@ func ParseEndpoint(
 			case "list":
 				epf = taskListFlags
 
+			case "show":
+				epf = taskShowFlags
+
 			}
 
 		}
@@ -166,6 +173,9 @@ func ParseEndpoint(
 			case "list":
 				endpoint = c.List()
 				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag)
+			case "show":
+				endpoint = c.Show()
+				data, err = taskc.BuildShowPayload(*taskShowIDFlag)
 			}
 		}
 	}
@@ -199,8 +209,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Soluta unde quibusdam aut et.",
-      "username": "Cupiditate autem quibusdam."
+      "password": "Et molestiae molestias aut odio optio enim.",
+      "username": "Autem quibusdam quibusdam soluta unde quibusdam."
    }'
 `, os.Args[0])
 }
@@ -213,8 +223,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Distinctio reprehenderit rerum.",
-      "username": "Enim nisi optio recusandae non officiis ipsam."
+      "password": "Quam voluptas deleniti earum praesentium non dolorum.",
+      "username": "Reprehenderit rerum dicta reiciendis."
    }'
 `, os.Args[0])
 }
@@ -227,7 +237,7 @@ Logout of the system
 
 Example:
     %[1]s auth logout --body '{
-      "token": "Voluptas deleniti earum praesentium non dolorum laboriosam."
+      "token": "Corrupti explicabo voluptate aut."
    }'
 `, os.Args[0])
 }
@@ -240,6 +250,7 @@ Usage:
 
 COMMAND:
     list: List all tasks
+    show: Show a task
 
 Additional help:
     %[1]s task COMMAND --help
@@ -253,6 +264,17 @@ List all tasks
     -offset UINT32: 
 
 Example:
-    %[1]s task list --limit 2612157465 --offset 1756068594
+    %[1]s task list --limit 2879474180 --offset 2696750844
+`, os.Args[0])
+}
+
+func taskShowUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task show -id UINT32
+
+Show a task
+    -id UINT32: ID of task to show
+
+Example:
+    %[1]s task show --id 1982806257
 `, os.Args[0])
 }

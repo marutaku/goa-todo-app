@@ -15,6 +15,8 @@ import (
 type Service interface {
 	// List all tasks
 	List(context.Context, *ListPayload) (res *ListResult, err error)
+	// Show a task
+	Show(context.Context, *ShowPayload) (res *ShowResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -25,7 +27,7 @@ const ServiceName = "task"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"list"}
+var MethodNames = [2]string{"list", "show"}
 
 // A task
 type BackendStoredTask struct {
@@ -61,4 +63,36 @@ type ListPayload struct {
 type ListResult struct {
 	// List of tasks
 	Tasks BackendStoredTaskCollection
+}
+
+// ShowPayload is the payload type of the task service show method.
+type ShowPayload struct {
+	// ID of task to show
+	ID uint32
+}
+
+// ShowResult is the result type of the task service show method.
+type ShowResult struct {
+	// task to show
+	Task *BackendStoredTask
+}
+
+// No task matched given criteria
+type NoMatch string
+
+// Error returns an error description.
+func (e NoMatch) Error() string {
+	return "No task matched given criteria"
+}
+
+// ErrorName returns "no_match".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e NoMatch) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "no_match".
+func (e NoMatch) GoaErrorName() string {
+	return "no_match"
 }

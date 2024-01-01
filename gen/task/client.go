@@ -16,12 +16,14 @@ import (
 // Client is the "task" service client.
 type Client struct {
 	ListEndpoint goa.Endpoint
+	ShowEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "task" service client given the endpoints.
-func NewClient(list goa.Endpoint) *Client {
+func NewClient(list, show goa.Endpoint) *Client {
 	return &Client{
 		ListEndpoint: list,
+		ShowEndpoint: show,
 	}
 }
 
@@ -33,4 +35,17 @@ func (c *Client) List(ctx context.Context, p *ListPayload) (res *ListResult, err
 		return
 	}
 	return ires.(*ListResult), nil
+}
+
+// Show calls the "show" endpoint of the "task" service.
+// Show may return the following errors:
+//   - "no_match" (type NoMatch)
+//   - error: internal error
+func (c *Client) Show(ctx context.Context, p *ShowPayload) (res *ShowResult, err error) {
+	var ires any
+	ires, err = c.ShowEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*ShowResult), nil
 }

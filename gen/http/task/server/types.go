@@ -18,6 +18,13 @@ type ListResponseBody struct {
 	Tasks BackendStoredTaskCollectionResponseBody `form:"tasks,omitempty" json:"tasks,omitempty" xml:"tasks,omitempty"`
 }
 
+// ShowResponseBody is the type of the "task" service "show" endpoint HTTP
+// response body.
+type ShowResponseBody struct {
+	// task to show
+	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
+}
+
 // BackendStoredTaskCollectionResponseBody is used to define fields on response
 // body types.
 type BackendStoredTaskCollectionResponseBody []*BackendStoredTaskResponseBody
@@ -56,11 +63,29 @@ func NewListResponseBody(res *task.ListResult) *ListResponseBody {
 	return body
 }
 
+// NewShowResponseBody builds the HTTP response body from the result of the
+// "show" endpoint of the "task" service.
+func NewShowResponseBody(res *task.ShowResult) *ShowResponseBody {
+	body := &ShowResponseBody{}
+	if res.Task != nil {
+		body.Task = marshalTaskBackendStoredTaskToBackendStoredTaskResponseBody(res.Task)
+	}
+	return body
+}
+
 // NewListPayload builds a task service list endpoint payload.
 func NewListPayload(limit uint32, offset uint32) *task.ListPayload {
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
+
+	return v
+}
+
+// NewShowPayload builds a task service show endpoint payload.
+func NewShowPayload(id uint32) *task.ShowPayload {
+	v := &task.ShowPayload{}
+	v.ID = id
 
 	return v
 }

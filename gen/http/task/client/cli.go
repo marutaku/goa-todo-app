@@ -45,3 +45,22 @@ func BuildListPayload(taskListLimit string, taskListOffset string) (*task.ListPa
 
 	return v, nil
 }
+
+// BuildShowPayload builds the payload for the task show endpoint from CLI
+// flags.
+func BuildShowPayload(taskShowID string) (*task.ShowPayload, error) {
+	var err error
+	var id uint32
+	{
+		var v uint64
+		v, err = strconv.ParseUint(taskShowID, 10, 32)
+		id = uint32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT32")
+		}
+	}
+	v := &task.ShowPayload{}
+	v.ID = id
+
+	return v, nil
+}
