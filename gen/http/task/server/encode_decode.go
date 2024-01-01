@@ -11,6 +11,7 @@ import (
 	task "backend/gen/task"
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -130,6 +131,43 @@ func EncodeShowError(encoder func(context.Context, http.ResponseWriter) goahttp.
 		default:
 			return encodeError(ctx, w, v)
 		}
+	}
+}
+
+// EncodeCreateResponse returns an encoder for responses returned by the task
+// create endpoint.
+func EncodeCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {
+	return func(ctx context.Context, w http.ResponseWriter, v any) error {
+		res, _ := v.(*task.CreateResult)
+		enc := encoder(ctx, w)
+		body := NewCreateResponseBody(res)
+		w.WriteHeader(http.StatusCreated)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeCreateRequest returns a decoder for requests sent to the task create
+// endpoint.
+func DecodeCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
+	return func(r *http.Request) (any, error) {
+		var (
+			body CreateRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateCreateRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+		payload := NewCreatePayload(&body)
+
+		return payload, nil
 	}
 }
 

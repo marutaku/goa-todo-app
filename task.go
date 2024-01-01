@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -55,5 +56,27 @@ func (s *tasksrvc) Show(ctx context.Context, p *task.ShowPayload) (res *task.Sho
 		return nil, result.Error
 	}
 	res.Task = returnTask
+	return res, nil
+}
+
+func (s *tasksrvc) Create(ctx context.Context, p *task.CreatePayload) (res *task.CreateResult, err error) {
+	res = &task.CreateResult{}
+	s.logger.Print("task.create")
+	newTask := &task.BackendStoredTask{
+		Name:        p.Name,
+		Description: *p.Description,
+		Done:        false,
+		DoneAt:      "",
+		DoneBy:      "",
+		CreatedBy:   p.CreatedBy,
+		CreatedAt:   time.Now().Format(time.RFC3339),
+	}
+
+	result := s.db.WithContext(ctx).Create(&newTask)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	res.Task = newTask
+	fmt.Println(newTask)
 	return res, nil
 }

@@ -21,6 +21,7 @@ type Server struct {
 	Mounts []*MountPoint
 	List   http.Handler
 	Show   http.Handler
+	Create http.Handler
 }
 
 // MountPoint holds information about the mounted endpoints.
@@ -52,9 +53,11 @@ func New(
 		Mounts: []*MountPoint{
 			{"List", "GET", "/tasks"},
 			{"Show", "GET", "/tasks/{id}"},
+			{"Create", "POST", "/tasks"},
 		},
-		List: NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
-		Show: NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		List:   NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
+		Show:   NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		Create: NewCreateHandler(e.Create, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -65,6 +68,7 @@ func (s *Server) Service() string { return "task" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.List = m(s.List)
 	s.Show = m(s.Show)
+	s.Create = m(s.Create)
 }
 
 // MethodNames returns the methods served.
@@ -74,6 +78,7 @@ func (s *Server) MethodNames() []string { return task.MethodNames[:] }
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountListHandler(mux, h.List)
 	MountShowHandler(mux, h.Show)
+	MountCreateHandler(mux, h.Create)
 }
 
 // Mount configures the mux to serve the task endpoints.
@@ -162,6 +167,57 @@ func NewShowHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "show")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "task")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountCreateHandler configures the mux to serve the "task" service "create"
+// endpoint.
+func MountCreateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/tasks", f)
+}
+
+// NewCreateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "task" service "create" endpoint.
+func NewCreateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(ctx context.Context, err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeCreateRequest(mux, decoder)
+		encodeResponse = EncodeCreateResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "task")
 		payload, err := decodeRequest(r)
 		if err != nil {

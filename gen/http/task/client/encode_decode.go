@@ -168,6 +168,77 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 	}
 }
 
+// BuildCreateRequest instantiates a HTTP request object with method and path
+// set to call the "task" service "create" endpoint
+func (c *Client) BuildCreateRequest(ctx context.Context, v any) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateTaskPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("task", "create", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeCreateRequest returns an encoder for requests sent to the task create
+// server.
+func EncodeCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
+	return func(req *http.Request, v any) error {
+		p, ok := v.(*task.CreatePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("task", "create", "*task.CreatePayload", v)
+		}
+		body := NewCreateRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("task", "create", err)
+		}
+		return nil
+	}
+}
+
+// DecodeCreateResponse returns a decoder for responses returned by the task
+// create endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
+	return func(resp *http.Response) (any, error) {
+		if restoreBody {
+			b, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusCreated:
+			var (
+				body CreateResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "create", err)
+			}
+			err = ValidateCreateResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "create", err)
+			}
+			res := NewCreateResultCreated(&body)
+			return res, nil
+		default:
+			body, _ := io.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("task", "create", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask builds a value
 // of type *task.BackendStoredTask from a value of type
 // *BackendStoredTaskResponseBody.

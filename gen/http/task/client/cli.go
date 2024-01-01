@@ -9,6 +9,7 @@ package client
 
 import (
 	task "backend/gen/task"
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -61,6 +62,27 @@ func BuildShowPayload(taskShowID string) (*task.ShowPayload, error) {
 	}
 	v := &task.ShowPayload{}
 	v.ID = id
+
+	return v, nil
+}
+
+// BuildCreatePayload builds the payload for the task create endpoint from CLI
+// flags.
+func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
+	var err error
+	var body CreateRequestBody
+	{
+		err = json.Unmarshal([]byte(taskCreateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Suscipit dolor.\",\n      \"description\": \"Illo non quibusdam magni.\",\n      \"id\": 2812545490,\n      \"name\": \"Eaque tenetur.\"\n   }'")
+		}
+	}
+	v := &task.CreatePayload{
+		ID:          body.ID,
+		Name:        body.Name,
+		Description: body.Description,
+		CreatedBy:   body.CreatedBy,
+	}
 
 	return v, nil
 }

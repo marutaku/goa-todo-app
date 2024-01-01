@@ -9,7 +9,22 @@ package server
 
 import (
 	task "backend/gen/task"
+
+	goa "goa.design/goa/v3/pkg"
 )
+
+// CreateRequestBody is the type of the "task" service "create" endpoint HTTP
+// request body.
+type CreateRequestBody struct {
+	// ID of task to create
+	ID *uint32 `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of the task
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Description of the task
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Who created the task
+	CreatedBy *string `form:"created_by,omitempty" json:"created_by,omitempty" xml:"created_by,omitempty"`
+}
 
 // ListResponseBody is the type of the "task" service "list" endpoint HTTP
 // response body.
@@ -22,6 +37,13 @@ type ListResponseBody struct {
 // response body.
 type ShowResponseBody struct {
 	// task to show
+	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
+}
+
+// CreateResponseBody is the type of the "task" service "create" endpoint HTTP
+// response body.
+type CreateResponseBody struct {
+	// Created task
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
@@ -45,7 +67,7 @@ type BackendStoredTaskResponseBody struct {
 	// Who did the todo
 	DoneBy string `gorm:"default ''"`
 	// When the todo was created in ISO format
-	CreatedAt string `gorm:"autoCreateTime"`
+	CreatedAt string `gorm:"not null"`
 	// Who created the todo
 	CreatedBy string `gorm:"not null"`
 }
@@ -73,6 +95,16 @@ func NewShowResponseBody(res *task.ShowResult) *ShowResponseBody {
 	return body
 }
 
+// NewCreateResponseBody builds the HTTP response body from the result of the
+// "create" endpoint of the "task" service.
+func NewCreateResponseBody(res *task.CreateResult) *CreateResponseBody {
+	body := &CreateResponseBody{}
+	if res.Task != nil {
+		body.Task = marshalTaskBackendStoredTaskToBackendStoredTaskResponseBody(res.Task)
+	}
+	return body
+}
+
 // NewListPayload builds a task service list endpoint payload.
 func NewListPayload(limit uint32, offset uint32) *task.ListPayload {
 	v := &task.ListPayload{}
@@ -88,4 +120,27 @@ func NewShowPayload(id uint32) *task.ShowPayload {
 	v.ID = id
 
 	return v
+}
+
+// NewCreatePayload builds a task service create endpoint payload.
+func NewCreatePayload(body *CreateRequestBody) *task.CreatePayload {
+	v := &task.CreatePayload{
+		ID:          body.ID,
+		Name:        *body.Name,
+		Description: body.Description,
+		CreatedBy:   *body.CreatedBy,
+	}
+
+	return v
+}
+
+// ValidateCreateRequestBody runs the validations defined on CreateRequestBody
+func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.CreatedBy == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("created_by", "body"))
+	}
+	return
 }

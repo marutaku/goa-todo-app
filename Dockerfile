@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . .
 
-RUN make build
+RUN go build -o ./dist/task ./cmd/task
 
 FROM alpine:3.13
 

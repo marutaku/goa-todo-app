@@ -17,6 +17,8 @@ type Service interface {
 	List(context.Context, *ListPayload) (res *ListResult, err error)
 	// Show a task
 	Show(context.Context, *ShowPayload) (res *ShowResult, err error)
+	// Create a task
+	Create(context.Context, *CreatePayload) (res *CreateResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -27,7 +29,7 @@ const ServiceName = "task"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"list", "show"}
+var MethodNames = [3]string{"list", "show", "create"}
 
 // A task
 type BackendStoredTask struct {
@@ -44,12 +46,30 @@ type BackendStoredTask struct {
 	// Who did the todo
 	DoneBy string `gorm:"default ''"`
 	// When the todo was created in ISO format
-	CreatedAt string `gorm:"autoCreateTime"`
+	CreatedAt string `gorm:"not null"`
 	// Who created the todo
 	CreatedBy string `gorm:"not null"`
 }
 
 type BackendStoredTaskCollection []*BackendStoredTask
+
+// CreatePayload is the payload type of the task service create method.
+type CreatePayload struct {
+	// ID of task to create
+	ID *uint32
+	// Name of the task
+	Name string
+	// Description of the task
+	Description *string
+	// Who created the task
+	CreatedBy string
+}
+
+// CreateResult is the result type of the task service create method.
+type CreateResult struct {
+	// Created task
+	Task *BackendStoredTask
+}
 
 // ListPayload is the payload type of the task service list method.
 type ListPayload struct {

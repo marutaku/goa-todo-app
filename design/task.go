@@ -42,4 +42,22 @@ var _ = Service("task", func() {
 			Response("no_match", StatusNotFound)
 		})
 	})
+
+	Method("create", func() {
+		Description("Create a task")
+		Payload(func() {
+			Attribute("id", UInt32, "ID of task to create")
+			Attribute("name", String, "Name of the task")
+			Attribute("description", String, "Description of the task")
+			Attribute("created_by", String, "Who created the task")
+			Required("name", "created_by")
+		})
+		Result(func() {
+			Attribute("task", StoredTask, "Created task")
+		})
+		HTTP(func() {
+			POST("/tasks")
+			Response(StatusCreated)
+		})
+	})
 })

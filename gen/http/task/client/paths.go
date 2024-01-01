@@ -20,3 +20,8 @@ func ListTaskPath() string {
 func ShowTaskPath(id uint32) string {
 	return fmt.Sprintf("/tasks/%v", id)
 }
+
+// CreateTaskPath returns the URL path to the task service create HTTP endpoint.
+func CreateTaskPath() string {
+	return "/tasks"
+}

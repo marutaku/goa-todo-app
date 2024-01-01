@@ -15,15 +15,17 @@ import (
 
 // Client is the "task" service client.
 type Client struct {
-	ListEndpoint goa.Endpoint
-	ShowEndpoint goa.Endpoint
+	ListEndpoint   goa.Endpoint
+	ShowEndpoint   goa.Endpoint
+	CreateEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "task" service client given the endpoints.
-func NewClient(list, show goa.Endpoint) *Client {
+func NewClient(list, show, create goa.Endpoint) *Client {
 	return &Client{
-		ListEndpoint: list,
-		ShowEndpoint: show,
+		ListEndpoint:   list,
+		ShowEndpoint:   show,
+		CreateEndpoint: create,
 	}
 }
 
@@ -48,4 +50,14 @@ func (c *Client) Show(ctx context.Context, p *ShowPayload) (res *ShowResult, err
 		return
 	}
 	return ires.(*ShowResult), nil
+}
+
+// Create calls the "create" endpoint of the "task" service.
+func (c *Client) Create(ctx context.Context, p *CreatePayload) (res *CreateResult, err error) {
+	var ires any
+	ires, err = c.CreateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*CreateResult), nil
 }

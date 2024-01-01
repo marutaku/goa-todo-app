@@ -29,7 +29,7 @@ var Task = Type("Task", func() {
 		Meta("struct:tag:gorm", "default ''")
 	})
 	Attribute("createdAt", String, "When the todo was created in ISO format", func() {
-		Meta("struct:tag:gorm", "autoCreateTime")
+		Meta("struct:tag:gorm", "not null")
 	})
 	Attribute("createdBy", String, "Who created the todo", func() {
 		Meta("struct:tag:gorm", "not null")
@@ -48,7 +48,9 @@ var StoredTask = ResultType("applicaiton/vnd.backend.stored-task", func() {
 		Attribute("done")
 		Attribute("doneAt")
 		Attribute("doneBy")
-		Attribute("createdAt")
+		Attribute("createdAt", func() {
+
+		})
 		Attribute("createdBy")
 	})
 })
