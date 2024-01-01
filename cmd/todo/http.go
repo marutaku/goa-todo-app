@@ -1,6 +1,8 @@
 package main
 
 import (
+	auth "backend/gen/auth"
+	authsvr "backend/gen/http/auth/server"
 	todosvr "backend/gen/http/todo/server"
 	todo "backend/gen/todo"
 	"context"
@@ -18,7 +20,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, todoEndpoints *todo.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, authEndpoints *auth.Endpoints, todoEndpoints *todo.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -49,19 +51,23 @@ func handleHTTPServer(ctx context.Context, u *url.URL, todoEndpoints *todo.Endpo
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
+		authServer *authsvr.Server
 		todoServer *todosvr.Server
 	)
 	{
 		eh := errorHandler(logger)
+		authServer = authsvr.New(authEndpoints, mux, dec, enc, eh, nil)
 		todoServer = todosvr.New(todoEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
+				authServer,
 				todoServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
 	}
 	// Configure the mux.
+	authsvr.Mount(mux, authServer)
 	todosvr.Mount(mux, todoServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
@@ -75,6 +81,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, todoEndpoints *todo.Endpo
 	// Start HTTP server using default configuration, change the code to
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler, ReadHeaderTimeout: time.Second * 60}
+	for _, m := range authServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
 	for _, m := range todoServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}

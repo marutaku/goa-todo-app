@@ -31,8 +31,8 @@ var _ = API("todo", func() {
 	Title("Todo Service")
 	Description("Service for managing todos")
 	Server("todo", func() {
-		Host("localhost", func() {
-			URI("http://localhost:8000")
+		Host("local", func() {
+			URI("http://0.0.0.0:8000")
 		})
 	})
 })

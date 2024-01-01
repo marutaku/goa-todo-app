@@ -2,6 +2,7 @@ package main
 
 import (
 	todoapi "backend"
+	auth "backend/gen/auth"
 	todo "backend/gen/todo"
 	"context"
 	"flag"
@@ -19,7 +20,7 @@ func main() {
 	// Define command line flags, add any other flag required to configure the
 	// service.
 	var (
-		hostF     = flag.String("host", "localhost", "Server host (valid values: localhost)")
+		hostF     = flag.String("host", "local", "Server host (valid values: local)")
 		domainF   = flag.String("domain", "", "Host domain name (overrides host domain specified in service design)")
 		httpPortF = flag.String("http-port", "", "HTTP port (overrides host HTTP port specified in service design)")
 		secureF   = flag.Bool("secure", false, "Use secure scheme (https or grpcs)")
@@ -37,18 +38,22 @@ func main() {
 
 	// Initialize the services.
 	var (
+		authSvc auth.Service
 		todoSvc todo.Service
 	)
 	{
+		authSvc = todoapi.NewAuth(logger)
 		todoSvc = todoapi.NewTodo(logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
+		authEndpoints *auth.Endpoints
 		todoEndpoints *todo.Endpoints
 	)
 	{
+		authEndpoints = auth.NewEndpoints(authSvc)
 		todoEndpoints = todo.NewEndpoints(todoSvc)
 	}
 
@@ -69,9 +74,9 @@ func main() {
 
 	// Start the servers and send errors (if any) to the error channel.
 	switch *hostF {
-	case "localhost":
+	case "local":
 		{
-			addr := "http://localhost:8000"
+			addr := "http://0.0.0.0:8000"
 			u, err := url.Parse(addr)
 			if err != nil {
 				logger.Fatalf("invalid URL %#v: %s\n", addr, err)
@@ -91,11 +96,11 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host = net.JoinHostPort(u.Host, "80")
 			}
-			handleHTTPServer(ctx, u, todoEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, authEndpoints, todoEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:
-		logger.Fatalf("invalid host argument: %q (valid hosts: localhost)\n", *hostF)
+		logger.Fatalf("invalid host argument: %q (valid hosts: local)\n", *hostF)
 	}
 
 	// Wait for signal.
