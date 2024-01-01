@@ -20,7 +20,7 @@ func NewTodo(logger *log.Logger) todo.Service {
 // List all todos
 func (s *todosrvc) List(ctx context.Context, p *todo.ListPayload) (res *todo.ListResult, err error) {
 	res = &todo.ListResult{
-		Todos: []*todo.Todo{
+		Todos: []*todo.Task{
 			{
 				ID:          1,
 				Name:        "task1",
@@ -48,7 +48,7 @@ func (s *todosrvc) List(ctx context.Context, p *todo.ListPayload) (res *todo.Lis
 
 func (s *todosrvc) Show(ctx context.Context, p *todo.ShowPayload) (res *todo.ShowResult, err error) {
 	res = &todo.ShowResult{
-		Todo: &todo.Todo{
+		Todo: &todo.Task{
 			ID:          1,
 			Name:        "task1",
 			Description: "description1",

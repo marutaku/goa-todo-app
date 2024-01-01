@@ -1,9 +1,9 @@
 package main
 
 import (
-	todoapi "backend"
+	taskapi "backend"
 	auth "backend/gen/auth"
-	todo "backend/gen/todo"
+	task "backend/gen/task"
 	"context"
 	"flag"
 	"fmt"
@@ -33,28 +33,28 @@ func main() {
 		logger *log.Logger
 	)
 	{
-		logger = log.New(os.Stderr, "[todoapi] ", log.Ltime)
+		logger = log.New(os.Stderr, "[taskapi] ", log.Ltime)
 	}
 
 	// Initialize the services.
 	var (
 		authSvc auth.Service
-		todoSvc todo.Service
+		taskSvc task.Service
 	)
 	{
-		authSvc = todoapi.NewAuth(logger)
-		todoSvc = todoapi.NewTodo(logger)
+		authSvc = taskapi.NewAuth(logger)
+		taskSvc = taskapi.NewTask(logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
 		authEndpoints *auth.Endpoints
-		todoEndpoints *todo.Endpoints
+		taskEndpoints *task.Endpoints
 	)
 	{
 		authEndpoints = auth.NewEndpoints(authSvc)
-		todoEndpoints = todo.NewEndpoints(todoSvc)
+		taskEndpoints = task.NewEndpoints(taskSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -96,7 +96,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host = net.JoinHostPort(u.Host, "80")
 			}
-			handleHTTPServer(ctx, u, authEndpoints, todoEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, authEndpoints, taskEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:

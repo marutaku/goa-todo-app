@@ -3,8 +3,8 @@ package main
 import (
 	auth "backend/gen/auth"
 	authsvr "backend/gen/http/auth/server"
-	todosvr "backend/gen/http/todo/server"
-	todo "backend/gen/todo"
+	tasksvr "backend/gen/http/task/server"
+	task "backend/gen/task"
 	"context"
 	"log"
 	"net/http"
@@ -20,7 +20,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, authEndpoints *auth.Endpoints, todoEndpoints *todo.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, authEndpoints *auth.Endpoints, taskEndpoints *task.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -52,23 +52,23 @@ func handleHTTPServer(ctx context.Context, u *url.URL, authEndpoints *auth.Endpo
 	// responses.
 	var (
 		authServer *authsvr.Server
-		todoServer *todosvr.Server
+		taskServer *tasksvr.Server
 	)
 	{
 		eh := errorHandler(logger)
 		authServer = authsvr.New(authEndpoints, mux, dec, enc, eh, nil)
-		todoServer = todosvr.New(todoEndpoints, mux, dec, enc, eh, nil)
+		taskServer = tasksvr.New(taskEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
 				authServer,
-				todoServer,
+				taskServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
 	}
 	// Configure the mux.
 	authsvr.Mount(mux, authServer)
-	todosvr.Mount(mux, todoServer)
+	tasksvr.Mount(mux, taskServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -84,7 +84,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, authEndpoints *auth.Endpo
 	for _, m := range authServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
-	for _, m := range todoServer.Mounts {
+	for _, m := range taskServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 
