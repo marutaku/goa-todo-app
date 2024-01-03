@@ -24,17 +24,17 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `auth (login|register|logout)
-task (list|show|create)
+task (list|show|create|update)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Distinctio reprehenderit rerum.",
-      "username": "Enim nisi optio recusandae non officiis ipsam."
+      "password": "Voluptas deleniti earum praesentium non dolorum laboriosam.",
+      "username": "Dicta reiciendis est."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 2251696521 --offset 1375011135` + "\n" +
+		os.Args[0] + ` task list --limit 3325048348 --offset 2280797127` + "\n" +
 		""
 }
 
@@ -70,6 +70,10 @@ func ParseEndpoint(
 
 		taskCreateFlags    = flag.NewFlagSet("create", flag.ExitOnError)
 		taskCreateBodyFlag = taskCreateFlags.String("body", "REQUIRED", "")
+
+		taskUpdateFlags    = flag.NewFlagSet("update", flag.ExitOnError)
+		taskUpdateBodyFlag = taskUpdateFlags.String("body", "REQUIRED", "")
+		taskUpdateIDFlag   = taskUpdateFlags.String("id", "REQUIRED", "ID of task to update")
 	)
 	authFlags.Usage = authUsage
 	authLoginFlags.Usage = authLoginUsage
@@ -80,6 +84,7 @@ func ParseEndpoint(
 	taskListFlags.Usage = taskListUsage
 	taskShowFlags.Usage = taskShowUsage
 	taskCreateFlags.Usage = taskCreateUsage
+	taskUpdateFlags.Usage = taskUpdateUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -139,6 +144,9 @@ func ParseEndpoint(
 			case "create":
 				epf = taskCreateFlags
 
+			case "update":
+				epf = taskUpdateFlags
+
 			}
 
 		}
@@ -186,6 +194,9 @@ func ParseEndpoint(
 			case "create":
 				endpoint = c.Create()
 				data, err = taskc.BuildCreatePayload(*taskCreateBodyFlag)
+			case "update":
+				endpoint = c.Update()
+				data, err = taskc.BuildUpdatePayload(*taskUpdateBodyFlag, *taskUpdateIDFlag)
 			}
 		}
 	}
@@ -219,8 +230,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Distinctio reprehenderit rerum.",
-      "username": "Enim nisi optio recusandae non officiis ipsam."
+      "password": "Voluptas deleniti earum praesentium non dolorum laboriosam.",
+      "username": "Dicta reiciendis est."
    }'
 `, os.Args[0])
 }
@@ -233,8 +244,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Nesciunt quas corrupti explicabo voluptate aut.",
-      "username": "Voluptas deleniti earum praesentium non dolorum laboriosam."
+      "password": "Dolores vel aliquam a voluptas.",
+      "username": "Laboriosam et libero deserunt voluptatibus similique."
    }'
 `, os.Args[0])
 }
@@ -247,7 +258,7 @@ Logout of the system
 
 Example:
     %[1]s auth logout --body '{
-      "token": "Dolores vel aliquam a voluptas."
+      "token": "In voluptas id eos."
    }'
 `, os.Args[0])
 }
@@ -262,6 +273,7 @@ COMMAND:
     list: List all tasks
     show: Show a task
     create: Create a task
+    update: Update a task
 
 Additional help:
     %[1]s task COMMAND --help
@@ -275,7 +287,7 @@ List all tasks
     -offset UINT32: 
 
 Example:
-    %[1]s task list --limit 2251696521 --offset 1375011135
+    %[1]s task list --limit 3325048348 --offset 2280797127
 `, os.Args[0])
 }
 
@@ -286,7 +298,7 @@ Show a task
     -id UINT32: ID of task to show
 
 Example:
-    %[1]s task show --id 3834344555
+    %[1]s task show --id 1488275987
 `, os.Args[0])
 }
 
@@ -298,10 +310,25 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Suscipit dolor.",
-      "description": "Illo non quibusdam magni.",
-      "id": 2812545490,
-      "name": "Eaque tenetur."
+      "created_by": "Ut ducimus et consequatur aut.",
+      "description": "Molestias mollitia odio.",
+      "id": 3033221028,
+      "name": "Non officiis minima voluptatem perferendis omnis."
    }'
+`, os.Args[0])
+}
+
+func taskUpdateUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task update -body JSON -id UINT32
+
+Update a task
+    -body JSON: 
+    -id UINT32: ID of task to update
+
+Example:
+    %[1]s task update --body '{
+      "description": "Est qui harum quis qui.",
+      "name": "Dolor voluptatem."
+   }' --id 666905628
 `, os.Args[0])
 }

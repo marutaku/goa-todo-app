@@ -25,3 +25,8 @@ func ShowTaskPath(id uint32) string {
 func CreateTaskPath() string {
 	return "/tasks"
 }
+
+// UpdateTaskPath returns the URL path to the task service update HTTP endpoint.
+func UpdateTaskPath(id uint32) string {
+	return fmt.Sprintf("/tasks/%v", id)
+}

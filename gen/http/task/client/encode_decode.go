@@ -239,6 +239,87 @@ func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 	}
 }
 
+// BuildUpdateRequest instantiates a HTTP request object with method and path
+// set to call the "task" service "update" endpoint
+func (c *Client) BuildUpdateRequest(ctx context.Context, v any) (*http.Request, error) {
+	var (
+		id uint32
+	)
+	{
+		p, ok := v.(*task.UpdatePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("task", "update", "*task.UpdatePayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: UpdateTaskPath(id)}
+	req, err := http.NewRequest("PUT", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("task", "update", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeUpdateRequest returns an encoder for requests sent to the task update
+// server.
+func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
+	return func(req *http.Request, v any) error {
+		p, ok := v.(*task.UpdatePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("task", "update", "*task.UpdatePayload", v)
+		}
+		body := NewUpdateRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("task", "update", err)
+		}
+		return nil
+	}
+}
+
+// DecodeUpdateResponse returns a decoder for responses returned by the task
+// update endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
+	return func(resp *http.Response) (any, error) {
+		if restoreBody {
+			b, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body UpdateResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "update", err)
+			}
+			err = ValidateUpdateResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "update", err)
+			}
+			res := NewUpdateResultOK(&body)
+			return res, nil
+		default:
+			body, _ := io.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("task", "update", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask builds a value
 // of type *task.BackendStoredTask from a value of type
 // *BackendStoredTaskResponseBody.

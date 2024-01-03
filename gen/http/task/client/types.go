@@ -26,6 +26,15 @@ type CreateRequestBody struct {
 	CreatedBy string `form:"created_by" json:"created_by" xml:"created_by"`
 }
 
+// UpdateRequestBody is the type of the "task" service "update" endpoint HTTP
+// request body.
+type UpdateRequestBody struct {
+	// Name of the task
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Description of the task
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+}
+
 // ListResponseBody is the type of the "task" service "list" endpoint HTTP
 // response body.
 type ListResponseBody struct {
@@ -44,6 +53,13 @@ type ShowResponseBody struct {
 // response body.
 type CreateResponseBody struct {
 	// Created task
+	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
+}
+
+// UpdateResponseBody is the type of the "task" service "update" endpoint HTTP
+// response body.
+type UpdateResponseBody struct {
+	// Updated task
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
@@ -80,6 +96,16 @@ func NewCreateRequestBody(p *task.CreatePayload) *CreateRequestBody {
 		Name:        p.Name,
 		Description: p.Description,
 		CreatedBy:   p.CreatedBy,
+	}
+	return body
+}
+
+// NewUpdateRequestBody builds the HTTP request body from the payload of the
+// "update" endpoint of the "task" service.
+func NewUpdateRequestBody(p *task.UpdatePayload) *UpdateRequestBody {
+	body := &UpdateRequestBody{
+		Name:        p.Name,
+		Description: p.Description,
 	}
 	return body
 }
@@ -127,6 +153,17 @@ func NewCreateResultCreated(body *CreateResponseBody) *task.CreateResult {
 	return v
 }
 
+// NewUpdateResultOK builds a "task" service "update" endpoint result from a
+// HTTP "OK" response.
+func NewUpdateResultOK(body *UpdateResponseBody) *task.UpdateResult {
+	v := &task.UpdateResult{}
+	if body.Task != nil {
+		v.Task = unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask(body.Task)
+	}
+
+	return v
+}
+
 // ValidateListResponseBody runs the validations defined on ListResponseBody
 func ValidateListResponseBody(body *ListResponseBody) (err error) {
 	if body.Tasks != nil {
@@ -149,6 +186,16 @@ func ValidateShowResponseBody(body *ShowResponseBody) (err error) {
 
 // ValidateCreateResponseBody runs the validations defined on CreateResponseBody
 func ValidateCreateResponseBody(body *CreateResponseBody) (err error) {
+	if body.Task != nil {
+		if err2 := ValidateBackendStoredTaskResponseBody(body.Task); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateUpdateResponseBody runs the validations defined on UpdateResponseBody
+func ValidateUpdateResponseBody(body *UpdateResponseBody) (err error) {
 	if body.Task != nil {
 		if err2 := ValidateBackendStoredTaskResponseBody(body.Task); err2 != nil {
 			err = goa.MergeErrors(err, err2)

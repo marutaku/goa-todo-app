@@ -152,6 +152,30 @@ paths:
                         type: string
             schemes:
                 - http
+        put:
+            tags:
+                - task
+            summary: update task
+            description: Update a task
+            operationId: task#update
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of task to update
+                  required: true
+                  type: integer
+                - name: UpdateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TaskUpdateRequestBody'
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TaskUpdateResponseBody'
+            schemes:
+                - http
 definitions:
     AuthLoginRequestBody:
         title: AuthLoginRequestBody
@@ -160,14 +184,14 @@ definitions:
             password:
                 type: string
                 description: Password to login with
-                example: Consequatur aut.
+                example: Optio ut aut voluptatum eaque et harum.
             username:
                 type: string
                 description: Username to login with
-                example: Mollitia odio incidunt ut ducimus.
+                example: Iste delectus est voluptatem corporis.
         example:
-            password: Molestias est qui.
-            username: Rerum dolor.
+            password: Odit dolores reprehenderit sit mollitia quis.
+            username: Qui quo cumque est velit.
         required:
             - username
             - password
@@ -178,9 +202,9 @@ definitions:
             token:
                 type: string
                 description: JWT token to use for authentication
-                example: Minima dolorum non officiis minima voluptatem.
+                example: Molestias est voluptas et.
         example:
-            token: Omnis mollitia.
+            token: Qui maiores.
     AuthLogoutRequestBody:
         title: AuthLogoutRequestBody
         type: object
@@ -188,9 +212,9 @@ definitions:
             token:
                 type: string
                 description: JWT token to use for authentication
-                example: Odit dolores reprehenderit sit mollitia quis.
+                example: Quidem consequuntur architecto quaerat.
         example:
-            token: Minus et officia quo veritatis fuga.
+            token: Distinctio ut incidunt consequuntur quae velit.
         required:
             - token
     AuthRegisterRequestBody:
@@ -200,14 +224,14 @@ definitions:
             password:
                 type: string
                 description: Password to register with
-                example: Iste delectus est voluptatem corporis.
+                example: Sed quis.
             username:
                 type: string
                 description: Username to register with
-                example: Qui maiores.
+                example: Provident tempora ad non accusamus sit delectus.
         example:
-            password: Qui quo cumque est velit.
-            username: Optio ut aut voluptatum eaque et harum.
+            password: Vel et blanditiis aliquam doloremque dolore in.
+            username: Id nesciunt.
         required:
             - username
             - password
@@ -218,9 +242,9 @@ definitions:
             token:
                 type: string
                 description: JWT token to use for authentication
-                example: Quis qui non.
+                example: Minus et officia quo veritatis fuga.
         example:
-            token: Molestias est voluptas et.
+            token: Sit ut numquam repellendus vel.
     BackendStoredTaskResponseBody:
         title: 'Mediatype identifier: applicaiton/vnd.backend.stored-task; view=default'
         type: object
@@ -228,49 +252,49 @@ definitions:
             createdAt:
                 type: string
                 description: When the todo was created in ISO format
-                example: Id nesciunt.
+                example: Pariatur fugiat asperiores illo sed.
             createdBy:
                 type: string
                 description: Who created the todo
-                example: Vel et blanditiis aliquam doloremque dolore in.
+                example: Voluptas maxime nulla odio neque itaque.
             description:
                 type: string
                 description: Description of the todo
-                example: Tempora ad.
+                example: Accusamus odio.
             done:
                 type: boolean
                 description: Whether or not the todo is done
                 default: false
-                example: true
+                example: false
             doneAt:
                 type: string
                 description: When the todo was done in ISO format
                 default: ""
-                example: Sit delectus.
+                example: Aut quos culpa voluptatum repellat minus ratione.
             doneBy:
                 type: string
                 description: Who did the todo
                 default: ""
-                example: Sed quis.
+                example: Pariatur eos ut.
             id:
                 type: integer
                 description: Unique ID
-                example: 4101334422
+                example: 3116138495
                 format: int32
             name:
                 type: string
                 description: Name of the todo
-                example: Ut numquam repellendus vel magnam.
+                example: Nam recusandae.
         description: A task (default view)
         example:
-            createdAt: Ut aliquam pariatur.
-            createdBy: Asperiores illo.
-            description: Ut incidunt consequuntur quae velit numquam adipisci.
+            createdAt: Consequatur provident quisquam.
+            createdBy: Consequuntur dolorem libero officia aliquam laborum.
+            description: Quo quia quaerat et eveniet.
             done: true
-            doneAt: Placeat accusamus odio consectetur debitis aut.
-            doneBy: Culpa voluptatum repellat minus ratione voluptates pariatur.
-            id: 2810871232
-            name: Consequuntur architecto quaerat reprehenderit.
+            doneAt: Ad accusamus ea.
+            doneBy: Assumenda dolorem voluptatem.
+            id: 1974875452
+            name: Distinctio nesciunt sequi nihil cumque dolorem.
         required:
             - id
             - name
@@ -285,38 +309,38 @@ definitions:
             $ref: '#/definitions/BackendStoredTaskResponseBody'
         description: BackendStored-TaskCollectionResponseBody is the result type for an array of BackendStored-TaskResponseBody (default view)
         example:
-            - createdAt: Corrupti assumenda dolorem voluptatem asperiores consequatur.
-              createdBy: Quisquam voluptas consequuntur dolorem libero.
-              description: Distinctio nesciunt sequi nihil cumque dolorem.
+            - createdAt: Ab cumque quia accusamus.
+              createdBy: Neque error et repellat porro recusandae.
+              description: Nulla quaerat eos ipsa temporibus voluptate velit.
               done: false
-              doneAt: Quia quaerat.
-              doneBy: Eveniet veritatis doloremque ad accusamus.
-              id: 3721423088
-              name: Maxime nulla odio neque itaque ea.
-            - createdAt: Corrupti assumenda dolorem voluptatem asperiores consequatur.
-              createdBy: Quisquam voluptas consequuntur dolorem libero.
-              description: Distinctio nesciunt sequi nihil cumque dolorem.
+              doneAt: Occaecati doloremque illum fugiat consequuntur.
+              doneBy: Voluptatibus tenetur nisi.
+              id: 2281551911
+              name: Et enim itaque qui et est voluptas.
+            - createdAt: Ab cumque quia accusamus.
+              createdBy: Neque error et repellat porro recusandae.
+              description: Nulla quaerat eos ipsa temporibus voluptate velit.
               done: false
-              doneAt: Quia quaerat.
-              doneBy: Eveniet veritatis doloremque ad accusamus.
-              id: 3721423088
-              name: Maxime nulla odio neque itaque ea.
-            - createdAt: Corrupti assumenda dolorem voluptatem asperiores consequatur.
-              createdBy: Quisquam voluptas consequuntur dolorem libero.
-              description: Distinctio nesciunt sequi nihil cumque dolorem.
+              doneAt: Occaecati doloremque illum fugiat consequuntur.
+              doneBy: Voluptatibus tenetur nisi.
+              id: 2281551911
+              name: Et enim itaque qui et est voluptas.
+            - createdAt: Ab cumque quia accusamus.
+              createdBy: Neque error et repellat porro recusandae.
+              description: Nulla quaerat eos ipsa temporibus voluptate velit.
               done: false
-              doneAt: Quia quaerat.
-              doneBy: Eveniet veritatis doloremque ad accusamus.
-              id: 3721423088
-              name: Maxime nulla odio neque itaque ea.
-            - createdAt: Corrupti assumenda dolorem voluptatem asperiores consequatur.
-              createdBy: Quisquam voluptas consequuntur dolorem libero.
-              description: Distinctio nesciunt sequi nihil cumque dolorem.
+              doneAt: Occaecati doloremque illum fugiat consequuntur.
+              doneBy: Voluptatibus tenetur nisi.
+              id: 2281551911
+              name: Et enim itaque qui et est voluptas.
+            - createdAt: Ab cumque quia accusamus.
+              createdBy: Neque error et repellat porro recusandae.
+              description: Nulla quaerat eos ipsa temporibus voluptate velit.
               done: false
-              doneAt: Quia quaerat.
-              doneBy: Eveniet veritatis doloremque ad accusamus.
-              id: 3721423088
-              name: Maxime nulla odio neque itaque ea.
+              doneAt: Occaecati doloremque illum fugiat consequuntur.
+              doneBy: Voluptatibus tenetur nisi.
+              id: 2281551911
+              name: Et enim itaque qui et est voluptas.
     TaskCreateRequestBody:
         title: TaskCreateRequestBody
         type: object
@@ -324,25 +348,25 @@ definitions:
             created_by:
                 type: string
                 description: Who created the task
-                example: Eum nulla.
+                example: Hic est voluptate et.
             description:
                 type: string
                 description: Description of the task
-                example: Aperiam et enim itaque qui et est.
+                example: Rerum sit sed sequi iusto laborum.
             id:
                 type: integer
                 description: ID of task to create
-                example: 3065071769
+                example: 2087078681
                 format: int32
             name:
                 type: string
                 description: Name of the task
-                example: Laborum voluptatem.
+                example: Sed ut et nemo voluptas quod sunt.
         example:
-            created_by: Consequuntur excepturi voluptatibus tenetur nisi.
-            description: Doloremque illum.
-            id: 2182924862
-            name: Ipsa temporibus voluptate velit ipsum vero.
+            created_by: At aut beatae error.
+            description: Sit et reiciendis dolores itaque.
+            id: 191022876
+            name: Doloribus asperiores iste dolores totam ut.
         required:
             - name
             - created_by
@@ -404,6 +428,37 @@ definitions:
                   name: Id labore ipsa.
     TaskShowResponseBody:
         title: TaskShowResponseBody
+        type: object
+        properties:
+            task:
+                $ref: '#/definitions/BackendStoredTaskResponseBody'
+        example:
+            task:
+                createdAt: Sunt autem.
+                createdBy: Beatae eaque.
+                description: Dolores voluptate dolores quas.
+                done: true
+                doneAt: Est voluptatem molestiae.
+                doneBy: Vitae aperiam eaque qui voluptas nihil.
+                id: 268402415
+                name: Id labore ipsa.
+    TaskUpdateRequestBody:
+        title: TaskUpdateRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Description of the task
+                example: Rerum ducimus incidunt id laborum hic distinctio.
+            name:
+                type: string
+                description: Name of the task
+                example: Omnis reprehenderit cumque mollitia alias non hic.
+        example:
+            description: Pariatur aut modi.
+            name: Voluptates voluptatem quia qui.
+    TaskUpdateResponseBody:
+        title: TaskUpdateResponseBody
         type: object
         properties:
             task:

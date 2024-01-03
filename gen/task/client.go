@@ -18,14 +18,16 @@ type Client struct {
 	ListEndpoint   goa.Endpoint
 	ShowEndpoint   goa.Endpoint
 	CreateEndpoint goa.Endpoint
+	UpdateEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "task" service client given the endpoints.
-func NewClient(list, show, create goa.Endpoint) *Client {
+func NewClient(list, show, create, update goa.Endpoint) *Client {
 	return &Client{
 		ListEndpoint:   list,
 		ShowEndpoint:   show,
 		CreateEndpoint: create,
+		UpdateEndpoint: update,
 	}
 }
 
@@ -60,4 +62,17 @@ func (c *Client) Create(ctx context.Context, p *CreatePayload) (res *CreateResul
 		return
 	}
 	return ires.(*CreateResult), nil
+}
+
+// Update calls the "update" endpoint of the "task" service.
+// Update may return the following errors:
+//   - "no_match" (type NoMatch)
+//   - error: internal error
+func (c *Client) Update(ctx context.Context, p *UpdatePayload) (res *UpdateResult, err error) {
+	var ires any
+	ires, err = c.UpdateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*UpdateResult), nil
 }

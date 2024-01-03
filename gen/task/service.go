@@ -19,6 +19,8 @@ type Service interface {
 	Show(context.Context, *ShowPayload) (res *ShowResult, err error)
 	// Create a task
 	Create(context.Context, *CreatePayload) (res *CreateResult, err error)
+	// Update a task
+	Update(context.Context, *UpdatePayload) (res *UpdateResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -29,7 +31,7 @@ const ServiceName = "task"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [3]string{"list", "show", "create"}
+var MethodNames = [4]string{"list", "show", "create", "update"}
 
 // A task
 type BackendStoredTask struct {
@@ -94,6 +96,22 @@ type ShowPayload struct {
 // ShowResult is the result type of the task service show method.
 type ShowResult struct {
 	// task to show
+	Task *BackendStoredTask
+}
+
+// UpdatePayload is the payload type of the task service update method.
+type UpdatePayload struct {
+	// ID of task to update
+	ID uint32
+	// Name of the task
+	Name *string
+	// Description of the task
+	Description *string
+}
+
+// UpdateResult is the result type of the task service update method.
+type UpdateResult struct {
+	// Updated task
 	Task *BackendStoredTask
 }
 

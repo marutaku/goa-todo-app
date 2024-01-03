@@ -74,7 +74,7 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Suscipit dolor.\",\n      \"description\": \"Illo non quibusdam magni.\",\n      \"id\": 2812545490,\n      \"name\": \"Eaque tenetur.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Ut ducimus et consequatur aut.\",\n      \"description\": \"Molestias mollitia odio.\",\n      \"id\": 3033221028,\n      \"name\": \"Non officiis minima voluptatem perferendis omnis.\"\n   }'")
 		}
 	}
 	v := &task.CreatePayload{
@@ -83,6 +83,35 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 		Description: body.Description,
 		CreatedBy:   body.CreatedBy,
 	}
+
+	return v, nil
+}
+
+// BuildUpdatePayload builds the payload for the task update endpoint from CLI
+// flags.
+func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.UpdatePayload, error) {
+	var err error
+	var body UpdateRequestBody
+	{
+		err = json.Unmarshal([]byte(taskUpdateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Est qui harum quis qui.\",\n      \"name\": \"Dolor voluptatem.\"\n   }'")
+		}
+	}
+	var id uint32
+	{
+		var v uint64
+		v, err = strconv.ParseUint(taskUpdateID, 10, 32)
+		id = uint32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT32")
+		}
+	}
+	v := &task.UpdatePayload{
+		Name:        body.Name,
+		Description: body.Description,
+	}
+	v.ID = id
 
 	return v, nil
 }

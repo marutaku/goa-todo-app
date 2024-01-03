@@ -60,4 +60,21 @@ var _ = Service("task", func() {
 			Response(StatusCreated)
 		})
 	})
+	Method("update", func() {
+		Description("Update a task")
+		Payload(func() {
+			Attribute("id", UInt32, "ID of task to update")
+			Attribute("name", String, "Name of the task")
+			Attribute("description", String, "Description of the task")
+			Required("id")
+		})
+		Error("no_match", String, "No task matched given criteria")
+		Result(func() {
+			Attribute("task", StoredTask, "Updated task")
+		})
+		HTTP(func() {
+			PUT("/tasks/{id}")
+			Response(StatusOK)
+		})
+	})
 })

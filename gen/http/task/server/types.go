@@ -26,6 +26,15 @@ type CreateRequestBody struct {
 	CreatedBy *string `form:"created_by,omitempty" json:"created_by,omitempty" xml:"created_by,omitempty"`
 }
 
+// UpdateRequestBody is the type of the "task" service "update" endpoint HTTP
+// request body.
+type UpdateRequestBody struct {
+	// Name of the task
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Description of the task
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+}
+
 // ListResponseBody is the type of the "task" service "list" endpoint HTTP
 // response body.
 type ListResponseBody struct {
@@ -44,6 +53,13 @@ type ShowResponseBody struct {
 // response body.
 type CreateResponseBody struct {
 	// Created task
+	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
+}
+
+// UpdateResponseBody is the type of the "task" service "update" endpoint HTTP
+// response body.
+type UpdateResponseBody struct {
+	// Updated task
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
@@ -105,6 +121,16 @@ func NewCreateResponseBody(res *task.CreateResult) *CreateResponseBody {
 	return body
 }
 
+// NewUpdateResponseBody builds the HTTP response body from the result of the
+// "update" endpoint of the "task" service.
+func NewUpdateResponseBody(res *task.UpdateResult) *UpdateResponseBody {
+	body := &UpdateResponseBody{}
+	if res.Task != nil {
+		body.Task = marshalTaskBackendStoredTaskToBackendStoredTaskResponseBody(res.Task)
+	}
+	return body
+}
+
 // NewListPayload builds a task service list endpoint payload.
 func NewListPayload(limit uint32, offset uint32) *task.ListPayload {
 	v := &task.ListPayload{}
@@ -130,6 +156,17 @@ func NewCreatePayload(body *CreateRequestBody) *task.CreatePayload {
 		Description: body.Description,
 		CreatedBy:   *body.CreatedBy,
 	}
+
+	return v
+}
+
+// NewUpdatePayload builds a task service update endpoint payload.
+func NewUpdatePayload(body *UpdateRequestBody, id uint32) *task.UpdatePayload {
+	v := &task.UpdatePayload{
+		Name:        body.Name,
+		Description: body.Description,
+	}
+	v.ID = id
 
 	return v
 }

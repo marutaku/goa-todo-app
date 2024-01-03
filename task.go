@@ -80,3 +80,28 @@ func (s *tasksrvc) Create(ctx context.Context, p *task.CreatePayload) (res *task
 	fmt.Println(newTask)
 	return res, nil
 }
+
+func (s *tasksrvc) Update(ctx context.Context, p *task.UpdatePayload) (res *task.UpdateResult, err error) {
+	res = &task.UpdateResult{}
+	s.logger.Print("task.update")
+	var returnTask *task.BackendStoredTask
+	result := s.db.WithContext(ctx).First(&returnTask, p.ID)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, task.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		}
+		return nil, result.Error
+	}
+	if p.Name != nil {
+		returnTask.Name = *p.Name
+	}
+	if p.Description != nil {
+		returnTask.Description = *p.Description
+	}
+	result = s.db.WithContext(ctx).Save(&returnTask)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	res.Task = returnTask
+	return res, nil
+}

@@ -21,7 +21,7 @@ func BuildLoginPayload(authLoginBody string) (*auth.LoginPayload, error) {
 	{
 		err = json.Unmarshal([]byte(authLoginBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"password\": \"Distinctio reprehenderit rerum.\",\n      \"username\": \"Enim nisi optio recusandae non officiis ipsam.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"password\": \"Voluptas deleniti earum praesentium non dolorum laboriosam.\",\n      \"username\": \"Dicta reiciendis est.\"\n   }'")
 		}
 	}
 	v := &auth.LoginPayload{
@@ -40,7 +40,7 @@ func BuildRegisterPayload(authRegisterBody string) (*auth.RegisterPayload, error
 	{
 		err = json.Unmarshal([]byte(authRegisterBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"password\": \"Nesciunt quas corrupti explicabo voluptate aut.\",\n      \"username\": \"Voluptas deleniti earum praesentium non dolorum laboriosam.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"password\": \"Dolores vel aliquam a voluptas.\",\n      \"username\": \"Laboriosam et libero deserunt voluptatibus similique.\"\n   }'")
 		}
 	}
 	v := &auth.RegisterPayload{
@@ -59,7 +59,7 @@ func BuildLogoutPayload(authLogoutBody string) (*auth.LogoutPayload, error) {
 	{
 		err = json.Unmarshal([]byte(authLogoutBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"token\": \"Dolores vel aliquam a voluptas.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"token\": \"In voluptas id eos.\"\n   }'")
 		}
 	}
 	v := &auth.LogoutPayload{
