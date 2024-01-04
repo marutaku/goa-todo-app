@@ -36,9 +36,11 @@ func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
 	return func(r *http.Request) (any, error) {
 		var (
-			limit  uint32
-			offset uint32
-			err    error
+			limit     uint32
+			offset    uint32
+			createdBy string
+			name      string
+			err       error
 		)
 		{
 			limitRaw := r.URL.Query().Get("limit")
@@ -62,10 +64,18 @@ func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 				offset = uint32(v)
 			}
 		}
+		createdByRaw := r.URL.Query().Get("createdBy")
+		if createdByRaw != "" {
+			createdBy = createdByRaw
+		}
+		nameRaw := r.URL.Query().Get("name")
+		if nameRaw != "" {
+			name = nameRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewListPayload(limit, offset)
+		payload := NewListPayload(limit, offset, createdBy, name)
 
 		return payload, nil
 	}

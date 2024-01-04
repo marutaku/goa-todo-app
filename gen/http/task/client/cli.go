@@ -16,7 +16,7 @@ import (
 
 // BuildListPayload builds the payload for the task list endpoint from CLI
 // flags.
-func BuildListPayload(taskListLimit string, taskListOffset string) (*task.ListPayload, error) {
+func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreatedBy string, taskListName string) (*task.ListPayload, error) {
 	var err error
 	var limit uint32
 	{
@@ -40,9 +40,23 @@ func BuildListPayload(taskListLimit string, taskListOffset string) (*task.ListPa
 			}
 		}
 	}
+	var createdBy string
+	{
+		if taskListCreatedBy != "" {
+			createdBy = taskListCreatedBy
+		}
+	}
+	var name string
+	{
+		if taskListName != "" {
+			name = taskListName
+		}
+	}
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
+	v.CreatedBy = createdBy
+	v.Name = name
 
 	return v, nil
 }
@@ -74,7 +88,7 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Odio incidunt ut ducimus et consequatur.\",\n      \"description\": \"Minima voluptatem perferendis omnis mollitia molestias.\",\n      \"id\": 1226753853,\n      \"name\": \"Dolorum non.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Voluptatum eaque et harum minima qui quo.\",\n      \"description\": \"Voluptatem corporis error optio ut.\",\n      \"id\": 1533579072,\n      \"name\": \"Maiores cumque iste delectus.\"\n   }'")
 		}
 	}
 	v := &task.CreatePayload{
@@ -95,7 +109,7 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.Updat
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Molestias est qui.\",\n      \"name\": \"Rerum dolor.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Mollitia quis.\",\n      \"name\": \"Velit recusandae odit dolores reprehenderit.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -124,7 +138,7 @@ func BuildDonePayload(taskDoneBody string, taskDoneID string) (*task.DonePayload
 	{
 		err = json.Unmarshal([]byte(taskDoneBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Non optio molestias est voluptas et ab.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Officia quo veritatis fuga.\"\n   }'")
 		}
 	}
 	var id uint32

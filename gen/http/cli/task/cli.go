@@ -31,10 +31,10 @@ task (list|show|create|update|done)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Nesciunt quas corrupti explicabo voluptate aut.",
-      "username": "Voluptas deleniti earum praesentium non dolorum laboriosam."
+      "password": "Inventore laboriosam consequatur odio dolorem in voluptas.",
+      "username": "Voluptas a sed."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 263022673 --offset 2408880799` + "\n" +
+		os.Args[0] + ` task list --limit 779747781 --offset 2604982443 --created-by "Ut ducimus et consequatur aut." --name "Rerum dolor."` + "\n" +
 		""
 }
 
@@ -61,9 +61,11 @@ func ParseEndpoint(
 
 		taskFlags = flag.NewFlagSet("task", flag.ContinueOnError)
 
-		taskListFlags      = flag.NewFlagSet("list", flag.ExitOnError)
-		taskListLimitFlag  = taskListFlags.String("limit", "20", "")
-		taskListOffsetFlag = taskListFlags.String("offset", "", "")
+		taskListFlags         = flag.NewFlagSet("list", flag.ExitOnError)
+		taskListLimitFlag     = taskListFlags.String("limit", "20", "")
+		taskListOffsetFlag    = taskListFlags.String("offset", "", "")
+		taskListCreatedByFlag = taskListFlags.String("created-by", "", "")
+		taskListNameFlag      = taskListFlags.String("name", "", "")
 
 		taskShowFlags  = flag.NewFlagSet("show", flag.ExitOnError)
 		taskShowIDFlag = taskShowFlags.String("id", "REQUIRED", "ID of task to show")
@@ -195,7 +197,7 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				endpoint = c.List()
-				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag)
+				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag, *taskListCreatedByFlag, *taskListNameFlag)
 			case "show":
 				endpoint = c.Show()
 				data, err = taskc.BuildShowPayload(*taskShowIDFlag)
@@ -241,8 +243,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Nesciunt quas corrupti explicabo voluptate aut.",
-      "username": "Voluptas deleniti earum praesentium non dolorum laboriosam."
+      "password": "Inventore laboriosam consequatur odio dolorem in voluptas.",
+      "username": "Voluptas a sed."
    }'
 `, os.Args[0])
 }
@@ -255,8 +257,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Sed vitae inventore laboriosam consequatur odio.",
-      "username": "Dolores vel aliquam a voluptas."
+      "password": "Praesentium suscipit dolor voluptatem.",
+      "username": "Reiciendis eaque tenetur enim illo non quibusdam."
    }'
 `, os.Args[0])
 }
@@ -269,7 +271,7 @@ Logout of the system
 
 Example:
     %[1]s auth logout --body '{
-      "token": "Voluptates nihil repellat impedit."
+      "token": "Minima voluptatem perferendis omnis mollitia molestias."
    }'
 `, os.Args[0])
 }
@@ -292,14 +294,16 @@ Additional help:
 `, os.Args[0])
 }
 func taskListUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32 -created-by STRING -name STRING
 
 List all tasks
     -limit UINT32: 
     -offset UINT32: 
+    -created-by STRING: 
+    -name STRING: 
 
 Example:
-    %[1]s task list --limit 263022673 --offset 2408880799
+    %[1]s task list --limit 779747781 --offset 2604982443 --created-by "Ut ducimus et consequatur aut." --name "Rerum dolor."
 `, os.Args[0])
 }
 
@@ -310,7 +314,7 @@ Show a task
     -id UINT32: ID of task to show
 
 Example:
-    %[1]s task show --id 981574588
+    %[1]s task show --id 2904217230
 `, os.Args[0])
 }
 
@@ -322,10 +326,10 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Odio incidunt ut ducimus et consequatur.",
-      "description": "Minima voluptatem perferendis omnis mollitia molestias.",
-      "id": 1226753853,
-      "name": "Dolorum non."
+      "created_by": "Voluptatum eaque et harum minima qui quo.",
+      "description": "Voluptatem corporis error optio ut.",
+      "id": 1533579072,
+      "name": "Maiores cumque iste delectus."
    }'
 `, os.Args[0])
 }
@@ -339,9 +343,9 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Molestias est qui.",
-      "name": "Rerum dolor."
-   }' --id 3641181099
+      "description": "Mollitia quis.",
+      "name": "Velit recusandae odit dolores reprehenderit."
+   }' --id 4090597077
 `, os.Args[0])
 }
 
@@ -354,7 +358,7 @@ Mark a task as done
 
 Example:
     %[1]s task done --body '{
-      "done_by": "Non optio molestias est voluptas et ab."
-   }' --id 854053637
+      "done_by": "Officia quo veritatis fuga."
+   }' --id 4101334422
 `, os.Args[0])
 }

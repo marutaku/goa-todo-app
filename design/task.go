@@ -13,6 +13,12 @@ var _ = Service("task", func() {
 			Attribute("offset", UInt32, "Offset into the list of tasks to start at", func() {
 				Default(0)
 			})
+			Attribute("createdBy", String, "Filter by creator", func() {
+				Default("")
+			})
+			Attribute("name", String, "Filter by name", func() {
+				Default("")
+			})
 		})
 		Result(func() {
 			Attribute("tasks", CollectionOf(StoredTask), "List of tasks")
@@ -21,6 +27,8 @@ var _ = Service("task", func() {
 			GET("/tasks")
 			Param("limit")
 			Param("offset")
+			Param("createdBy")
+			Param("name")
 			Response(StatusOK)
 		})
 	})

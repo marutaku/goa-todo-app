@@ -20,8 +20,8 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LoginRequestBody'
                         example:
-                            password: Nesciunt quas corrupti explicabo voluptate aut.
-                            username: Voluptas deleniti earum praesentium non dolorum laboriosam.
+                            password: Inventore laboriosam consequatur odio dolorem in voluptas.
+                            username: Voluptas a sed.
             responses:
                 "200":
                     description: OK response.
@@ -30,7 +30,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/LoginResponseBody'
                             example:
-                                token: Laboriosam et libero deserunt voluptatibus similique.
+                                token: Eos repudiandae voluptates nihil repellat.
     /logout:
         post:
             tags:
@@ -45,7 +45,7 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LogoutRequestBody'
                         example:
-                            token: Voluptates nihil repellat impedit.
+                            token: Minima voluptatem perferendis omnis mollitia molestias.
             responses:
                 "200":
                     description: OK response.
@@ -63,8 +63,8 @@ paths:
                         schema:
                             $ref: '#/components/schemas/LoginRequestBody'
                         example:
-                            password: Sed vitae inventore laboriosam consequatur odio.
-                            username: Dolores vel aliquam a voluptas.
+                            password: Praesentium suscipit dolor voluptatem.
+                            username: Reiciendis eaque tenetur enim illo non quibusdam.
             responses:
                 "200":
                     description: OK response.
@@ -73,7 +73,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/LoginResponseBody'
                             example:
-                                token: In voluptas id eos.
+                                token: Dolorum non.
     /tasks:
         get:
             tags:
@@ -90,8 +90,8 @@ paths:
                     type: integer
                     description: Maximum number of tasks to return
                     default: 20
-                    example: 550390416
-                  example: 318933970
+                    example: 2434934798
+                  example: 2490199481
                 - name: offset
                   in: query
                   description: Offset into the list of tasks to start at
@@ -100,8 +100,28 @@ paths:
                     type: integer
                     description: Offset into the list of tasks to start at
                     default: 0
-                    example: 1129678815
-                  example: 3231018537
+                    example: 1786604846
+                  example: 994899442
+                - name: createdBy
+                  in: query
+                  description: Filter by creator
+                  allowEmptyValue: true
+                  schema:
+                    type: string
+                    description: Filter by creator
+                    default: ""
+                    example: Enim illo provident ducimus blanditiis ut et.
+                  example: Voluptas distinctio minus.
+                - name: name
+                  in: query
+                  description: Filter by name
+                  allowEmptyValue: true
+                  schema:
+                    type: string
+                    description: Filter by name
+                    default: ""
+                    example: Aspernatur et molestias in perspiciatis accusantium et.
+                  example: Quis possimus dignissimos.
             responses:
                 "200":
                     description: OK response.
@@ -111,38 +131,22 @@ paths:
                                 $ref: '#/components/schemas/ListResponseBody'
                             example:
                                 tasks:
-                                    - createdAt: Sunt autem.
-                                      createdBy: Beatae eaque.
-                                      description: Dolores voluptate dolores quas.
-                                      done: true
-                                      doneAt: Est voluptatem molestiae.
-                                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                      id: 268402415
-                                      name: Id labore ipsa.
-                                    - createdAt: Sunt autem.
-                                      createdBy: Beatae eaque.
-                                      description: Dolores voluptate dolores quas.
-                                      done: true
-                                      doneAt: Est voluptatem molestiae.
-                                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                      id: 268402415
-                                      name: Id labore ipsa.
-                                    - createdAt: Sunt autem.
-                                      createdBy: Beatae eaque.
-                                      description: Dolores voluptate dolores quas.
-                                      done: true
-                                      doneAt: Est voluptatem molestiae.
-                                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                      id: 268402415
-                                      name: Id labore ipsa.
-                                    - createdAt: Sunt autem.
-                                      createdBy: Beatae eaque.
-                                      description: Dolores voluptate dolores quas.
-                                      done: true
-                                      doneAt: Est voluptatem molestiae.
-                                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                      id: 268402415
-                                      name: Id labore ipsa.
+                                    - createdAt: Odio optio enim.
+                                      createdBy: Optio recusandae non officiis ipsam unde.
+                                      description: Ipsam sunt autem.
+                                      done: false
+                                      doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                      doneBy: Unde quibusdam aut et molestiae molestias.
+                                      id: 211222292
+                                      name: Sed vitae aperiam eaque qui voluptas.
+                                    - createdAt: Odio optio enim.
+                                      createdBy: Optio recusandae non officiis ipsam unde.
+                                      description: Ipsam sunt autem.
+                                      done: false
+                                      doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                      doneBy: Unde quibusdam aut et molestiae molestias.
+                                      id: 211222292
+                                      name: Sed vitae aperiam eaque qui voluptas.
         post:
             tags:
                 - task
@@ -156,10 +160,10 @@ paths:
                         schema:
                             $ref: '#/components/schemas/CreateRequestBody'
                         example:
-                            created_by: Odio incidunt ut ducimus et consequatur.
-                            description: Minima voluptatem perferendis omnis mollitia molestias.
-                            id: 1226753853
-                            name: Dolorum non.
+                            created_by: Voluptatum eaque et harum minima qui quo.
+                            description: Voluptatem corporis error optio ut.
+                            id: 1533579072
+                            name: Maiores cumque iste delectus.
             responses:
                 "201":
                     description: Created response.
@@ -169,14 +173,14 @@ paths:
                                 $ref: '#/components/schemas/ShowResponseBody'
                             example:
                                 task:
-                                    createdAt: Sunt autem.
-                                    createdBy: Beatae eaque.
-                                    description: Dolores voluptate dolores quas.
-                                    done: true
-                                    doneAt: Est voluptatem molestiae.
-                                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                    id: 268402415
-                                    name: Id labore ipsa.
+                                    createdAt: Odio optio enim.
+                                    createdBy: Optio recusandae non officiis ipsam unde.
+                                    description: Ipsam sunt autem.
+                                    done: false
+                                    doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                    doneBy: Unde quibusdam aut et molestiae molestias.
+                                    id: 211222292
+                                    name: Sed vitae aperiam eaque qui voluptas.
     /tasks/{id}:
         get:
             tags:
@@ -192,8 +196,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to show
-                    example: 2397615876
-                  example: 3502519865
+                    example: 4182280084
+                  example: 2046555375
             responses:
                 "200":
                     description: OK response.
@@ -203,22 +207,22 @@ paths:
                                 $ref: '#/components/schemas/ShowResponseBody'
                             example:
                                 task:
-                                    createdAt: Sunt autem.
-                                    createdBy: Beatae eaque.
-                                    description: Dolores voluptate dolores quas.
-                                    done: true
-                                    doneAt: Est voluptatem molestiae.
-                                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                    id: 268402415
-                                    name: Id labore ipsa.
+                                    createdAt: Odio optio enim.
+                                    createdBy: Optio recusandae non officiis ipsam unde.
+                                    description: Ipsam sunt autem.
+                                    done: false
+                                    doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                    doneBy: Unde quibusdam aut et molestiae molestias.
+                                    id: 211222292
+                                    name: Sed vitae aperiam eaque qui voluptas.
                 "404":
                     description: 'no_match: Not Found response.'
                     content:
                         application/json:
                             schema:
                                 type: string
-                                example: Molestiae quia dolor velit voluptate et.
-                            example: Illum eaque et dolor ut qui.
+                                example: Praesentium aliquid perspiciatis placeat.
+                            example: Fugiat placeat non iste.
         put:
             tags:
                 - task
@@ -233,8 +237,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to update
-                    example: 661462482
-                  example: 2575446831
+                    example: 2795260614
+                  example: 4217468346
             requestBody:
                 required: true
                 content:
@@ -242,8 +246,8 @@ paths:
                         schema:
                             $ref: '#/components/schemas/UpdateRequestBody'
                         example:
-                            description: Molestias est qui.
-                            name: Rerum dolor.
+                            description: Mollitia quis.
+                            name: Velit recusandae odit dolores reprehenderit.
             responses:
                 "200":
                     description: OK response.
@@ -253,14 +257,14 @@ paths:
                                 $ref: '#/components/schemas/ShowResponseBody'
                             example:
                                 task:
-                                    createdAt: Sunt autem.
-                                    createdBy: Beatae eaque.
-                                    description: Dolores voluptate dolores quas.
-                                    done: true
-                                    doneAt: Est voluptatem molestiae.
-                                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                    id: 268402415
-                                    name: Id labore ipsa.
+                                    createdAt: Odio optio enim.
+                                    createdBy: Optio recusandae non officiis ipsam unde.
+                                    description: Ipsam sunt autem.
+                                    done: false
+                                    doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                    doneBy: Unde quibusdam aut et molestiae molestias.
+                                    id: 211222292
+                                    name: Sed vitae aperiam eaque qui voluptas.
     /tasks/{id}/done:
         put:
             tags:
@@ -276,8 +280,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to mark as done
-                    example: 893588208
-                  example: 2773490020
+                    example: 1897455474
+                  example: 667288393
             requestBody:
                 required: true
                 content:
@@ -285,7 +289,7 @@ paths:
                         schema:
                             $ref: '#/components/schemas/DoneRequestBody'
                         example:
-                            done_by: Non optio molestias est voluptas et ab.
+                            done_by: Officia quo veritatis fuga.
             responses:
                 "200":
                     description: OK response.
@@ -295,14 +299,14 @@ paths:
                                 $ref: '#/components/schemas/ShowResponseBody'
                             example:
                                 task:
-                                    createdAt: Sunt autem.
-                                    createdBy: Beatae eaque.
-                                    description: Dolores voluptate dolores quas.
-                                    done: true
-                                    doneAt: Est voluptatem molestiae.
-                                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                                    id: 268402415
-                                    name: Id labore ipsa.
+                                    createdAt: Odio optio enim.
+                                    createdBy: Optio recusandae non officiis ipsam unde.
+                                    description: Ipsam sunt autem.
+                                    done: false
+                                    doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                                    doneBy: Unde quibusdam aut et molestiae molestias.
+                                    id: 211222292
+                                    name: Sed vitae aperiam eaque qui voluptas.
 components:
     schemas:
         BackendStoredTask:
@@ -311,48 +315,48 @@ components:
                 createdAt:
                     type: string
                     description: When the todo was created in ISO format
-                    example: Minima excepturi eaque dignissimos molestias officiis maiores.
+                    example: Cum impedit.
                 createdBy:
                     type: string
                     description: Who created the todo
-                    example: Ut qui quas vel velit hic.
+                    example: Nihil quaerat.
                 description:
                     type: string
                     description: Description of the todo
-                    example: Eveniet ullam fuga expedita.
+                    example: Ut qui quas vel velit hic.
                 done:
                     type: boolean
                     description: Whether or not the todo is done
                     default: false
-                    example: false
+                    example: true
                 doneAt:
                     type: string
                     description: When the todo was done in ISO format
                     default: ""
-                    example: Eum facere.
+                    example: Eos qui enim nihil qui recusandae ipsam.
                 doneBy:
                     type: string
                     description: Who did the todo
                     default: ""
-                    example: Qui iure doloribus consequuntur rerum doloremque.
+                    example: Architecto tempora aperiam quam qui accusantium.
                 id:
                     type: integer
                     description: Unique ID
-                    example: 1724648620
+                    example: 3362513943
                 name:
                     type: string
                     description: Name of the todo
-                    example: Veniam eos maiores aut suscipit.
+                    example: Minima excepturi eaque dignissimos molestias officiis maiores.
             description: A task
             example:
-                createdAt: Dolor quia illum.
-                createdBy: Illo corrupti ea aperiam.
-                description: Architecto tempora aperiam quam qui accusantium.
-                done: true
-                doneAt: Impedit minima.
-                doneBy: Quaerat quae.
-                id: 3760826724
-                name: Eos qui enim nihil qui recusandae ipsam.
+                createdAt: Rerum excepturi consectetur voluptates voluptatibus harum.
+                createdBy: Facere facere earum quas illo cupiditate voluptas.
+                description: Illo corrupti ea aperiam.
+                done: false
+                doneAt: Molestiae quia dolor velit voluptate et.
+                doneBy: Et eius.
+                id: 1631915146
+                name: Dolor quia illum.
             required:
                 - id
                 - name
@@ -365,62 +369,46 @@ components:
             items:
                 $ref: '#/components/schemas/BackendStoredTask'
             example:
-                - createdAt: Sunt autem.
-                  createdBy: Beatae eaque.
-                  description: Dolores voluptate dolores quas.
-                  done: true
-                  doneAt: Est voluptatem molestiae.
-                  doneBy: Vitae aperiam eaque qui voluptas nihil.
-                  id: 268402415
-                  name: Id labore ipsa.
-                - createdAt: Sunt autem.
-                  createdBy: Beatae eaque.
-                  description: Dolores voluptate dolores quas.
-                  done: true
-                  doneAt: Est voluptatem molestiae.
-                  doneBy: Vitae aperiam eaque qui voluptas nihil.
-                  id: 268402415
-                  name: Id labore ipsa.
-                - createdAt: Sunt autem.
-                  createdBy: Beatae eaque.
-                  description: Dolores voluptate dolores quas.
-                  done: true
-                  doneAt: Est voluptatem molestiae.
-                  doneBy: Vitae aperiam eaque qui voluptas nihil.
-                  id: 268402415
-                  name: Id labore ipsa.
-                - createdAt: Sunt autem.
-                  createdBy: Beatae eaque.
-                  description: Dolores voluptate dolores quas.
-                  done: true
-                  doneAt: Est voluptatem molestiae.
-                  doneBy: Vitae aperiam eaque qui voluptas nihil.
-                  id: 268402415
-                  name: Id labore ipsa.
+                - createdAt: Odio optio enim.
+                  createdBy: Optio recusandae non officiis ipsam unde.
+                  description: Ipsam sunt autem.
+                  done: false
+                  doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                  doneBy: Unde quibusdam aut et molestiae molestias.
+                  id: 211222292
+                  name: Sed vitae aperiam eaque qui voluptas.
+                - createdAt: Odio optio enim.
+                  createdBy: Optio recusandae non officiis ipsam unde.
+                  description: Ipsam sunt autem.
+                  done: false
+                  doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                  doneBy: Unde quibusdam aut et molestiae molestias.
+                  id: 211222292
+                  name: Sed vitae aperiam eaque qui voluptas.
         CreateRequestBody:
             type: object
             properties:
                 created_by:
                     type: string
                     description: Who created the task
-                    example: Facere earum quas.
+                    example: Officiis dolorum illum.
                 description:
                     type: string
                     description: Description of the task
-                    example: Voluptates voluptatibus harum quos.
+                    example: Vitae voluptatem voluptatem iusto sunt velit voluptas.
                 id:
                     type: integer
                     description: ID of task to create
-                    example: 3172058472
+                    example: 23043838
                 name:
                     type: string
                     description: Name of the task
-                    example: Eius omnis rerum excepturi.
+                    example: Odit natus porro mollitia voluptates incidunt.
             example:
-                created_by: Natus porro mollitia voluptates incidunt quos vitae.
-                description: Assumenda nemo.
-                id: 2932721030
-                name: Voluptas omnis odit praesentium aliquid perspiciatis.
+                created_by: Nulla aut ut optio qui maiores quis.
+                description: Odit veniam.
+                id: 3434486123
+                name: Delectus et corporis ipsum ratione voluptas voluptatem.
             required:
                 - name
                 - created_by
@@ -430,9 +418,9 @@ components:
                 done_by:
                     type: string
                     description: Who did the task
-                    example: Aut ut optio qui maiores.
+                    example: Omnis qui porro.
             example:
-                done_by: Suscipit officiis ad quibusdam.
+                done_by: Aperiam atque quia et repudiandae magnam.
         ListResponseBody:
             type: object
             properties:
@@ -440,52 +428,36 @@ components:
                     $ref: '#/components/schemas/BackendStoredTaskCollection'
             example:
                 tasks:
-                    - createdAt: Sunt autem.
-                      createdBy: Beatae eaque.
-                      description: Dolores voluptate dolores quas.
-                      done: true
-                      doneAt: Est voluptatem molestiae.
-                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                      id: 268402415
-                      name: Id labore ipsa.
-                    - createdAt: Sunt autem.
-                      createdBy: Beatae eaque.
-                      description: Dolores voluptate dolores quas.
-                      done: true
-                      doneAt: Est voluptatem molestiae.
-                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                      id: 268402415
-                      name: Id labore ipsa.
-                    - createdAt: Sunt autem.
-                      createdBy: Beatae eaque.
-                      description: Dolores voluptate dolores quas.
-                      done: true
-                      doneAt: Est voluptatem molestiae.
-                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                      id: 268402415
-                      name: Id labore ipsa.
-                    - createdAt: Sunt autem.
-                      createdBy: Beatae eaque.
-                      description: Dolores voluptate dolores quas.
-                      done: true
-                      doneAt: Est voluptatem molestiae.
-                      doneBy: Vitae aperiam eaque qui voluptas nihil.
-                      id: 268402415
-                      name: Id labore ipsa.
+                    - createdAt: Odio optio enim.
+                      createdBy: Optio recusandae non officiis ipsam unde.
+                      description: Ipsam sunt autem.
+                      done: false
+                      doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                      doneBy: Unde quibusdam aut et molestiae molestias.
+                      id: 211222292
+                      name: Sed vitae aperiam eaque qui voluptas.
+                    - createdAt: Odio optio enim.
+                      createdBy: Optio recusandae non officiis ipsam unde.
+                      description: Ipsam sunt autem.
+                      done: false
+                      doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                      doneBy: Unde quibusdam aut et molestiae molestias.
+                      id: 211222292
+                      name: Sed vitae aperiam eaque qui voluptas.
         LoginRequestBody:
             type: object
             properties:
                 password:
                     type: string
                     description: Password to login with
-                    example: Sit eligendi quisquam eos dolore.
+                    example: Et dolor at velit.
                 username:
                     type: string
                     description: Username to login with
-                    example: Cum sed saepe incidunt.
+                    example: Modi perspiciatis dolor iusto in et fuga.
             example:
-                password: Hic commodi.
-                username: Saepe necessitatibus vitae sint omnis.
+                password: Alias dolore enim.
+                username: Iusto in dolorem consequatur quibusdam et laboriosam.
             required:
                 - username
                 - password
@@ -495,18 +467,18 @@ components:
                 token:
                     type: string
                     description: JWT token to use for authentication
-                    example: Modi perspiciatis dolor iusto in et fuga.
+                    example: Iusto veniam eos maiores.
             example:
-                token: Et dolor at velit.
+                token: Suscipit eum eveniet ullam.
         LogoutRequestBody:
             type: object
             properties:
                 token:
                     type: string
                     description: JWT token to use for authentication
-                    example: Iusto in dolorem consequatur quibusdam et laboriosam.
+                    example: Expedita ut est eum.
             example:
-                token: Alias dolore enim.
+                token: Rerum qui iure doloribus consequuntur rerum.
             required:
                 - token
         ShowResponseBody:
@@ -516,28 +488,28 @@ components:
                     $ref: '#/components/schemas/BackendStoredTask'
             example:
                 task:
-                    createdAt: Sunt autem.
-                    createdBy: Beatae eaque.
-                    description: Dolores voluptate dolores quas.
-                    done: true
-                    doneAt: Est voluptatem molestiae.
-                    doneBy: Vitae aperiam eaque qui voluptas nihil.
-                    id: 268402415
-                    name: Id labore ipsa.
+                    createdAt: Odio optio enim.
+                    createdBy: Optio recusandae non officiis ipsam unde.
+                    description: Ipsam sunt autem.
+                    done: false
+                    doneAt: Eaque dolorem cupiditate autem quibusdam quibusdam.
+                    doneBy: Unde quibusdam aut et molestiae molestias.
+                    id: 211222292
+                    name: Sed vitae aperiam eaque qui voluptas.
         UpdateRequestBody:
             type: object
             properties:
                 description:
                     type: string
                     description: Description of the task
-                    example: Officiis officiis dolorum illum.
+                    example: Quam voluptatibus.
                 name:
                     type: string
                     description: Name of the task
-                    example: Voluptatem iusto sunt velit.
+                    example: Officiis ad quibusdam rerum distinctio ex doloremque.
             example:
-                description: Atque odit veniam est.
-                name: Quis delectus et corporis ipsum ratione voluptas.
+                description: Quasi distinctio.
+                name: Eaque et dolor ut qui sint voluptatibus.
 tags:
     - name: auth
       description: The auth service manages authentication

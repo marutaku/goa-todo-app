@@ -45,6 +45,8 @@ func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 		values := req.URL.Query()
 		values.Add("limit", fmt.Sprintf("%v", p.Limit))
 		values.Add("offset", fmt.Sprintf("%v", p.Offset))
+		values.Add("createdBy", p.CreatedBy)
+		values.Add("name", p.Name)
 		req.URL.RawQuery = values.Encode()
 		return nil
 	}

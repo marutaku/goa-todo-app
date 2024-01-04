@@ -85,21 +85,21 @@ type BackendStoredTaskCollectionResponseBody []*BackendStoredTaskResponseBody
 // types.
 type BackendStoredTaskResponseBody struct {
 	// Unique ID
-	ID *uint32 `gorm:"primaryKey"`
+	ID *uint32 `gorm:"primaryKey" json:"id"`
 	// Name of the todo
-	Name *string `gorm:"not null"`
+	Name *string `gorm:"not null" json:"name"`
 	// Description of the todo
-	Description *string `gorm:"not null;default ''"`
+	Description *string `gorm:"not null;default ''" json:"description"`
 	// Whether or not the todo is done
-	Done *bool `gorm:"not null;default false"`
+	Done *bool `gorm:"not null;default false" json:"done"`
 	// When the todo was done in ISO format
-	DoneAt *string `gorm:"default ''"`
+	DoneAt *string `gorm:"default ''" json:"doneAt"`
 	// Who did the todo
-	DoneBy *string `gorm:"default ''"`
+	DoneBy *string `gorm:"default ''" json:"doneBy"`
 	// When the todo was created in ISO format
-	CreatedAt *string `gorm:"not null"`
+	CreatedAt *string `gorm:"not null" json:"createdAt"`
 	// Who created the todo
-	CreatedBy *string `gorm:"not null"`
+	CreatedBy *string `gorm:"not null" json:"createdBy"`
 }
 
 // NewCreateRequestBody builds the HTTP request body from the payload of the
