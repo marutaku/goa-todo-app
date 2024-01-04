@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func NewPostgresDatabase(config *Config) (*gorm.DB, error) {
@@ -14,5 +15,6 @@ func NewPostgresDatabase(config *Config) (*gorm.DB, error) {
 		return nil, err
 	}
 	db.AutoMigrate(&task.BackendStoredTask{})
+	db.Logger = db.Logger.LogMode(logger.Info)
 	return db, nil
 }

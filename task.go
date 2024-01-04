@@ -34,7 +34,7 @@ func (s *tasksrvc) List(ctx context.Context, p *task.ListPayload) (res *task.Lis
 
 	s.logger.Print("task.list")
 	var tasks []*task.BackendStoredTask
-	result := s.db.WithContext(ctx).Find(&tasks)
+	result := s.db.WithContext(ctx).Where("done = false").Order("created_at DESC").Limit(int(p.Limit)).Offset(int(p.Offset)).Find(&tasks)
 	if result.Error != nil {
 		return nil, result.Error
 	}
