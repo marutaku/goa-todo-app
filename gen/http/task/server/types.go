@@ -35,6 +35,13 @@ type UpdateRequestBody struct {
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
 }
 
+// DoneRequestBody is the type of the "task" service "done" endpoint HTTP
+// request body.
+type DoneRequestBody struct {
+	// Who did the task
+	DoneBy *string `form:"done_by,omitempty" json:"done_by,omitempty" xml:"done_by,omitempty"`
+}
+
 // ListResponseBody is the type of the "task" service "list" endpoint HTTP
 // response body.
 type ListResponseBody struct {
@@ -60,6 +67,13 @@ type CreateResponseBody struct {
 // response body.
 type UpdateResponseBody struct {
 	// Updated task
+	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
+}
+
+// DoneResponseBody is the type of the "task" service "done" endpoint HTTP
+// response body.
+type DoneResponseBody struct {
+	// Finished task
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
@@ -131,6 +145,16 @@ func NewUpdateResponseBody(res *task.UpdateResult) *UpdateResponseBody {
 	return body
 }
 
+// NewDoneResponseBody builds the HTTP response body from the result of the
+// "done" endpoint of the "task" service.
+func NewDoneResponseBody(res *task.DoneResult) *DoneResponseBody {
+	body := &DoneResponseBody{}
+	if res.Task != nil {
+		body.Task = marshalTaskBackendStoredTaskToBackendStoredTaskResponseBody(res.Task)
+	}
+	return body
+}
+
 // NewListPayload builds a task service list endpoint payload.
 func NewListPayload(limit uint32, offset uint32) *task.ListPayload {
 	v := &task.ListPayload{}
@@ -167,6 +191,16 @@ func NewUpdatePayload(body *UpdateRequestBody, id uint32) *task.UpdatePayload {
 		Description: body.Description,
 	}
 	v.ID = id
+
+	return v
+}
+
+// NewDonePayload builds a task service done endpoint payload.
+func NewDonePayload(body *DoneRequestBody, id uint32) *task.DonePayload {
+	v := &task.DonePayload{
+		DoneBy: body.DoneBy,
+	}
+	v.ID = &id
 
 	return v
 }

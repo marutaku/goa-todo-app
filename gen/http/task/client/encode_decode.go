@@ -320,6 +320,89 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 	}
 }
 
+// BuildDoneRequest instantiates a HTTP request object with method and path set
+// to call the "task" service "done" endpoint
+func (c *Client) BuildDoneRequest(ctx context.Context, v any) (*http.Request, error) {
+	var (
+		id uint32
+	)
+	{
+		p, ok := v.(*task.DonePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("task", "done", "*task.DonePayload", v)
+		}
+		if p.ID != nil {
+			id = *p.ID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DoneTaskPath(id)}
+	req, err := http.NewRequest("PUT", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("task", "done", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeDoneRequest returns an encoder for requests sent to the task done
+// server.
+func EncodeDoneRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
+	return func(req *http.Request, v any) error {
+		p, ok := v.(*task.DonePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("task", "done", "*task.DonePayload", v)
+		}
+		body := NewDoneRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("task", "done", err)
+		}
+		return nil
+	}
+}
+
+// DecodeDoneResponse returns a decoder for responses returned by the task done
+// endpoint. restoreBody controls whether the response body should be restored
+// after having been read.
+func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
+	return func(resp *http.Response) (any, error) {
+		if restoreBody {
+			b, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body DoneResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "done", err)
+			}
+			err = ValidateDoneResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "done", err)
+			}
+			res := NewDoneResultOK(&body)
+			return res, nil
+		default:
+			body, _ := io.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("task", "done", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask builds a value
 // of type *task.BackendStoredTask from a value of type
 // *BackendStoredTaskResponseBody.

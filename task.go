@@ -105,3 +105,25 @@ func (s *tasksrvc) Update(ctx context.Context, p *task.UpdatePayload) (res *task
 	res.Task = returnTask
 	return res, nil
 }
+
+func (s *tasksrvc) Done(ctx context.Context, p *task.DonePayload) (res *task.DoneResult, err error) {
+	res = &task.DoneResult{}
+	s.logger.Print("task.done")
+	var returnTask *task.BackendStoredTask
+	result := s.db.WithContext(ctx).First(&returnTask, p.ID)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, task.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		}
+		return nil, result.Error
+	}
+	returnTask.Done = true
+	returnTask.DoneAt = time.Now().Format(time.RFC3339)
+	returnTask.DoneBy = *p.DoneBy
+	result = s.db.WithContext(ctx).Save(&returnTask)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	res.Task = returnTask
+	return res, nil
+}

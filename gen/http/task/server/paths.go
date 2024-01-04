@@ -30,3 +30,8 @@ func CreateTaskPath() string {
 func UpdateTaskPath(id uint32) string {
 	return fmt.Sprintf("/tasks/%v", id)
 }
+
+// DoneTaskPath returns the URL path to the task service done HTTP endpoint.
+func DoneTaskPath(id uint32) string {
+	return fmt.Sprintf("/tasks/%v/done", id)
+}

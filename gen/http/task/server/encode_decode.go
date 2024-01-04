@@ -221,6 +221,56 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 	}
 }
 
+// EncodeDoneResponse returns an encoder for responses returned by the task
+// done endpoint.
+func EncodeDoneResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {
+	return func(ctx context.Context, w http.ResponseWriter, v any) error {
+		res, _ := v.(*task.DoneResult)
+		enc := encoder(ctx, w)
+		body := NewDoneResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeDoneRequest returns a decoder for requests sent to the task done
+// endpoint.
+func DecodeDoneRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
+	return func(r *http.Request) (any, error) {
+		var (
+			body DoneRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+
+		var (
+			id uint32
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = uint32(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewDonePayload(&body, id)
+
+		return payload, nil
+	}
+}
+
 // marshalTaskBackendStoredTaskToBackendStoredTaskResponseBody builds a value
 // of type *BackendStoredTaskResponseBody from a value of type
 // *task.BackendStoredTask.

@@ -29,6 +29,9 @@ type Client struct {
 	// Update Doer is the HTTP client used to make requests to the update endpoint.
 	UpdateDoer goahttp.Doer
 
+	// Done Doer is the HTTP client used to make requests to the done endpoint.
+	DoneDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -53,6 +56,7 @@ func NewClient(
 		ShowDoer:            doer,
 		CreateDoer:          doer,
 		UpdateDoer:          doer,
+		DoneDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -147,6 +151,30 @@ func (c *Client) Update() goa.Endpoint {
 		resp, err := c.UpdateDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("task", "update", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// Done returns an endpoint that makes HTTP requests to the task service done
+// server.
+func (c *Client) Done() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeDoneRequest(c.encoder)
+		decodeResponse = DecodeDoneResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v any) (any, error) {
+		req, err := c.BuildDoneRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.DoneDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("task", "done", err)
 		}
 		return decodeResponse(resp)
 	}

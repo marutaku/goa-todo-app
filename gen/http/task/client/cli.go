@@ -74,7 +74,7 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Ut ducimus et consequatur aut.\",\n      \"description\": \"Molestias mollitia odio.\",\n      \"id\": 3033221028,\n      \"name\": \"Non officiis minima voluptatem perferendis omnis.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Odio incidunt ut ducimus et consequatur.\",\n      \"description\": \"Minima voluptatem perferendis omnis mollitia molestias.\",\n      \"id\": 1226753853,\n      \"name\": \"Dolorum non.\"\n   }'")
 		}
 	}
 	v := &task.CreatePayload{
@@ -95,7 +95,7 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.Updat
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Est qui harum quis qui.\",\n      \"name\": \"Dolor voluptatem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Molestias est qui.\",\n      \"name\": \"Rerum dolor.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -112,6 +112,34 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.Updat
 		Description: body.Description,
 	}
 	v.ID = id
+
+	return v, nil
+}
+
+// BuildDonePayload builds the payload for the task done endpoint from CLI
+// flags.
+func BuildDonePayload(taskDoneBody string, taskDoneID string) (*task.DonePayload, error) {
+	var err error
+	var body DoneRequestBody
+	{
+		err = json.Unmarshal([]byte(taskDoneBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Non optio molestias est voluptas et ab.\"\n   }'")
+		}
+	}
+	var id uint32
+	{
+		var v uint64
+		v, err = strconv.ParseUint(taskDoneID, 10, 32)
+		id = uint32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT32")
+		}
+	}
+	v := &task.DonePayload{
+		DoneBy: body.DoneBy,
+	}
+	v.ID = &id
 
 	return v, nil
 }

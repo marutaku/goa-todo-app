@@ -77,4 +77,19 @@ var _ = Service("task", func() {
 			Response(StatusOK)
 		})
 	})
+	Method("done", func() {
+		Description("Mark a task as done")
+		Payload(func() {
+			Attribute("id", UInt32, "ID of task to mark as done")
+			Attribute("done_by", String, "Who did the task")
+		})
+		Error("no_match", String, "No task matched given criteria")
+		Result(func() {
+			Attribute("task", StoredTask, "Finished task")
+		})
+		HTTP(func() {
+			PUT("/tasks/{id}/done")
+			Response(StatusOK)
+		})
+	})
 })
