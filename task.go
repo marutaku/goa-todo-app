@@ -34,9 +34,7 @@ func (s *tasksrvc) List(ctx context.Context, p *task.ListPayload) (res *task.Lis
 
 	s.logger.Print("task.list")
 	var tasks []*task.BackendStoredTask
-	criteria := map[string]interface{}{
-		"done": false,
-	}
+	criteria := map[string]interface{}{}
 	if p.CreatedBy != "" {
 		criteria["created_by"] = p.CreatedBy
 	}
