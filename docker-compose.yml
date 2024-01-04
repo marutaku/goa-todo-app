@@ -17,5 +17,15 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
+  openapi:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gen/http/openapi3.yaml:/openapi.yaml
+    env_file:
+      - ./.env
+    environment:
+      SWAGGER_JSON: /openapi.yaml
 volumes:
   postgres_data:
