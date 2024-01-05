@@ -1,8 +1,6 @@
-package models
+package database
 
 import (
-	task "backend/gen/task"
-
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,7 +12,6 @@ func NewPostgresDatabase(config *Config) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate(&task.BackendStoredTask{})
 	db.Logger = db.Logger.LogMode(logger.Info)
 	return db, nil
 }

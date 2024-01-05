@@ -2,7 +2,7 @@ package taskapi
 
 import (
 	task "backend/gen/task"
-	"backend/models"
+	"backend/infrastructure/database"
 	"context"
 	"fmt"
 	"log"
@@ -20,8 +20,8 @@ type tasksrvc struct {
 
 // NewTask returns the task service implementation.
 func NewTask(logger *log.Logger) task.Service {
-	config := models.NewPostgresConfig()
-	db, err := models.NewPostgresDatabase(config)
+	config := database.NewPostgresConfig()
+	db, err := database.NewPostgresDatabase(config)
 	if err != nil {
 		log.Fatal(err)
 	}
