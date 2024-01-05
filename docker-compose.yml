@@ -8,7 +8,9 @@ services:
       - "8000:8000"
     env_file:
       - ./.env
-    command: sh -c './wait-for.sh postgres:5432 -- /app/task'
+    volumes:
+      - ./:/app/
+    command: sh -c './wait-for.sh postgres:5432 -- make run'
   postgres:
     image: postgres:12.1
     env_file:
