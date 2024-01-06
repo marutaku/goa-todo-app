@@ -39,7 +39,7 @@ type UpdateRequestBody struct {
 // request body.
 type DoneRequestBody struct {
 	// Who did the task
-	DoneBy *string `form:"done_by,omitempty" json:"done_by,omitempty" xml:"done_by,omitempty"`
+	DoneBy string `form:"done_by" json:"done_by" xml:"done_by"`
 }
 
 // ListResponseBody is the type of the "task" service "list" endpoint HTTP

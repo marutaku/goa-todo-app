@@ -200,9 +200,17 @@ func NewUpdatePayload(body *UpdateRequestBody, id uint32) *task.UpdatePayload {
 // NewDonePayload builds a task service done endpoint payload.
 func NewDonePayload(body *DoneRequestBody, id uint32) *task.DonePayload {
 	v := &task.DonePayload{
-		DoneBy: body.DoneBy,
+		DoneBy: *body.DoneBy,
 	}
-	v.ID = &id
+	v.ID = id
+
+	return v
+}
+
+// NewDeletePayload builds a task service delete endpoint payload.
+func NewDeletePayload(id uint32) *task.DeletePayload {
+	v := &task.DeletePayload{}
+	v.ID = id
 
 	return v
 }
@@ -214,6 +222,14 @@ func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
 	}
 	if body.CreatedBy == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("created_by", "body"))
+	}
+	return
+}
+
+// ValidateDoneRequestBody runs the validations defined on DoneRequestBody
+func ValidateDoneRequestBody(body *DoneRequestBody) (err error) {
+	if body.DoneBy == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("done_by", "body"))
 	}
 	return
 }

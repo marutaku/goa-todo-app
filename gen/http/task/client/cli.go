@@ -153,7 +153,26 @@ func BuildDonePayload(taskDoneBody string, taskDoneID string) (*task.DonePayload
 	v := &task.DonePayload{
 		DoneBy: body.DoneBy,
 	}
-	v.ID = &id
+	v.ID = id
+
+	return v, nil
+}
+
+// BuildDeletePayload builds the payload for the task delete endpoint from CLI
+// flags.
+func BuildDeletePayload(taskDeleteID string) (*task.DeletePayload, error) {
+	var err error
+	var id uint32
+	{
+		var v uint64
+		v, err = strconv.ParseUint(taskDeleteID, 10, 32)
+		id = uint32(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT32")
+		}
+	}
+	v := &task.DeletePayload{}
+	v.ID = id
 
 	return v, nil
 }

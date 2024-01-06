@@ -18,29 +18,21 @@ type Task struct {
 	// Whether or not the todo is done
 	Done bool
 	// When the todo was done in ISO format
-	DoneAt time.Time
+	DoneAt *time.Time
 	// Who did the todo
 	DoneBy    string
 	CreatedAt time.Time
 	CreatedBy string
 }
 
-func NewTask(id TaskId, name string, description string, done bool, doneAtString string, oneBy string, createdAtString string, createdBy string) (*Task, error) {
-	doneAt, err := time.Parse(time.RFC3339, doneAtString)
-	if err != nil {
-		return nil, err
-	}
-	createdAt, err := time.Parse(time.RFC3339, createdAtString)
-	if err != nil {
-		return nil, err
-	}
+func NewTask(id TaskId, name string, description string, done bool, doneAt *time.Time, doneBy string, createdAt time.Time, createdBy string) (*Task, error) {
 	return &Task{
 		ID:          id,
 		Name:        name,
 		Description: description,
 		Done:        done,
 		DoneAt:      doneAt,
-		DoneBy:      oneBy,
+		DoneBy:      doneBy,
 		CreatedAt:   createdAt,
 		CreatedBy:   createdBy,
 	}, nil

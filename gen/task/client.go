@@ -20,16 +20,18 @@ type Client struct {
 	CreateEndpoint goa.Endpoint
 	UpdateEndpoint goa.Endpoint
 	DoneEndpoint   goa.Endpoint
+	DeleteEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "task" service client given the endpoints.
-func NewClient(list, show, create, update, done goa.Endpoint) *Client {
+func NewClient(list, show, create, update, done, delete_ goa.Endpoint) *Client {
 	return &Client{
 		ListEndpoint:   list,
 		ShowEndpoint:   show,
 		CreateEndpoint: create,
 		UpdateEndpoint: update,
 		DoneEndpoint:   done,
+		DeleteEndpoint: delete_,
 	}
 }
 
@@ -90,4 +92,13 @@ func (c *Client) Done(ctx context.Context, p *DonePayload) (res *DoneResult, err
 		return
 	}
 	return ires.(*DoneResult), nil
+}
+
+// Delete calls the "delete" endpoint of the "task" service.
+// Delete may return the following errors:
+//   - "no_match" (type NoMatch)
+//   - error: internal error
+func (c *Client) Delete(ctx context.Context, p *DeletePayload) (err error) {
+	_, err = c.DeleteEndpoint(ctx, p)
+	return
 }

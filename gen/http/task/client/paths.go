@@ -35,3 +35,8 @@ func UpdateTaskPath(id uint32) string {
 func DoneTaskPath(id uint32) string {
 	return fmt.Sprintf("/tasks/%v/done", id)
 }
+
+// DeleteTaskPath returns the URL path to the task service delete HTTP endpoint.
+func DeleteTaskPath(id uint32) string {
+	return fmt.Sprintf("/tasks/%v", id)
+}

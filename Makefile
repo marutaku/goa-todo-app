@@ -2,8 +2,6 @@
 
 gen: 
 	goa gen backend/design
-	rm -rf ./cmd
-	goa example backend/design
 
 build:
 	mkdir -p ./dist && \

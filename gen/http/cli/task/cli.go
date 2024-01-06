@@ -24,15 +24,15 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `auth (login|register|logout)
-task (list|show|create|update|done)
+task (list|show|create|update|done|delete)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Inventore laboriosam consequatur odio dolorem in voluptas.",
-      "username": "Voluptas a sed."
+      "password": "Laboriosam consequatur odio dolorem in voluptas id.",
+      "username": "A sed vitae."
    }'` + "\n" +
 		os.Args[0] + ` task list --limit 779747781 --offset 2604982443 --created-by "Ut ducimus et consequatur aut." --name "Rerum dolor."` + "\n" +
 		""
@@ -80,6 +80,9 @@ func ParseEndpoint(
 		taskDoneFlags    = flag.NewFlagSet("done", flag.ExitOnError)
 		taskDoneBodyFlag = taskDoneFlags.String("body", "REQUIRED", "")
 		taskDoneIDFlag   = taskDoneFlags.String("id", "REQUIRED", "ID of task to mark as done")
+
+		taskDeleteFlags  = flag.NewFlagSet("delete", flag.ExitOnError)
+		taskDeleteIDFlag = taskDeleteFlags.String("id", "REQUIRED", "ID of task to delete")
 	)
 	authFlags.Usage = authUsage
 	authLoginFlags.Usage = authLoginUsage
@@ -92,6 +95,7 @@ func ParseEndpoint(
 	taskCreateFlags.Usage = taskCreateUsage
 	taskUpdateFlags.Usage = taskUpdateUsage
 	taskDoneFlags.Usage = taskDoneUsage
+	taskDeleteFlags.Usage = taskDeleteUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -157,6 +161,9 @@ func ParseEndpoint(
 			case "done":
 				epf = taskDoneFlags
 
+			case "delete":
+				epf = taskDeleteFlags
+
 			}
 
 		}
@@ -210,6 +217,9 @@ func ParseEndpoint(
 			case "done":
 				endpoint = c.Done()
 				data, err = taskc.BuildDonePayload(*taskDoneBodyFlag, *taskDoneIDFlag)
+			case "delete":
+				endpoint = c.Delete()
+				data, err = taskc.BuildDeletePayload(*taskDeleteIDFlag)
 			}
 		}
 	}
@@ -243,8 +253,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Inventore laboriosam consequatur odio dolorem in voluptas.",
-      "username": "Voluptas a sed."
+      "password": "Laboriosam consequatur odio dolorem in voluptas id.",
+      "username": "A sed vitae."
    }'
 `, os.Args[0])
 }
@@ -258,7 +268,7 @@ Register a new user
 Example:
     %[1]s auth register --body '{
       "password": "Praesentium suscipit dolor voluptatem.",
-      "username": "Reiciendis eaque tenetur enim illo non quibusdam."
+      "username": "Tenetur enim illo non quibusdam."
    }'
 `, os.Args[0])
 }
@@ -288,6 +298,7 @@ COMMAND:
     create: Create a task
     update: Update a task
     done: Mark a task as done
+    delete: Delete a task
 
 Additional help:
     %[1]s task COMMAND --help
@@ -360,5 +371,16 @@ Example:
     %[1]s task done --body '{
       "done_by": "Officia quo veritatis fuga."
    }' --id 4101334422
+`, os.Args[0])
+}
+
+func taskDeleteUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task delete -id UINT32
+
+Delete a task
+    -id UINT32: ID of task to delete
+
+Example:
+    %[1]s task delete --id 1948469439
 `, os.Args[0])
 }

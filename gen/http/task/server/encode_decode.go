@@ -258,6 +258,10 @@ func DecodeDoneRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
+		err = ValidateDoneRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
 
 		var (
 			id uint32
@@ -276,6 +280,42 @@ func DecodeDoneRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			return nil, err
 		}
 		payload := NewDonePayload(&body, id)
+
+		return payload, nil
+	}
+}
+
+// EncodeDeleteResponse returns an encoder for responses returned by the task
+// delete endpoint.
+func EncodeDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {
+	return func(ctx context.Context, w http.ResponseWriter, v any) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeDeleteRequest returns a decoder for requests sent to the task delete
+// endpoint.
+func DecodeDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
+	return func(r *http.Request) (any, error) {
+		var (
+			id  uint32
+			err error
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, 32)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = uint32(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewDeletePayload(id)
 
 		return payload, nil
 	}

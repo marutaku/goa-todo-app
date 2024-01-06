@@ -333,9 +333,7 @@ func (c *Client) BuildDoneRequest(ctx context.Context, v any) (*http.Request, er
 		if !ok {
 			return nil, goahttp.ErrInvalidType("task", "done", "*task.DonePayload", v)
 		}
-		if p.ID != nil {
-			id = *p.ID
-		}
+		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DoneTaskPath(id)}
 	req, err := http.NewRequest("PUT", u.String(), nil)
@@ -401,6 +399,58 @@ func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "done", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildDeleteRequest instantiates a HTTP request object with method and path
+// set to call the "task" service "delete" endpoint
+func (c *Client) BuildDeleteRequest(ctx context.Context, v any) (*http.Request, error) {
+	var (
+		id uint32
+	)
+	{
+		p, ok := v.(*task.DeletePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("task", "delete", "*task.DeletePayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteTaskPath(id)}
+	req, err := http.NewRequest("DELETE", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("task", "delete", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeDeleteResponse returns a decoder for responses returned by the task
+// delete endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
+	return func(resp *http.Response) (any, error) {
+		if restoreBody {
+			b, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := io.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("task", "delete", resp.StatusCode, string(body))
 		}
 	}
 }

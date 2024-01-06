@@ -32,6 +32,9 @@ type Client struct {
 	// Done Doer is the HTTP client used to make requests to the done endpoint.
 	DoneDoer goahttp.Doer
 
+	// Delete Doer is the HTTP client used to make requests to the delete endpoint.
+	DeleteDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -57,6 +60,7 @@ func NewClient(
 		CreateDoer:          doer,
 		UpdateDoer:          doer,
 		DoneDoer:            doer,
+		DeleteDoer:          doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -175,6 +179,25 @@ func (c *Client) Done() goa.Endpoint {
 		resp, err := c.DoneDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("task", "done", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// Delete returns an endpoint that makes HTTP requests to the task service
+// delete server.
+func (c *Client) Delete() goa.Endpoint {
+	var (
+		decodeResponse = DecodeDeleteResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v any) (any, error) {
+		req, err := c.BuildDeleteRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.DeleteDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("task", "delete", err)
 		}
 		return decodeResponse(resp)
 	}

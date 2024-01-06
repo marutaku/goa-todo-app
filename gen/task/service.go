@@ -23,6 +23,8 @@ type Service interface {
 	Update(context.Context, *UpdatePayload) (res *UpdateResult, err error)
 	// Mark a task as done
 	Done(context.Context, *DonePayload) (res *DoneResult, err error)
+	// Delete a task
+	Delete(context.Context, *DeletePayload) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -33,7 +35,7 @@ const ServiceName = "task"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"list", "show", "create", "update", "done"}
+var MethodNames = [6]string{"list", "show", "create", "update", "done", "delete"}
 
 // A task
 type BackendStoredTask struct {
@@ -75,12 +77,18 @@ type CreateResult struct {
 	Task *BackendStoredTask
 }
 
+// DeletePayload is the payload type of the task service delete method.
+type DeletePayload struct {
+	// ID of task to delete
+	ID uint32
+}
+
 // DonePayload is the payload type of the task service done method.
 type DonePayload struct {
 	// ID of task to mark as done
-	ID *uint32
+	ID uint32
 	// Who did the task
-	DoneBy *string
+	DoneBy string
 }
 
 // DoneResult is the result type of the task service done method.

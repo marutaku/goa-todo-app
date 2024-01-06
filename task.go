@@ -84,7 +84,6 @@ func (s *tasksrvc) Create(ctx context.Context, p *task.CreatePayload) (res *task
 		return nil, result.Error
 	}
 	res.Task = newTask
-	fmt.Println(newTask)
 	return res, nil
 }
 

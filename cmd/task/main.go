@@ -1,7 +1,7 @@
 package main
 
 import (
-	taskapi "backend"
+	"backend/adapter/controller"
 	auth "backend/gen/auth"
 	task "backend/gen/task"
 	"context"
@@ -42,8 +42,8 @@ func main() {
 		taskSvc task.Service
 	)
 	{
-		authSvc = taskapi.NewAuth(logger)
-		taskSvc = taskapi.NewTask(logger)
+		// authSvc = taskapi.NewAuth(logger)
+		taskSvc = controller.NewTaskController(logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services

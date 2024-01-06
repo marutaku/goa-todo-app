@@ -3,6 +3,8 @@ package repository
 import (
 	"backend/domain"
 	"context"
+	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -30,17 +32,29 @@ type TaskRecord struct {
 	CreatedBy string `gorm:"not null"`
 }
 
-type TaskCriteria TaskRecord
-
 func (t *TaskRecord) ToDomain() (*domain.Task, error) {
+	var doneAt *time.Time
+	if t.DoneAt != "" {
+		parsedDate, err := time.Parse(time.RFC3339, t.DoneAt)
+		if err != nil {
+			return nil, err
+		}
+		doneAt = &parsedDate
+	} else {
+		doneAt = nil
+	}
+	createdAt, err := time.Parse(time.RFC3339, t.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
 	return domain.NewTask(
 		domain.TaskId(t.ID),
 		t.Name,
 		t.Description,
 		t.Done,
-		t.DoneAt,
+		doneAt,
 		t.DoneBy,
-		t.CreatedAt,
+		createdAt,
 		t.CreatedBy,
 	)
 }
@@ -52,16 +66,10 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	}
 }
 
-func (t *TaskRepository) FindAll(ctx context.Context, taskCondition TaskCriteria) ([]*domain.Task, error) {
-	criteria := map[string]interface{}{}
-	if taskCondition.CreatedBy != "" {
-		criteria["created_by"] = taskCondition.CreatedBy
-	}
-	if taskCondition.Name != "" {
-		criteria["name"] = taskCondition.Name
-	}
+func (t *TaskRepository) FindAll(ctx context.Context, criteria TaskCriteria) ([]*domain.Task, error) {
 	var taskRecords []*TaskRecord
-	if err := t.db.WithContext(ctx).Where(criteria).Find(&taskRecords).Error; err != nil {
+	// FIXME: Currently, criteria is not used
+	if err := t.db.WithContext(ctx).Find(&taskRecords).Error; err != nil {
 		return nil, err
 	}
 	var tasks []*domain.Task
@@ -83,13 +91,27 @@ func (t *TaskRepository) FindOne(ctx context.Context, id domain.TaskId) (*domain
 	return taskRecord.ToDomain()
 }
 
-func (t *TaskRepository) Update(ctx context.Context, id domain.TaskId, name string, description string) (*domain.Task, error) {
-	var taskRecord TaskRecord
-	if err := t.db.WithContext(ctx).First(&taskRecord, id.UInt32()).Error; err != nil {
+func (t *TaskRepository) Create(ctx context.Context, newTask *domain.Task) (*domain.Task, error) {
+	taskRecord := TaskRecord{
+		Name:        newTask.Name,
+		Description: newTask.Description,
+		Done:        false,
+		CreatedAt:   newTask.CreatedAt.Format(time.RFC3339),
+	}
+	if err := t.db.WithContext(ctx).Create(&taskRecord).Error; err != nil {
 		return nil, err
 	}
-	taskRecord.Name = name
-	taskRecord.Description = description
+	fmt.Println(taskRecord)
+	return taskRecord.ToDomain()
+}
+
+func (t *TaskRepository) Update(ctx context.Context, newTask *domain.Task) (*domain.Task, error) {
+	var taskRecord TaskRecord
+	if err := t.db.WithContext(ctx).First(&taskRecord, newTask.ID).Error; err != nil {
+		return nil, err
+	}
+	taskRecord.Name = newTask.Name
+	taskRecord.Description = newTask.Description
 	if err := t.db.WithContext(ctx).Save(&taskRecord).Error; err != nil {
 		return nil, err
 	}

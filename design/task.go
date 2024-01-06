@@ -90,6 +90,7 @@ var _ = Service("task", func() {
 		Payload(func() {
 			Attribute("id", UInt32, "ID of task to mark as done")
 			Attribute("done_by", String, "Who did the task")
+			Required("id", "done_by")
 		})
 		Error("no_match", String, "No task matched given criteria")
 		Result(func() {
@@ -97,6 +98,18 @@ var _ = Service("task", func() {
 		})
 		HTTP(func() {
 			PUT("/tasks/{id}/done")
+			Response(StatusOK)
+		})
+	})
+	Method("delete", func() {
+		Description("Delete a task")
+		Payload(func() {
+			Attribute("id", UInt32, "ID of task to delete")
+			Required("id")
+		})
+		Error("no_match", String, "No task matched given criteria")
+		HTTP(func() {
+			DELETE("/tasks/{id}")
 			Response(StatusOK)
 		})
 	})

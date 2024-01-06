@@ -20,6 +20,7 @@ type Endpoints struct {
 	Create goa.Endpoint
 	Update goa.Endpoint
 	Done   goa.Endpoint
+	Delete goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "task" service with endpoints.
@@ -30,6 +31,7 @@ func NewEndpoints(s Service) *Endpoints {
 		Create: NewCreateEndpoint(s),
 		Update: NewUpdateEndpoint(s),
 		Done:   NewDoneEndpoint(s),
+		Delete: NewDeleteEndpoint(s),
 	}
 }
 
@@ -40,6 +42,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Create = m(e.Create)
 	e.Update = m(e.Update)
 	e.Done = m(e.Done)
+	e.Delete = m(e.Delete)
 }
 
 // NewListEndpoint returns an endpoint function that calls the method "list" of
@@ -84,5 +87,14 @@ func NewDoneEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req any) (any, error) {
 		p := req.(*DonePayload)
 		return s.Done(ctx, p)
+	}
+}
+
+// NewDeleteEndpoint returns an endpoint function that calls the method
+// "delete" of service "task".
+func NewDeleteEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req any) (any, error) {
+		p := req.(*DeletePayload)
+		return nil, s.Delete(ctx, p)
 	}
 }
