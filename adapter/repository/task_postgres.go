@@ -66,10 +66,19 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	}
 }
 
-func (t *TaskRepository) FindAll(ctx context.Context, criteria TaskCriteria) ([]*domain.Task, error) {
+func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, createdBy *string) ([]*domain.Task, error) {
 	var taskRecords []*TaskRecord
-	// FIXME: Currently, criteria is not used
-	if err := t.db.WithContext(ctx).Find(&taskRecords).Error; err != nil {
+	criteria := &TaskRecord{}
+	if name != nil {
+		criteria.Name = *name
+	}
+	if done != nil {
+		criteria.Done = *done
+	}
+	if createdBy != nil {
+		criteria.CreatedBy = *createdBy
+	}
+	if err := t.db.WithContext(ctx).Where(criteria).Find(&taskRecords).Error; err != nil {
 		return nil, err
 	}
 	var tasks []*domain.Task
@@ -92,7 +101,7 @@ func (t *TaskRepository) FindOne(ctx context.Context, id domain.TaskId) (*domain
 }
 
 func (t *TaskRepository) Create(ctx context.Context, newTask *domain.Task) (*domain.Task, error) {
-	taskRecord := TaskRecord{
+	taskRecord := &TaskRecord{
 		Name:        newTask.Name,
 		Description: newTask.Description,
 		Done:        false,
@@ -106,7 +115,7 @@ func (t *TaskRepository) Create(ctx context.Context, newTask *domain.Task) (*dom
 }
 
 func (t *TaskRepository) Update(ctx context.Context, newTask *domain.Task) (*domain.Task, error) {
-	var taskRecord TaskRecord
+	var taskRecord *TaskRecord
 	if err := t.db.WithContext(ctx).First(&taskRecord, newTask.ID).Error; err != nil {
 		return nil, err
 	}

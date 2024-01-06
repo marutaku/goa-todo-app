@@ -9,12 +9,18 @@ import (
 
 type (
 	TaskUseCase interface {
-		List(ctx context.Context, criteria map[string]interface{}) ([]*domain.Task, error)
+		List(ctx context.Context, criteria TaskCriteria) ([]*domain.Task, error)
 		Show(ctx context.Context, id uint32) (*domain.Task, error)
 		Create(ctx context.Context, params TaskCreateParams) (*domain.Task, error)
 		Update(ctx context.Context, id uint32, params TaskUpdateParams) (*domain.Task, error)
 		Delete(ctx context.Context, id uint32) error
 		Done(ctx context.Context, id uint32) (*domain.Task, error)
+	}
+	TaskCriteria struct {
+		Name        *string
+		Description *string
+		Done        *bool
+		CreatedBy   *string
 	}
 	TaskCreateParams struct {
 		Name        string
@@ -35,8 +41,8 @@ func NewTaskInteractor(repo repository.TaskRepositoryInterface) *taskInteractor 
 	}
 }
 
-func (t *taskInteractor) List(ctx context.Context, criteria map[string]interface{}) ([]*domain.Task, error) {
-	return t.repo.FindAll(ctx, criteria)
+func (t *taskInteractor) List(ctx context.Context, criteria TaskCriteria) ([]*domain.Task, error) {
+	return t.repo.FindAll(ctx, criteria.Name, criteria.Done, criteria.CreatedBy)
 }
 
 func (t *taskInteractor) Show(ctx context.Context, id uint32) (*domain.Task, error) {

@@ -39,12 +39,12 @@ func NewTaskController(logger *log.Logger) *taskController {
 // List all tasks
 func (c *taskController) List(ctx context.Context, p *taskService.ListPayload) (res *taskService.ListResult, err error) {
 	c.logger.Print("task.list")
-	criteria := map[string]interface{}{}
+	criteria := usecase.TaskCriteria{}
 	if p.CreatedBy != "" {
-		criteria["created_by"] = p.CreatedBy
+		criteria.CreatedBy = &p.CreatedBy
 	}
 	if p.Name != "" {
-		criteria["name"] = p.Name
+		criteria.Name = &p.Name
 	}
 	tasks, err := c.usecase.List(ctx, criteria)
 	if err != nil {
