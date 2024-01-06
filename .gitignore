@@ -56,3 +56,4 @@ Temporary Items
 ### Custom
 dist
 .env*
+tmp/
