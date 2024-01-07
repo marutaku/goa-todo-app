@@ -136,6 +136,9 @@ func EncodeRegisterRequest(encoder func(*http.Request) goahttp.Encoder) func(*ht
 // DecodeRegisterResponse returns a decoder for responses returned by the auth
 // register endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
+// DecodeRegisterResponse may return the following errors:
+//   - "register_failed" (type auth.RegisterFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeRegisterResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -166,6 +169,16 @@ func DecodeRegisterResponse(decoder func(*http.Response) goahttp.Decoder, restor
 			}
 			res := NewRegisterResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body string
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("auth", "register", err)
+			}
+			return nil, NewRegisterRegisterFailed(body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "register", resp.StatusCode, string(body))

@@ -29,6 +29,7 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to register with")
 			Required("username", "password")
 		})
+		Error("register_failed", String, "Username already exists")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
 			Required("token")
@@ -36,6 +37,7 @@ var _ = Service("auth", func() {
 		HTTP(func() {
 			POST("/register")
 			Response(StatusOK)
+			Response("register_failed", StatusBadRequest)
 		})
 	})
 	// Method("logout", func() {

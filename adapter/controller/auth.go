@@ -7,6 +7,7 @@ import (
 	"backend/infrastructure/database"
 	"backend/usecase"
 	"context"
+	"errors"
 	"log"
 
 	"gorm.io/gorm"
@@ -50,7 +51,10 @@ func (c *authController) Register(ctx context.Context, params *authService.Regis
 		Password: params.Password,
 	})
 	if err != nil {
-		return nil, err
+		var authErr *usecase.AuthError
+		if errors.As(err, &authErr) {
+			return nil, authService.RegisterFailed(string(err.Error()))
+		}
 	}
 	return c.presenter.RegisterOutput(token), nil
 }

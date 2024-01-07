@@ -13,6 +13,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type AuthError struct {
+	Err error
+}
+
+func (e *AuthError) Error() string {
+	return e.Err.Error()
+}
+
 type (
 	AuthUseCase interface {
 		Login(ctx context.Context, name string, password string) (string, error)
@@ -71,14 +79,24 @@ func NewAuthInteractor(repo repository.UserRepositoryInterface) *authInteractor 
 
 func (u *authInteractor) Login(ctx context.Context, name string, password string) (string, error) {
 	hashedPassword := hashPassword(password)
-	user, err := u.repo.Find(ctx, name, hashedPassword)
+	user, err := u.repo.FindByName(ctx, name)
 	if err != nil {
 		return "", err
+	}
+	if user.Password != hashedPassword {
+		return "", &AuthError{Err: errors.New("invalid password")}
 	}
 	return encodeJWTToken(user)
 }
 
 func (u *authInteractor) Register(ctx context.Context, params UserCreateParams) (string, error) {
+	existingUser, err := u.repo.FindByName(ctx, params.Name)
+	if err != nil {
+		return "", err
+	}
+	if existingUser != nil {
+		return "", &AuthError{Err: errors.New("user already exists")}
+	}
 	hashedPassword := hashPassword(params.Password)
 	user, err := domain.NewUser(
 		0,

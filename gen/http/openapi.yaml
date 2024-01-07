@@ -65,6 +65,10 @@ paths:
                         $ref: '#/definitions/AuthRegisterResponseBody'
                         required:
                             - token
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
             schemes:
                 - http
     /tasks:

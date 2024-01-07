@@ -60,6 +60,9 @@ type RegisterResult struct {
 // User not found
 type LoginFailed string
 
+// Username already exists
+type RegisterFailed string
+
 // Error returns an error description.
 func (e LoginFailed) Error() string {
 	return "User not found"
@@ -75,4 +78,21 @@ func (e LoginFailed) ErrorName() string {
 // GoaErrorName returns "login_failed".
 func (e LoginFailed) GoaErrorName() string {
 	return "login_failed"
+}
+
+// Error returns an error description.
+func (e RegisterFailed) Error() string {
+	return "Username already exists"
+}
+
+// ErrorName returns "register_failed".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e RegisterFailed) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "register_failed".
+func (e RegisterFailed) GoaErrorName() string {
+	return "register_failed"
 }

@@ -3,7 +3,6 @@ package repository
 import (
 	"backend/domain"
 	"context"
-	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -38,11 +37,11 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) Find(ctx context.Context, name string, hashedPassword string) (*domain.User, error) {
+func (r *UserRepository) FindByName(ctx context.Context, name string) (*domain.User, error) {
 	var record AuthRecord
-	r.db.WithContext(ctx).Where("name = ?", name).First(&record)
-	if record.Password != hashedPassword {
-		return nil, errors.New("user not found")
+	result := r.db.WithContext(ctx).Where("name = ?", name).First(&record)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	user, err := record.ToDomain()
 	if err != nil {

@@ -92,6 +92,14 @@ func NewRegisterResultOK(body *RegisterResponseBody) *auth.RegisterResult {
 	return v
 }
 
+// NewRegisterRegisterFailed builds a auth service register endpoint
+// register_failed error.
+func NewRegisterRegisterFailed(body string) auth.RegisterFailed {
+	v := auth.RegisterFailed(body)
+
+	return v
+}
+
 // ValidateLoginResponseBody runs the validations defined on LoginResponseBody
 func ValidateLoginResponseBody(body *LoginResponseBody) (err error) {
 	if body.Token == nil {
