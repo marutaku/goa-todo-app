@@ -62,7 +62,7 @@ func decodeJWTToken(tokenString string) (uint32, error) {
 	} else if claims, ok := token.Claims.(*JWTClaims); ok {
 		return claims.Sub, nil
 	} else {
-		return 0, errors.New("invalid token")
+		return 0, &AuthError{Err: errors.New("invalid token")}
 	}
 }
 
