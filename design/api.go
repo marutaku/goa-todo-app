@@ -4,6 +4,12 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
+var Auth = JWTSecurity("jwt", func() {
+	Description("JWT Authentication for the API")
+	Scope("api:read", "Provides read access")
+	Scope("api:write", "Provides write access")
+})
+
 var Task = Type("Task", func() {
 	Description("Task describes a todo item")
 

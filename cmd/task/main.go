@@ -42,7 +42,7 @@ func main() {
 		taskSvc task.Service
 	)
 	{
-		// authSvc = taskapi.NewAuth(logger)
+		authSvc = controller.NewAuthController(logger)
 		taskSvc = controller.NewTaskController(logger)
 	}
 

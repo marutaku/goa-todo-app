@@ -9,6 +9,8 @@ package client
 
 import (
 	auth "backend/gen/auth"
+
+	goa "goa.design/goa/v3/pkg"
 )
 
 // LoginRequestBody is the type of the "auth" service "login" endpoint HTTP
@@ -27,13 +29,6 @@ type RegisterRequestBody struct {
 	Username string `form:"username" json:"username" xml:"username"`
 	// Password to register with
 	Password string `form:"password" json:"password" xml:"password"`
-}
-
-// LogoutRequestBody is the type of the "auth" service "logout" endpoint HTTP
-// request body.
-type LogoutRequestBody struct {
-	// JWT token to use for authentication
-	Token string `form:"token" json:"token" xml:"token"`
 }
 
 // LoginResponseBody is the type of the "auth" service "login" endpoint HTTP
@@ -70,21 +65,19 @@ func NewRegisterRequestBody(p *auth.RegisterPayload) *RegisterRequestBody {
 	return body
 }
 
-// NewLogoutRequestBody builds the HTTP request body from the payload of the
-// "logout" endpoint of the "auth" service.
-func NewLogoutRequestBody(p *auth.LogoutPayload) *LogoutRequestBody {
-	body := &LogoutRequestBody{
-		Token: p.Token,
-	}
-	return body
-}
-
 // NewLoginResultOK builds a "auth" service "login" endpoint result from a HTTP
 // "OK" response.
 func NewLoginResultOK(body *LoginResponseBody) *auth.LoginResult {
 	v := &auth.LoginResult{
-		Token: body.Token,
+		Token: *body.Token,
 	}
+
+	return v
+}
+
+// NewLoginLoginFailed builds a auth service login endpoint login_failed error.
+func NewLoginLoginFailed(body string) auth.LoginFailed {
+	v := auth.LoginFailed(body)
 
 	return v
 }
@@ -93,8 +86,25 @@ func NewLoginResultOK(body *LoginResponseBody) *auth.LoginResult {
 // a HTTP "OK" response.
 func NewRegisterResultOK(body *RegisterResponseBody) *auth.RegisterResult {
 	v := &auth.RegisterResult{
-		Token: body.Token,
+		Token: *body.Token,
 	}
 
 	return v
+}
+
+// ValidateLoginResponseBody runs the validations defined on LoginResponseBody
+func ValidateLoginResponseBody(body *LoginResponseBody) (err error) {
+	if body.Token == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
+	}
+	return
+}
+
+// ValidateRegisterResponseBody runs the validations defined on
+// RegisterResponseBody
+func ValidateRegisterResponseBody(body *RegisterResponseBody) (err error) {
+	if body.Token == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
+	}
+	return
 }

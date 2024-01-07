@@ -24,9 +24,6 @@ type Client struct {
 	// endpoint.
 	RegisterDoer goahttp.Doer
 
-	// Logout Doer is the HTTP client used to make requests to the logout endpoint.
-	LogoutDoer goahttp.Doer
-
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -49,7 +46,6 @@ func NewClient(
 	return &Client{
 		LoginDoer:           doer,
 		RegisterDoer:        doer,
-		LogoutDoer:          doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -101,30 +97,6 @@ func (c *Client) Register() goa.Endpoint {
 		resp, err := c.RegisterDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("auth", "register", err)
-		}
-		return decodeResponse(resp)
-	}
-}
-
-// Logout returns an endpoint that makes HTTP requests to the auth service
-// logout server.
-func (c *Client) Logout() goa.Endpoint {
-	var (
-		encodeRequest  = EncodeLogoutRequest(c.encoder)
-		decodeResponse = DecodeLogoutResponse(c.decoder, c.RestoreResponseBody)
-	)
-	return func(ctx context.Context, v any) (any, error) {
-		req, err := c.BuildLogoutRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		err = encodeRequest(req, v)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := c.LogoutDoer.Do(req)
-		if err != nil {
-			return nil, goahttp.ErrRequestError("auth", "logout", err)
 		}
 		return decodeResponse(resp)
 	}

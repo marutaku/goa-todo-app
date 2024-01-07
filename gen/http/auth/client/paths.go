@@ -16,8 +16,3 @@ func LoginAuthPath() string {
 func RegisterAuthPath() string {
 	return "/register"
 }
-
-// LogoutAuthPath returns the URL path to the auth service logout HTTP endpoint.
-func LogoutAuthPath() string {
-	return "/logout"
-}

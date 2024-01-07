@@ -17,7 +17,6 @@ import (
 type Endpoints struct {
 	Login    goa.Endpoint
 	Register goa.Endpoint
-	Logout   goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "auth" service with endpoints.
@@ -25,7 +24,6 @@ func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
 		Login:    NewLoginEndpoint(s),
 		Register: NewRegisterEndpoint(s),
-		Logout:   NewLogoutEndpoint(s),
 	}
 }
 
@@ -33,7 +31,6 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Login = m(e.Login)
 	e.Register = m(e.Register)
-	e.Logout = m(e.Logout)
 }
 
 // NewLoginEndpoint returns an endpoint function that calls the method "login"
@@ -51,14 +48,5 @@ func NewRegisterEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req any) (any, error) {
 		p := req.(*RegisterPayload)
 		return s.Register(ctx, p)
-	}
-}
-
-// NewLogoutEndpoint returns an endpoint function that calls the method
-// "logout" of service "auth".
-func NewLogoutEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req any) (any, error) {
-		p := req.(*LogoutPayload)
-		return nil, s.Logout(ctx, p)
 	}
 }

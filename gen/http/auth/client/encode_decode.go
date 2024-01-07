@@ -52,6 +52,9 @@ func EncodeLoginRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.
 // DecodeLoginResponse returns a decoder for responses returned by the auth
 // login endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
+// DecodeLoginResponse may return the following errors:
+//   - "login_failed" (type auth.LoginFailed): http.StatusUnauthorized
+//   - error: internal error
 func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -76,8 +79,22 @@ func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("auth", "login", err)
 			}
+			err = ValidateLoginResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("auth", "login", err)
+			}
 			res := NewLoginResultOK(&body)
 			return res, nil
+		case http.StatusUnauthorized:
+			var (
+				body string
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("auth", "login", err)
+			}
+			return nil, NewLoginLoginFailed(body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "login", resp.StatusCode, string(body))
@@ -143,69 +160,15 @@ func DecodeRegisterResponse(decoder func(*http.Response) goahttp.Decoder, restor
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("auth", "register", err)
 			}
+			err = ValidateRegisterResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("auth", "register", err)
+			}
 			res := NewRegisterResultOK(&body)
 			return res, nil
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "register", resp.StatusCode, string(body))
-		}
-	}
-}
-
-// BuildLogoutRequest instantiates a HTTP request object with method and path
-// set to call the "auth" service "logout" endpoint
-func (c *Client) BuildLogoutRequest(ctx context.Context, v any) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: LogoutAuthPath()}
-	req, err := http.NewRequest("POST", u.String(), nil)
-	if err != nil {
-		return nil, goahttp.ErrInvalidURL("auth", "logout", u.String(), err)
-	}
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-
-	return req, nil
-}
-
-// EncodeLogoutRequest returns an encoder for requests sent to the auth logout
-// server.
-func EncodeLogoutRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
-	return func(req *http.Request, v any) error {
-		p, ok := v.(*auth.LogoutPayload)
-		if !ok {
-			return goahttp.ErrInvalidType("auth", "logout", "*auth.LogoutPayload", v)
-		}
-		body := NewLogoutRequestBody(p)
-		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("auth", "logout", err)
-		}
-		return nil
-	}
-}
-
-// DecodeLogoutResponse returns a decoder for responses returned by the auth
-// logout endpoint. restoreBody controls whether the response body should be
-// restored after having been read.
-func DecodeLogoutResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
-	return func(resp *http.Response) (any, error) {
-		if restoreBody {
-			b, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
-			resp.Body = io.NopCloser(bytes.NewBuffer(b))
-			defer func() {
-				resp.Body = io.NopCloser(bytes.NewBuffer(b))
-			}()
-		} else {
-			defer resp.Body.Close()
-		}
-		switch resp.StatusCode {
-		case http.StatusOK:
-			return nil, nil
-		default:
-			body, _ := io.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("auth", "logout", resp.StatusCode, string(body))
 		}
 	}
 }

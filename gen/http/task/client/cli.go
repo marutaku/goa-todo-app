@@ -88,7 +88,7 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Quis qui non.\",\n      \"description\": \"Molestias est qui.\",\n      \"id\": 1026861111,\n      \"name\": \"Rerum dolor.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Voluptatem molestias est qui.\",\n      \"description\": \"Ducimus et consequatur aut omnis rerum.\",\n      \"id\": 25464241,\n      \"name\": \"Mollitia molestias mollitia odio incidunt.\"\n   }'")
 		}
 	}
 	v := &task.CreatePayload{
@@ -109,7 +109,7 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.Updat
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Ab qui maiores.\",\n      \"name\": \"Est voluptas.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Qui maiores.\",\n      \"name\": \"Qui non optio molestias est voluptas et.\"\n   }'")
 		}
 	}
 	var id uint32

@@ -11,12 +11,15 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to login with")
 			Required("username", "password")
 		})
+		Error("login_failed", String, "User not found")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
+			Required("token")
 		})
 		HTTP(func() {
 			POST("/login")
 			Response(StatusOK)
+			Response("login_failed", StatusUnauthorized)
 		})
 	})
 	Method("register", func() {
@@ -28,21 +31,22 @@ var _ = Service("auth", func() {
 		})
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
+			Required("token")
 		})
 		HTTP(func() {
 			POST("/register")
 			Response(StatusOK)
 		})
 	})
-	Method("logout", func() {
-		Description("Logout of the system")
-		Payload(func() {
-			Attribute("token", String, "JWT token to use for authentication")
-			Required("token")
-		})
-		HTTP(func() {
-			POST("/logout")
-			Response(StatusOK)
-		})
-	})
+	// Method("logout", func() {
+	// 	Description("Logout of the system")
+	// 	Payload(func() {
+	// 		Attribute("token", String, "JWT token to use for authentication")
+	// 		Required("token")
+	// 	})
+	// 	HTTP(func() {
+	// 		POST("/logout")
+	// 		Response(StatusOK)
+	// 	})
+	// })
 })

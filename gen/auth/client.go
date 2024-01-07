@@ -17,19 +17,20 @@ import (
 type Client struct {
 	LoginEndpoint    goa.Endpoint
 	RegisterEndpoint goa.Endpoint
-	LogoutEndpoint   goa.Endpoint
 }
 
 // NewClient initializes a "auth" service client given the endpoints.
-func NewClient(login, register, logout goa.Endpoint) *Client {
+func NewClient(login, register goa.Endpoint) *Client {
 	return &Client{
 		LoginEndpoint:    login,
 		RegisterEndpoint: register,
-		LogoutEndpoint:   logout,
 	}
 }
 
 // Login calls the "login" endpoint of the "auth" service.
+// Login may return the following errors:
+//   - "login_failed" (type LoginFailed)
+//   - error: internal error
 func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResult, err error) {
 	var ires any
 	ires, err = c.LoginEndpoint(ctx, p)
@@ -47,10 +48,4 @@ func (c *Client) Register(ctx context.Context, p *RegisterPayload) (res *Registe
 		return
 	}
 	return ires.(*RegisterResult), nil
-}
-
-// Logout calls the "logout" endpoint of the "auth" service.
-func (c *Client) Logout(ctx context.Context, p *LogoutPayload) (err error) {
-	_, err = c.LogoutEndpoint(ctx, p)
-	return
 }

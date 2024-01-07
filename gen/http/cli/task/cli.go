@@ -23,7 +23,7 @@ import (
 //
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
-	return `auth (login|register|logout)
+	return `auth (login|register)
 task (list|show|create|update|done|delete)
 `
 }
@@ -31,8 +31,8 @@ task (list|show|create|update|done|delete)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "A sed vitae.",
-      "username": "Similique est dolores vel aliquam a."
+      "password": "Dolorum laboriosam fugit nesciunt quas corrupti.",
+      "username": "Deleniti earum praesentium."
    }'` + "\n" +
 		os.Args[0] + ` task list --limit 100 --offset 0 --created-by "marutaku" --name "task1"` + "\n" +
 		""
@@ -55,9 +55,6 @@ func ParseEndpoint(
 
 		authRegisterFlags    = flag.NewFlagSet("register", flag.ExitOnError)
 		authRegisterBodyFlag = authRegisterFlags.String("body", "REQUIRED", "")
-
-		authLogoutFlags    = flag.NewFlagSet("logout", flag.ExitOnError)
-		authLogoutBodyFlag = authLogoutFlags.String("body", "REQUIRED", "")
 
 		taskFlags = flag.NewFlagSet("task", flag.ContinueOnError)
 
@@ -87,7 +84,6 @@ func ParseEndpoint(
 	authFlags.Usage = authUsage
 	authLoginFlags.Usage = authLoginUsage
 	authRegisterFlags.Usage = authRegisterUsage
-	authLogoutFlags.Usage = authLogoutUsage
 
 	taskFlags.Usage = taskUsage
 	taskListFlags.Usage = taskListUsage
@@ -138,9 +134,6 @@ func ParseEndpoint(
 
 			case "register":
 				epf = authRegisterFlags
-
-			case "logout":
-				epf = authLogoutFlags
 
 			}
 
@@ -195,9 +188,6 @@ func ParseEndpoint(
 			case "register":
 				endpoint = c.Register()
 				data, err = authc.BuildRegisterPayload(*authRegisterBodyFlag)
-			case "logout":
-				endpoint = c.Logout()
-				data, err = authc.BuildLogoutPayload(*authLogoutBodyFlag)
 			}
 		case "task":
 			c := taskc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -239,7 +229,6 @@ Usage:
 COMMAND:
     login: Login to the system
     register: Register a new user
-    logout: Logout of the system
 
 Additional help:
     %[1]s auth COMMAND --help
@@ -253,8 +242,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "A sed vitae.",
-      "username": "Similique est dolores vel aliquam a."
+      "password": "Dolorum laboriosam fugit nesciunt quas corrupti.",
+      "username": "Deleniti earum praesentium."
    }'
 `, os.Args[0])
 }
@@ -267,21 +256,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Tenetur enim illo non quibusdam.",
-      "username": "Repudiandae voluptates nihil repellat impedit reiciendis."
-   }'
-`, os.Args[0])
-}
-
-func authLogoutUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] auth logout -body JSON
-
-Logout of the system
-    -body JSON: 
-
-Example:
-    %[1]s auth logout --body '{
-      "token": "Dolorum non."
+      "password": "Repudiandae voluptates nihil repellat impedit reiciendis.",
+      "username": "Laboriosam consequatur odio dolorem in voluptas id."
    }'
 `, os.Args[0])
 }
@@ -325,7 +301,7 @@ Show a task
     -id UINT32: ID of task to show
 
 Example:
-    %[1]s task show --id 650264136
+    %[1]s task show --id 1968463752
 `, os.Args[0])
 }
 
@@ -337,10 +313,10 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Quis qui non.",
-      "description": "Molestias est qui.",
-      "id": 1026861111,
-      "name": "Rerum dolor."
+      "created_by": "Voluptatem molestias est qui.",
+      "description": "Ducimus et consequatur aut omnis rerum.",
+      "id": 25464241,
+      "name": "Mollitia molestias mollitia odio incidunt."
    }'
 `, os.Args[0])
 }
@@ -354,8 +330,8 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Ab qui maiores.",
-      "name": "Est voluptas."
+      "description": "Qui maiores.",
+      "name": "Qui non optio molestias est voluptas et."
    }' --id 971170566
 `, os.Args[0])
 }

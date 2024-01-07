@@ -63,9 +63,3 @@ func (p *TaskPresenter) DoneOutput(task *domain.Task) *taskService.DoneResult {
 	res.Task = taskToOutput(task)
 	return res
 }
-
-// func (p *TaskPresenter) DeleteOutput(task *domain.Task) *taskService.DeleteResult {
-// 	res := &taskService.DeleteResult{}
-// 	res.Task = taskToOutput(task)
-// 	return res
-// }

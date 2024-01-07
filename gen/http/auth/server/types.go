@@ -31,25 +31,18 @@ type RegisterRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
-// LogoutRequestBody is the type of the "auth" service "logout" endpoint HTTP
-// request body.
-type LogoutRequestBody struct {
-	// JWT token to use for authentication
-	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
-}
-
 // LoginResponseBody is the type of the "auth" service "login" endpoint HTTP
 // response body.
 type LoginResponseBody struct {
 	// JWT token to use for authentication
-	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
+	Token string `form:"token" json:"token" xml:"token"`
 }
 
 // RegisterResponseBody is the type of the "auth" service "register" endpoint
 // HTTP response body.
 type RegisterResponseBody struct {
 	// JWT token to use for authentication
-	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
+	Token string `form:"token" json:"token" xml:"token"`
 }
 
 // NewLoginResponseBody builds the HTTP response body from the result of the
@@ -90,15 +83,6 @@ func NewRegisterPayload(body *RegisterRequestBody) *auth.RegisterPayload {
 	return v
 }
 
-// NewLogoutPayload builds a auth service logout endpoint payload.
-func NewLogoutPayload(body *LogoutRequestBody) *auth.LogoutPayload {
-	v := &auth.LogoutPayload{
-		Token: *body.Token,
-	}
-
-	return v
-}
-
 // ValidateLoginRequestBody runs the validations defined on LoginRequestBody
 func ValidateLoginRequestBody(body *LoginRequestBody) (err error) {
 	if body.Username == nil {
@@ -118,14 +102,6 @@ func ValidateRegisterRequestBody(body *RegisterRequestBody) (err error) {
 	}
 	if body.Password == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("password", "body"))
-	}
-	return
-}
-
-// ValidateLogoutRequestBody runs the validations defined on LogoutRequestBody
-func ValidateLogoutRequestBody(body *LogoutRequestBody) (err error) {
-	if body.Token == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
 	}
 	return
 }

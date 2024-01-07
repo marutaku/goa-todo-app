@@ -21,7 +21,6 @@ type Server struct {
 	Mounts   []*MountPoint
 	Login    http.Handler
 	Register http.Handler
-	Logout   http.Handler
 }
 
 // MountPoint holds information about the mounted endpoints.
@@ -53,11 +52,9 @@ func New(
 		Mounts: []*MountPoint{
 			{"Login", "POST", "/login"},
 			{"Register", "POST", "/register"},
-			{"Logout", "POST", "/logout"},
 		},
 		Login:    NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
 		Register: NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
-		Logout:   NewLogoutHandler(e.Logout, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -68,7 +65,6 @@ func (s *Server) Service() string { return "auth" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Login = m(s.Login)
 	s.Register = m(s.Register)
-	s.Logout = m(s.Logout)
 }
 
 // MethodNames returns the methods served.
@@ -78,7 +74,6 @@ func (s *Server) MethodNames() []string { return auth.MethodNames[:] }
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountLoginHandler(mux, h.Login)
 	MountRegisterHandler(mux, h.Register)
-	MountLogoutHandler(mux, h.Logout)
 }
 
 // Mount configures the mux to serve the auth endpoints.
@@ -111,7 +106,7 @@ func NewLoginHandler(
 	var (
 		decodeRequest  = DecodeLoginRequest(mux, decoder)
 		encodeResponse = EncodeLoginResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeLoginError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -167,57 +162,6 @@ func NewRegisterHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "register")
-		ctx = context.WithValue(ctx, goa.ServiceKey, "auth")
-		payload, err := decodeRequest(r)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		res, err := endpoint(ctx, payload)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		if err := encodeResponse(ctx, w, res); err != nil {
-			errhandler(ctx, w, err)
-		}
-	})
-}
-
-// MountLogoutHandler configures the mux to serve the "auth" service "logout"
-// endpoint.
-func MountLogoutHandler(mux goahttp.Muxer, h http.Handler) {
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
-	mux.Handle("POST", "/logout", f)
-}
-
-// NewLogoutHandler creates a HTTP handler which loads the HTTP request and
-// calls the "auth" service "logout" endpoint.
-func NewLogoutHandler(
-	endpoint goa.Endpoint,
-	mux goahttp.Muxer,
-	decoder func(*http.Request) goahttp.Decoder,
-	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
-	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(ctx context.Context, err error) goahttp.Statuser,
-) http.Handler {
-	var (
-		decodeRequest  = DecodeLogoutRequest(mux, decoder)
-		encodeResponse = EncodeLogoutResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
-	)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "logout")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "auth")
 		payload, err := decodeRequest(r)
 		if err != nil {
