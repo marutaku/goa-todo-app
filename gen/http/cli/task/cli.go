@@ -31,10 +31,10 @@ task (list|show|create|update|done|delete)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Laboriosam consequatur odio dolorem in voluptas id.",
-      "username": "A sed vitae."
+      "password": "A sed vitae.",
+      "username": "Similique est dolores vel aliquam a."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 779747781 --offset 2604982443 --created-by "Ut ducimus et consequatur aut." --name "Rerum dolor."` + "\n" +
+		os.Args[0] + ` task list --limit 100 --offset 0 --created-by "marutaku" --name "task1"` + "\n" +
 		""
 }
 
@@ -253,8 +253,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Laboriosam consequatur odio dolorem in voluptas id.",
-      "username": "A sed vitae."
+      "password": "A sed vitae.",
+      "username": "Similique est dolores vel aliquam a."
    }'
 `, os.Args[0])
 }
@@ -267,8 +267,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Praesentium suscipit dolor voluptatem.",
-      "username": "Tenetur enim illo non quibusdam."
+      "password": "Tenetur enim illo non quibusdam.",
+      "username": "Repudiandae voluptates nihil repellat impedit reiciendis."
    }'
 `, os.Args[0])
 }
@@ -281,7 +281,7 @@ Logout of the system
 
 Example:
     %[1]s auth logout --body '{
-      "token": "Minima voluptatem perferendis omnis mollitia molestias."
+      "token": "Dolorum non."
    }'
 `, os.Args[0])
 }
@@ -314,7 +314,7 @@ List all tasks
     -name STRING: 
 
 Example:
-    %[1]s task list --limit 779747781 --offset 2604982443 --created-by "Ut ducimus et consequatur aut." --name "Rerum dolor."
+    %[1]s task list --limit 100 --offset 0 --created-by "marutaku" --name "task1"
 `, os.Args[0])
 }
 
@@ -325,7 +325,7 @@ Show a task
     -id UINT32: ID of task to show
 
 Example:
-    %[1]s task show --id 2904217230
+    %[1]s task show --id 650264136
 `, os.Args[0])
 }
 
@@ -337,10 +337,10 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Voluptatum eaque et harum minima qui quo.",
-      "description": "Voluptatem corporis error optio ut.",
-      "id": 1533579072,
-      "name": "Maiores cumque iste delectus."
+      "created_by": "Quis qui non.",
+      "description": "Molestias est qui.",
+      "id": 1026861111,
+      "name": "Rerum dolor."
    }'
 `, os.Args[0])
 }
@@ -354,9 +354,9 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Mollitia quis.",
-      "name": "Velit recusandae odit dolores reprehenderit."
-   }' --id 4090597077
+      "description": "Ab qui maiores.",
+      "name": "Est voluptas."
+   }' --id 971170566
 `, os.Args[0])
 }
 
@@ -369,8 +369,8 @@ Mark a task as done
 
 Example:
     %[1]s task done --body '{
-      "done_by": "Officia quo veritatis fuga."
-   }' --id 4101334422
+      "done_by": "Est voluptatem."
+   }' --id 1939311253
 `, os.Args[0])
 }
 
@@ -381,6 +381,6 @@ Delete a task
     -id UINT32: ID of task to delete
 
 Example:
-    %[1]s task delete --id 1948469439
+    %[1]s task delete --id 3044408807
 `, os.Args[0])
 }

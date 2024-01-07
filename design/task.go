@@ -9,15 +9,19 @@ var _ = Service("task", func() {
 		Payload(func() {
 			Attribute("limit", UInt32, "Maximum number of tasks to return", func() {
 				Default(20)
+				Example(100)
 			})
 			Attribute("offset", UInt32, "Offset into the list of tasks to start at", func() {
 				Default(0)
+				Example(0)
 			})
 			Attribute("createdBy", String, "Filter by creator", func() {
 				Default("")
+				Example("marutaku")
 			})
 			Attribute("name", String, "Filter by name", func() {
 				Default("")
+				Example("task1")
 			})
 		})
 		Result(func() {
