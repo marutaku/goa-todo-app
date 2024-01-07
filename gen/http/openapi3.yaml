@@ -65,7 +65,7 @@ paths:
                             example:
                                 token: Tenetur enim illo non quibusdam.
                 "400":
-                    description: 'register_failed: Bad Request response.'
+                    description: 'register_failed: Username already exists'
                     content:
                         application/json:
                             schema:

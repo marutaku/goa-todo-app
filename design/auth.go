@@ -37,7 +37,9 @@ var _ = Service("auth", func() {
 		HTTP(func() {
 			POST("/register")
 			Response(StatusOK)
-			Response("register_failed", StatusBadRequest)
+			Response("register_failed", StatusBadRequest, func() {
+				Description("Username already exists")
+			})
 		})
 	})
 	// Method("logout", func() {
