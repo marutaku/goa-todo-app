@@ -45,6 +45,20 @@ type RegisterResponseBody struct {
 	Token string `form:"token" json:"token" xml:"token"`
 }
 
+// LoginLoginFailedResponseBody is the type of the "auth" service "login"
+// endpoint HTTP response body for the "login_failed" error.
+type LoginLoginFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// RegisterRegisterFailedResponseBody is the type of the "auth" service
+// "register" endpoint HTTP response body for the "register_failed" error.
+type RegisterRegisterFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
 // NewLoginResponseBody builds the HTTP response body from the result of the
 // "login" endpoint of the "auth" service.
 func NewLoginResponseBody(res *auth.LoginResult) *LoginResponseBody {
@@ -59,6 +73,24 @@ func NewLoginResponseBody(res *auth.LoginResult) *LoginResponseBody {
 func NewRegisterResponseBody(res *auth.RegisterResult) *RegisterResponseBody {
 	body := &RegisterResponseBody{
 		Token: res.Token,
+	}
+	return body
+}
+
+// NewLoginLoginFailedResponseBody builds the HTTP response body from the
+// result of the "login" endpoint of the "auth" service.
+func NewLoginLoginFailedResponseBody(res *auth.AuthFailed) *LoginLoginFailedResponseBody {
+	body := &LoginLoginFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewRegisterRegisterFailedResponseBody builds the HTTP response body from the
+// result of the "register" endpoint of the "auth" service.
+func NewRegisterRegisterFailedResponseBody(res *auth.AuthFailed) *RegisterRegisterFailedResponseBody {
+	body := &RegisterRegisterFailedResponseBody{
+		Message: res.Message,
 	}
 	return body
 }

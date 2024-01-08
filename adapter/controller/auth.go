@@ -38,7 +38,7 @@ func (c *authController) Login(ctx context.Context, params *authService.LoginPay
 	token, err := c.usecase.Login(ctx, params.Username, params.Password)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, authService.LoginFailed("login failed")
+			return nil, &authService.AuthFailed{Message: "User not found"}
 		}
 	}
 	return c.presenter.LoginOutput(token), nil
@@ -53,7 +53,7 @@ func (c *authController) Register(ctx context.Context, params *authService.Regis
 	if err != nil {
 		var authErr *usecase.AuthError
 		if errors.As(err, &authErr) {
-			return nil, authService.RegisterFailed(string(err.Error()))
+			return nil, &authService.AuthFailed{Message: authErr.Error()}
 		}
 	}
 	return c.presenter.RegisterOutput(token), nil

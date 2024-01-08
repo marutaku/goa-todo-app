@@ -301,7 +301,7 @@ Show a task
     -id UINT32: ID of task to show
 
 Example:
-    %[1]s task show --id 650264136
+    %[1]s task show --id 3668896785
 `, os.Args[0])
 }
 
@@ -313,10 +313,10 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Quis qui non.",
-      "description": "Molestias est qui.",
-      "id": 1026861111,
-      "name": "Rerum dolor."
+      "created_by": "Molestias est qui.",
+      "description": "Omnis rerum dolor.",
+      "id": 1252493658,
+      "name": "Odio incidunt ut ducimus et consequatur."
    }'
 `, os.Args[0])
 }
@@ -330,8 +330,8 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Ab qui maiores.",
-      "name": "Est voluptas."
+      "description": "Qui maiores.",
+      "name": "Qui non optio molestias est voluptas et."
    }' --id 971170566
 `, os.Args[0])
 }
