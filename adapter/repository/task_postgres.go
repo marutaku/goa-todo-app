@@ -24,11 +24,11 @@ type TaskRecord struct {
 	// When the todo was done in ISO format
 	DoneAt string `gorm:"default ''"`
 	// Who did the todo
-	DoneBy string `gorm:"default ''"`
+	DoneBy uint32 `gorm:"default ''"`
 	// When the todo was created in ISO format
 	CreatedAt string `gorm:"not null"`
 	// Who created the todo
-	CreatedBy string `gorm:"not null"`
+	CreatedBy uint32 `gorm:"not null"`
 }
 
 func (t *TaskRecord) ToDomain() (*domain.Task, error) {
@@ -46,15 +46,16 @@ func (t *TaskRecord) ToDomain() (*domain.Task, error) {
 	if err != nil {
 		return nil, err
 	}
+	doneBy := domain.UserId(t.DoneBy)
 	return domain.NewTask(
 		domain.TaskId(t.ID),
 		t.Name,
 		t.Description,
 		t.Done,
 		doneAt,
-		t.DoneBy,
+		&doneBy,
 		createdAt,
-		t.CreatedBy,
+		domain.UserId(t.CreatedBy),
 	)
 }
 
@@ -65,7 +66,7 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	}
 }
 
-func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, createdBy *string) ([]*domain.Task, error) {
+func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, createdBy domain.UserId) ([]*domain.Task, error) {
 	var taskRecords []*TaskRecord
 	criteria := &TaskRecord{}
 	if name != nil {
@@ -74,8 +75,8 @@ func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, 
 	if done != nil {
 		criteria.Done = *done
 	}
-	if createdBy != nil {
-		criteria.CreatedBy = *createdBy
+	if createdBy != 0 {
+		criteria.CreatedBy = createdBy.UInt32()
 	}
 	if err := t.db.WithContext(ctx).Where(criteria).Find(&taskRecords).Error; err != nil {
 		return nil, err

@@ -9,10 +9,10 @@ package client
 
 // LoginAuthPath returns the URL path to the auth service login HTTP endpoint.
 func LoginAuthPath() string {
-	return "/login"
+	return "/auth/login"
 }
 
 // RegisterAuthPath returns the URL path to the auth service register HTTP endpoint.
 func RegisterAuthPath() string {
-	return "/register"
+	return "/auth/register"
 }

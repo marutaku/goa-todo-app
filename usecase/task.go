@@ -20,7 +20,7 @@ type (
 		Name        *string
 		Description *string
 		Done        *bool
-		CreatedBy   *string
+		CreatedBy   domain.UserId
 	}
 	TaskCreateParams struct {
 		Name        string
@@ -56,9 +56,9 @@ func (t *taskInteractor) Create(ctx context.Context, params TaskCreateParams) (*
 		params.Description,
 		false,
 		nil,
-		"",
+		nil,
 		time.Now(),
-		"",
+		ctx.Value("user_id").(domain.UserId),
 	)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,6 @@ func (t *taskInteractor) Done(ctx context.Context, id uint32) (*domain.Task, err
 	task.Done = true
 	doneAt := time.Now()
 	task.DoneAt = &doneAt
-	// FIXME: set user name
-	task.DoneBy = "user"
+	task.DoneBy = ctx.Value("user_id").(*domain.UserId)
 	return t.repo.Update(ctx, task)
 }

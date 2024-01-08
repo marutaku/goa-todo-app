@@ -25,7 +25,7 @@ func (r *AuthRecord) ToDomain() (*domain.User, error) {
 		return nil, err
 	}
 	return domain.NewUser(
-		r.ID,
+		domain.UserId(r.ID),
 		r.Name,
 		r.Password,
 		createdAt,

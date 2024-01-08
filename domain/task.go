@@ -20,12 +20,12 @@ type Task struct {
 	// When the todo was done in ISO format
 	DoneAt *time.Time
 	// Who did the todo
-	DoneBy    string
+	DoneBy    *UserId
 	CreatedAt time.Time
-	CreatedBy string
+	CreatedBy UserId
 }
 
-func NewTask(id TaskId, name string, description string, done bool, doneAt *time.Time, doneBy string, createdAt time.Time, createdBy string) (*Task, error) {
+func NewTask(id TaskId, name string, description string, done bool, doneAt *time.Time, doneBy *UserId, createdAt time.Time, createdBy UserId) (*Task, error) {
 	return &Task{
 		ID:          id,
 		Name:        name,

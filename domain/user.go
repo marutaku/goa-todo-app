@@ -2,9 +2,15 @@ package domain
 
 import "time"
 
+type UserId uint32
+
+func (u UserId) UInt32() uint32 {
+	return uint32(u)
+}
+
 type User struct {
 	// Unique ID
-	ID uint32
+	ID UserId
 	// Name
 	Name string
 	// Hashed password of the user
@@ -12,7 +18,7 @@ type User struct {
 	CreatedAt time.Time
 }
 
-func NewUser(id uint32, name string, password string, createdAt time.Time) (*User, error) {
+func NewUser(id UserId, name string, password string, createdAt time.Time) (*User, error) {
 	return &User{
 		ID:        id,
 		Name:      name,

@@ -6,7 +6,7 @@ import (
 )
 
 type TaskRepositoryInterface interface {
-	FindAll(ctx context.Context, name *string, done *bool, createdBy *string) ([]*domain.Task, error)
+	FindAll(ctx context.Context, name *string, done *bool, createdBy domain.UserId) ([]*domain.Task, error)
 	FindOne(ctx context.Context, id domain.TaskId) (*domain.Task, error)
 	Create(ctx context.Context, task *domain.Task) (*domain.Task, error)
 	Update(ctx context.Context, task *domain.Task) (*domain.Task, error)

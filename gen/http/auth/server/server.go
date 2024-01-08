@@ -50,8 +50,8 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Login", "POST", "/login"},
-			{"Register", "POST", "/register"},
+			{"Login", "POST", "/auth/login"},
+			{"Register", "POST", "/auth/register"},
 		},
 		Login:    NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
 		Register: NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
@@ -90,7 +90,7 @@ func MountLoginHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/login", f)
+	mux.Handle("POST", "/auth/login", f)
 }
 
 // NewLoginHandler creates a HTTP handler which loads the HTTP request and
@@ -141,7 +141,7 @@ func MountRegisterHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/register", f)
+	mux.Handle("POST", "/auth/register", f)
 }
 
 // NewRegisterHandler creates a HTTP handler which loads the HTTP request and

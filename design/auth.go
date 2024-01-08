@@ -22,7 +22,7 @@ var _ = Service("auth", func() {
 			Required("token")
 		})
 		HTTP(func() {
-			POST("/login")
+			POST("/auth/login")
 			Response(StatusOK)
 			Response("login_failed", StatusUnauthorized)
 		})
@@ -40,7 +40,7 @@ var _ = Service("auth", func() {
 			Required("token")
 		})
 		HTTP(func() {
-			POST("/register")
+			POST("/auth/register")
 			Response(StatusOK)
 			Response("register_failed", StatusBadRequest, func() {
 				Description("Username already exists")

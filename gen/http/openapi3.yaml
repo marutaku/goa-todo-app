@@ -6,7 +6,7 @@ info:
 servers:
     - url: http://0.0.0.0:8000
 paths:
-    /login:
+    /auth/login:
         post:
             tags:
                 - auth
@@ -39,7 +39,7 @@ paths:
                                 $ref: '#/components/schemas/AuthFailed'
                             example:
                                 message: Minima dolorum non officiis minima voluptatem.
-    /register:
+    /auth/register:
         post:
             tags:
                 - auth

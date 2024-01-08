@@ -3,6 +3,7 @@ package presenter
 import (
 	"backend/domain"
 	taskService "backend/gen/task"
+	"strconv"
 	"time"
 )
 
@@ -18,16 +19,19 @@ func taskToOutput(task *domain.Task) *taskService.BackendStoredTask {
 		doneAtString = task.DoneAt.Format(time.RFC3339)
 	}
 	createdAtString := task.CreatedAt.Format(time.RFC3339)
-	return &taskService.BackendStoredTask{
+	storedTask := &taskService.BackendStoredTask{
 		ID:          uint32(task.ID),
 		Name:        task.Name,
 		Description: task.Description,
 		Done:        task.Done,
 		DoneAt:      doneAtString,
-		DoneBy:      task.DoneBy,
 		CreatedAt:   createdAtString,
-		CreatedBy:   task.CreatedBy,
+		CreatedBy:   strconv.FormatUint(uint64(task.CreatedBy), 10),
 	}
+	if task.DoneBy != nil {
+		storedTask.DoneBy = strconv.FormatUint(uint64(*task.DoneBy), 10)
+	}
+	return storedTask
 }
 
 func (p *TaskPresenter) ListOutput(tasks []*domain.Task) *taskService.ListResult {

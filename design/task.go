@@ -42,7 +42,6 @@ var _ = Service("task", func() {
 			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
-
 	Method("show", func() {
 		Description("Show a task")
 		Payload(func() {
@@ -62,7 +61,6 @@ var _ = Service("task", func() {
 			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
-
 	Method("create", func() {
 		Description("Create a task")
 		Payload(func() {

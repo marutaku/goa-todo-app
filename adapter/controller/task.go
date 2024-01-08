@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/adapter/presenter"
 	"backend/adapter/repository"
+	"backend/domain"
 	taskService "backend/gen/task"
 	"backend/infrastructure/database"
 	"backend/service"
@@ -10,6 +11,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 
 	"goa.design/goa/v3/security"
 	"gorm.io/gorm"
@@ -54,7 +56,11 @@ func (c *taskController) List(ctx context.Context, p *taskService.ListPayload) (
 	c.logger.Print("task.list")
 	criteria := usecase.TaskCriteria{}
 	if p.CreatedBy != "" {
-		criteria.CreatedBy = &p.CreatedBy
+		createdBy, err := strconv.ParseUint(p.CreatedBy, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		criteria.CreatedBy = domain.UserId(createdBy)
 	}
 	if p.Name != "" {
 		criteria.Name = &p.Name
