@@ -11,7 +11,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 
 	"goa.design/goa/v3/security"
 	"gorm.io/gorm"
@@ -33,17 +32,18 @@ func NewTaskController(logger *log.Logger) *taskController {
 	if err != nil {
 		log.Fatal(err)
 	}
-	repository := repository.NewTaskRepository(db)
+	taskRepository := repository.NewTaskRepository(db, logger)
+	userRepository := repository.NewUserRepository(db, logger)
 	return &taskController{
 		logger:      logger,
-		usecase:     usecase.NewTaskInteractor(repository),
-		authService: service.NewJwTAuthService(),
+		usecase:     usecase.NewTaskInteractor(taskRepository, userRepository),
+		authService: service.NewJwTAuthService(userRepository),
 		presenter:   presenter.NewTaskPresenter(),
 	}
 }
 
 func (c *taskController) JWTAuth(ctx context.Context, token string, schema *security.JWTScheme) (context.Context, error) {
-	userId, err := c.authService.VerifyToken(token)
+	userId, err := c.authService.VerifyToken(ctx, token)
 	if err != nil {
 		return nil, &taskService.AuthFailed{Message: err.Error()}
 	}
@@ -54,13 +54,8 @@ func (c *taskController) JWTAuth(ctx context.Context, token string, schema *secu
 // List all tasks
 func (c *taskController) List(ctx context.Context, p *taskService.ListPayload) (res *taskService.ListResult, err error) {
 	c.logger.Print("task.list")
-	criteria := usecase.TaskCriteria{}
-	if p.CreatedBy != "" {
-		createdBy, err := strconv.ParseUint(p.CreatedBy, 10, 32)
-		if err != nil {
-			return nil, err
-		}
-		criteria.CreatedBy = domain.UserId(createdBy)
+	criteria := usecase.TaskCriteria{
+		CreatedBy: domain.UserId(ctx.Value("userId").(uint32)),
 	}
 	if p.Name != "" {
 		criteria.Name = &p.Name

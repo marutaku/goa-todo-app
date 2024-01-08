@@ -54,7 +54,6 @@ func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 		values := req.URL.Query()
 		values.Add("limit", fmt.Sprintf("%v", p.Limit))
 		values.Add("offset", fmt.Sprintf("%v", p.Offset))
-		values.Add("createdBy", p.CreatedBy)
 		values.Add("name", p.Name)
 		req.URL.RawQuery = values.Encode()
 		return nil
@@ -65,7 +64,7 @@ func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
 // DecodeListResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -97,7 +96,7 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewListResultOK(&body)
 			return res, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body ListTokenVerificationFailedResponseBody
 				err  error
@@ -167,7 +166,7 @@ func EncodeShowRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
 // DecodeShowResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - "no_match" (type task.NoMatch): http.StatusNotFound
 //   - error: internal error
 func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
@@ -200,7 +199,7 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewShowResultOK(&body)
 			return res, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body ShowTokenVerificationFailedResponseBody
 				err  error
@@ -274,7 +273,7 @@ func EncodeCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // create endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeCreateResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -306,7 +305,7 @@ func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			}
 			res := NewCreateResultCreated(&body)
 			return res, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body CreateTokenVerificationFailedResponseBody
 				err  error
@@ -380,7 +379,7 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // update endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeUpdateResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -412,7 +411,7 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			}
 			res := NewUpdateResultOK(&body)
 			return res, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body UpdateTokenVerificationFailedResponseBody
 				err  error
@@ -486,7 +485,7 @@ func EncodeDoneRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
 // DecodeDoneResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -518,7 +517,7 @@ func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewDoneResultOK(&body)
 			return res, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body DoneTokenVerificationFailedResponseBody
 				err  error
@@ -588,7 +587,7 @@ func EncodeDeleteRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // delete endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeDeleteResponse may return the following errors:
-//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -607,7 +606,7 @@ func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 		switch resp.StatusCode {
 		case http.StatusOK:
 			return nil, nil
-		case http.StatusBadRequest:
+		case http.StatusUnauthorized:
 			var (
 				body DeleteTokenVerificationFailedResponseBody
 				err  error

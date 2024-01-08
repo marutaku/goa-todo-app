@@ -255,11 +255,10 @@ func NewDeleteTokenVerificationFailedResponseBody(res *task.AuthFailed) *DeleteT
 }
 
 // NewListPayload builds a task service list endpoint payload.
-func NewListPayload(limit uint32, offset uint32, createdBy string, name string, token *string) *task.ListPayload {
+func NewListPayload(limit uint32, offset uint32, name string, token *string) *task.ListPayload {
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
-	v.CreatedBy = createdBy
 	v.Name = name
 	v.Token = token
 

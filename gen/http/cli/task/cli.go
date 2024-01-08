@@ -34,7 +34,7 @@ func UsageExamples() string {
       "password": "Eaque tenetur.",
       "username": "Id eos repudiandae voluptates nihil repellat impedit."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 100 --offset 0 --created-by "marutaku" --name "task1" --token "Molestias est qui."` + "\n" +
+		os.Args[0] + ` task list --limit 100 --offset 0 --name "task1" --token "Molestias est qui."` + "\n" +
 		""
 }
 
@@ -58,12 +58,11 @@ func ParseEndpoint(
 
 		taskFlags = flag.NewFlagSet("task", flag.ContinueOnError)
 
-		taskListFlags         = flag.NewFlagSet("list", flag.ExitOnError)
-		taskListLimitFlag     = taskListFlags.String("limit", "20", "")
-		taskListOffsetFlag    = taskListFlags.String("offset", "", "")
-		taskListCreatedByFlag = taskListFlags.String("created-by", "", "")
-		taskListNameFlag      = taskListFlags.String("name", "", "")
-		taskListTokenFlag     = taskListFlags.String("token", "", "")
+		taskListFlags      = flag.NewFlagSet("list", flag.ExitOnError)
+		taskListLimitFlag  = taskListFlags.String("limit", "20", "")
+		taskListOffsetFlag = taskListFlags.String("offset", "", "")
+		taskListNameFlag   = taskListFlags.String("name", "", "")
+		taskListTokenFlag  = taskListFlags.String("token", "", "")
 
 		taskShowFlags     = flag.NewFlagSet("show", flag.ExitOnError)
 		taskShowIDFlag    = taskShowFlags.String("id", "REQUIRED", "ID of task to show")
@@ -200,7 +199,7 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				endpoint = c.List()
-				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag, *taskListCreatedByFlag, *taskListNameFlag, *taskListTokenFlag)
+				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag, *taskListNameFlag, *taskListTokenFlag)
 			case "show":
 				endpoint = c.Show()
 				data, err = taskc.BuildShowPayload(*taskShowIDFlag, *taskShowTokenFlag)
@@ -287,17 +286,16 @@ Additional help:
 `, os.Args[0])
 }
 func taskListUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32 -created-by STRING -name STRING -token STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32 -name STRING -token STRING
 
 List all tasks
     -limit UINT32: 
     -offset UINT32: 
-    -created-by STRING: 
     -name STRING: 
     -token STRING: 
 
 Example:
-    %[1]s task list --limit 100 --offset 0 --created-by "marutaku" --name "task1" --token "Molestias est qui."
+    %[1]s task list --limit 100 --offset 0 --name "task1" --token "Molestias est qui."
 `, os.Args[0])
 }
 

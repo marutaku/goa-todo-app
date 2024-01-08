@@ -20,10 +20,6 @@ var _ = Service("task", func() {
 				Default(0)
 				Example(0)
 			})
-			Attribute("createdBy", String, "Filter by creator", func() {
-				Default("")
-				Example("marutaku")
-			})
 			Attribute("name", String, "Filter by name", func() {
 				Default("")
 				Example("task1")
@@ -36,10 +32,9 @@ var _ = Service("task", func() {
 			GET("/tasks")
 			Param("limit")
 			Param("offset")
-			Param("createdBy")
 			Param("name")
 			Response(StatusOK)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 	Method("show", func() {
@@ -58,7 +53,7 @@ var _ = Service("task", func() {
 			GET("/tasks/{id}")
 			Response(StatusOK)
 			Response("no_match", StatusNotFound)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 	Method("create", func() {
@@ -77,7 +72,7 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			POST("/tasks")
 			Response(StatusCreated)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 	Method("update", func() {
@@ -96,7 +91,7 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			PUT("/tasks/{id}")
 			Response(StatusOK)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 	Method("done", func() {
@@ -114,7 +109,7 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			PUT("/tasks/{id}/done")
 			Response(StatusOK)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 	Method("delete", func() {
@@ -128,7 +123,7 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			DELETE("/tasks/{id}")
 			Response(StatusOK)
-			Response("token_verification_failed", StatusBadRequest)
+			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
 })

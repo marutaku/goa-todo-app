@@ -119,8 +119,6 @@ type ListPayload struct {
 	Limit uint32
 	// Offset into the list of tasks to start at
 	Offset uint32
-	// Filter by creator
-	CreatedBy string
 	// Filter by name
 	Name string
 }

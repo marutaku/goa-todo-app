@@ -26,7 +26,7 @@ func NewAuthController(logger *log.Logger) *authController {
 	if err != nil {
 		log.Fatal(err)
 	}
-	repo := repository.NewUserRepository(db)
+	repo := repository.NewUserRepository(db, logger)
 	return &authController{
 		logger:    logger,
 		usecase:   usecase.NewAuthInteractor(repo),
@@ -38,9 +38,16 @@ func (c *authController) Login(ctx context.Context, params *authService.LoginPay
 	c.logger.Print("auth.login")
 	token, err := c.usecase.Login(ctx, params.Username, params.Password)
 	if err != nil {
+		var authErr *domain.AuthError
 		if err == gorm.ErrRecordNotFound {
-			return nil, &authService.AuthFailed{Message: "User not found"}
+			c.logger.Print("auth.login failed with ErrRecordNotFound")
+			return nil, &authService.AuthFailed{Message: "Login failed with no user found"}
+		} else if errors.As(err, &authErr) {
+			c.logger.Print("auth.login failed with AuthError")
+			return nil, &authService.AuthFailed{Message: "login failed with invalid password"}
 		}
+		c.logger.Print("auth.login failed with unknown error")
+		return nil, err
 	}
 	return c.presenter.LoginOutput(token), nil
 }

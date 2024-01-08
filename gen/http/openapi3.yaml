@@ -100,16 +100,6 @@ paths:
                     default: 0
                     example: 0
                   example: 0
-                - name: createdBy
-                  in: query
-                  description: Filter by creator
-                  allowEmptyValue: true
-                  schema:
-                    type: string
-                    description: Filter by creator
-                    default: ""
-                    example: marutaku
-                  example: marutaku
                 - name: name
                   in: query
                   description: Filter by name
@@ -145,8 +135,8 @@ paths:
                                       doneBy: Nihil ipsam sunt autem accusamus beatae eaque.
                                       id: 1602291338
                                       name: Tempore et id labore ipsa ullam.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
@@ -190,8 +180,8 @@ paths:
                                     doneBy: Nihil ipsam sunt autem accusamus beatae eaque.
                                     id: 1602291338
                                     name: Tempore et id labore ipsa ullam.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
@@ -221,8 +211,8 @@ paths:
             responses:
                 "200":
                     description: OK response.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
@@ -265,8 +255,8 @@ paths:
                                     doneBy: Nihil ipsam sunt autem accusamus beatae eaque.
                                     id: 1602291338
                                     name: Tempore et id labore ipsa ullam.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
@@ -326,8 +316,8 @@ paths:
                                     doneBy: Nihil ipsam sunt autem accusamus beatae eaque.
                                     id: 1602291338
                                     name: Tempore et id labore ipsa ullam.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
@@ -379,8 +369,8 @@ paths:
                                     doneBy: Nihil ipsam sunt autem accusamus beatae eaque.
                                     id: 1602291338
                                     name: Tempore et id labore ipsa ullam.
-                "400":
-                    description: 'token_verification_failed: Bad Request response.'
+                "401":
+                    description: 'token_verification_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:

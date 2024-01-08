@@ -37,12 +37,11 @@ func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
 	return func(r *http.Request) (any, error) {
 		var (
-			limit     uint32
-			offset    uint32
-			createdBy string
-			name      string
-			token     *string
-			err       error
+			limit  uint32
+			offset uint32
+			name   string
+			token  *string
+			err    error
 		)
 		{
 			limitRaw := r.URL.Query().Get("limit")
@@ -66,10 +65,6 @@ func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 				offset = uint32(v)
 			}
 		}
-		createdByRaw := r.URL.Query().Get("createdBy")
-		if createdByRaw != "" {
-			createdBy = createdByRaw
-		}
 		nameRaw := r.URL.Query().Get("name")
 		if nameRaw != "" {
 			name = nameRaw
@@ -81,7 +76,7 @@ func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 		if err != nil {
 			return nil, err
 		}
-		payload := NewListPayload(limit, offset, createdBy, name, token)
+		payload := NewListPayload(limit, offset, name, token)
 		if payload.Token != nil {
 			if strings.Contains(*payload.Token, " ") {
 				// Remove authorization scheme prefix (e.g. "Bearer")
@@ -115,7 +110,7 @@ func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.
 				body = NewListTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		default:
 			return encodeError(ctx, w, v)
@@ -195,7 +190,7 @@ func EncodeShowError(encoder func(context.Context, http.ResponseWriter) goahttp.
 				body = NewShowTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		case "no_match":
 			var res task.NoMatch
@@ -284,7 +279,7 @@ func EncodeCreateError(encoder func(context.Context, http.ResponseWriter) goahtt
 				body = NewCreateTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		default:
 			return encodeError(ctx, w, v)
@@ -375,7 +370,7 @@ func EncodeUpdateError(encoder func(context.Context, http.ResponseWriter) goahtt
 				body = NewUpdateTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		default:
 			return encodeError(ctx, w, v)
@@ -470,7 +465,7 @@ func EncodeDoneError(encoder func(context.Context, http.ResponseWriter) goahttp.
 				body = NewDoneTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		default:
 			return encodeError(ctx, w, v)
@@ -547,7 +542,7 @@ func EncodeDeleteError(encoder func(context.Context, http.ResponseWriter) goahtt
 				body = NewDeleteTokenVerificationFailedResponseBody(res)
 			}
 			w.Header().Set("goa-error", res.GoaErrorName())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
 		default:
 			return encodeError(ctx, w, v)

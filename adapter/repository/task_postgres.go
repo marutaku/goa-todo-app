@@ -3,13 +3,15 @@ package repository
 import (
 	"backend/domain"
 	"context"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type TaskRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *log.Logger
 }
 
 type TaskRecord struct {
@@ -59,24 +61,24 @@ func (t *TaskRecord) ToDomain() (*domain.Task, error) {
 	)
 }
 
-func NewTaskRepository(db *gorm.DB) *TaskRepository {
+func NewTaskRepository(db *gorm.DB, logger *log.Logger) *TaskRepository {
 	db.AutoMigrate(&TaskRecord{})
 	return &TaskRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
 func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, createdBy domain.UserId) ([]*domain.Task, error) {
 	var taskRecords []*TaskRecord
-	criteria := &TaskRecord{}
+	criteria := &TaskRecord{
+		CreatedBy: createdBy.UInt32(),
+	}
 	if name != nil {
 		criteria.Name = *name
 	}
 	if done != nil {
 		criteria.Done = *done
-	}
-	if createdBy != 0 {
-		criteria.CreatedBy = createdBy.UInt32()
 	}
 	if err := t.db.WithContext(ctx).Where(criteria).Find(&taskRecords).Error; err != nil {
 		return nil, err

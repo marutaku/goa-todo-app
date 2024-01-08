@@ -1,7 +1,9 @@
 package service
 
 import (
+	"backend/adapter/repository"
 	"backend/domain"
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -12,6 +14,7 @@ import (
 
 type JWTAuthService struct {
 	secretKey string
+	userRepo  repository.UserRepositoryInterface
 }
 
 type JWTClaims struct {
@@ -19,9 +22,10 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func NewJwTAuthService() *JWTAuthService {
+func NewJwTAuthService(userRepo repository.UserRepositoryInterface) *JWTAuthService {
 	return &JWTAuthService{
 		secretKey: os.Getenv("ENCODED_SECRET_KEY"),
+		userRepo:  userRepo,
 	}
 }
 
@@ -57,10 +61,17 @@ func (s *JWTAuthService) DecodeJWTToken(tokenString string) (uint32, error) {
 	}
 }
 
-func (s *JWTAuthService) VerifyToken(tokenString string) (uint32, error) {
+func (s *JWTAuthService) VerifyToken(ctx context.Context, tokenString string) (uint32, error) {
 	userId, err := s.DecodeJWTToken(tokenString)
 	if err != nil {
 		return 0, err
+	}
+	fmt.Println(userId)
+	user, err := s.userRepo.FindById(ctx, domain.UserId(userId))
+	if err != nil {
+		return 0, err
+	} else if user == nil {
+		return 0, &domain.AuthError{Err: errors.New("invalid token")}
 	}
 	return userId, nil
 }

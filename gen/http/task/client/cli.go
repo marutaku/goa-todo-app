@@ -16,7 +16,7 @@ import (
 
 // BuildListPayload builds the payload for the task list endpoint from CLI
 // flags.
-func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreatedBy string, taskListName string, taskListToken string) (*task.ListPayload, error) {
+func BuildListPayload(taskListLimit string, taskListOffset string, taskListName string, taskListToken string) (*task.ListPayload, error) {
 	var err error
 	var limit uint32
 	{
@@ -40,12 +40,6 @@ func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreat
 			}
 		}
 	}
-	var createdBy string
-	{
-		if taskListCreatedBy != "" {
-			createdBy = taskListCreatedBy
-		}
-	}
 	var name string
 	{
 		if taskListName != "" {
@@ -61,7 +55,6 @@ func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreat
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
-	v.CreatedBy = createdBy
 	v.Name = name
 	v.Token = token
 

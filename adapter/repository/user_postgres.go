@@ -3,13 +3,15 @@ package repository
 import (
 	"backend/domain"
 	"context"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type UserRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *log.Logger
 }
 
 type AuthRecord struct {
@@ -32,9 +34,22 @@ func (r *AuthRecord) ToDomain() (*domain.User, error) {
 	)
 }
 
-func NewUserRepository(db *gorm.DB) *UserRepository {
+func NewUserRepository(db *gorm.DB, logger *log.Logger) *UserRepository {
 	db.AutoMigrate(&AuthRecord{})
-	return &UserRepository{db: db}
+	return &UserRepository{db: db, logger: logger}
+}
+
+func (r *UserRepository) FindById(ctx context.Context, id domain.UserId) (*domain.User, error) {
+	var record *AuthRecord
+	result := r.db.WithContext(ctx).Take(&record, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	user, err := record.ToDomain()
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (r *UserRepository) FindByName(ctx context.Context, name string) (*domain.User, error) {

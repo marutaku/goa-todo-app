@@ -34,7 +34,7 @@ func hashPassword(password string) string {
 func NewAuthInteractor(repo repository.UserRepositoryInterface) *authInteractor {
 	return &authInteractor{
 		repo:       repo,
-		jwtService: service.NewJwTAuthService(),
+		jwtService: service.NewJwTAuthService(repo),
 	}
 }
 
@@ -43,9 +43,11 @@ func (u *authInteractor) Login(ctx context.Context, name string, password string
 	user, err := u.repo.FindByName(ctx, name)
 	if err != nil {
 		return "", err
+	} else if user == nil {
+		return "", &domain.AuthError{Err: errors.New("login failed")}
 	}
 	if user.Password != hashedPassword {
-		return "", &domain.AuthError{Err: errors.New("invalid password")}
+		return "", &domain.AuthError{Err: errors.New("login failed")}
 	}
 	return u.jwtService.EncodeJWTToken(user)
 }
