@@ -31,10 +31,10 @@ task (list|show|create|update|done|delete)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` auth login --body '{
-      "password": "Dolorum laboriosam fugit nesciunt quas corrupti.",
-      "username": "Deleniti earum praesentium."
+      "password": "Eaque tenetur.",
+      "username": "Id eos repudiandae voluptates nihil repellat impedit."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 100 --offset 0 --created-by "marutaku" --name "task1"` + "\n" +
+		os.Args[0] + ` task list --limit 100 --offset 0 --created-by "marutaku" --name "task1" --token "Molestias est qui."` + "\n" +
 		""
 }
 
@@ -63,23 +63,29 @@ func ParseEndpoint(
 		taskListOffsetFlag    = taskListFlags.String("offset", "", "")
 		taskListCreatedByFlag = taskListFlags.String("created-by", "", "")
 		taskListNameFlag      = taskListFlags.String("name", "", "")
+		taskListTokenFlag     = taskListFlags.String("token", "", "")
 
-		taskShowFlags  = flag.NewFlagSet("show", flag.ExitOnError)
-		taskShowIDFlag = taskShowFlags.String("id", "REQUIRED", "ID of task to show")
+		taskShowFlags     = flag.NewFlagSet("show", flag.ExitOnError)
+		taskShowIDFlag    = taskShowFlags.String("id", "REQUIRED", "ID of task to show")
+		taskShowTokenFlag = taskShowFlags.String("token", "", "")
 
-		taskCreateFlags    = flag.NewFlagSet("create", flag.ExitOnError)
-		taskCreateBodyFlag = taskCreateFlags.String("body", "REQUIRED", "")
+		taskCreateFlags     = flag.NewFlagSet("create", flag.ExitOnError)
+		taskCreateBodyFlag  = taskCreateFlags.String("body", "REQUIRED", "")
+		taskCreateTokenFlag = taskCreateFlags.String("token", "", "")
 
-		taskUpdateFlags    = flag.NewFlagSet("update", flag.ExitOnError)
-		taskUpdateBodyFlag = taskUpdateFlags.String("body", "REQUIRED", "")
-		taskUpdateIDFlag   = taskUpdateFlags.String("id", "REQUIRED", "ID of task to update")
+		taskUpdateFlags     = flag.NewFlagSet("update", flag.ExitOnError)
+		taskUpdateBodyFlag  = taskUpdateFlags.String("body", "REQUIRED", "")
+		taskUpdateIDFlag    = taskUpdateFlags.String("id", "REQUIRED", "ID of task to update")
+		taskUpdateTokenFlag = taskUpdateFlags.String("token", "", "")
 
-		taskDoneFlags    = flag.NewFlagSet("done", flag.ExitOnError)
-		taskDoneBodyFlag = taskDoneFlags.String("body", "REQUIRED", "")
-		taskDoneIDFlag   = taskDoneFlags.String("id", "REQUIRED", "ID of task to mark as done")
+		taskDoneFlags     = flag.NewFlagSet("done", flag.ExitOnError)
+		taskDoneBodyFlag  = taskDoneFlags.String("body", "REQUIRED", "")
+		taskDoneIDFlag    = taskDoneFlags.String("id", "REQUIRED", "ID of task to mark as done")
+		taskDoneTokenFlag = taskDoneFlags.String("token", "", "")
 
-		taskDeleteFlags  = flag.NewFlagSet("delete", flag.ExitOnError)
-		taskDeleteIDFlag = taskDeleteFlags.String("id", "REQUIRED", "ID of task to delete")
+		taskDeleteFlags     = flag.NewFlagSet("delete", flag.ExitOnError)
+		taskDeleteIDFlag    = taskDeleteFlags.String("id", "REQUIRED", "ID of task to delete")
+		taskDeleteTokenFlag = taskDeleteFlags.String("token", "", "")
 	)
 	authFlags.Usage = authUsage
 	authLoginFlags.Usage = authLoginUsage
@@ -194,22 +200,22 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				endpoint = c.List()
-				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag, *taskListCreatedByFlag, *taskListNameFlag)
+				data, err = taskc.BuildListPayload(*taskListLimitFlag, *taskListOffsetFlag, *taskListCreatedByFlag, *taskListNameFlag, *taskListTokenFlag)
 			case "show":
 				endpoint = c.Show()
-				data, err = taskc.BuildShowPayload(*taskShowIDFlag)
+				data, err = taskc.BuildShowPayload(*taskShowIDFlag, *taskShowTokenFlag)
 			case "create":
 				endpoint = c.Create()
-				data, err = taskc.BuildCreatePayload(*taskCreateBodyFlag)
+				data, err = taskc.BuildCreatePayload(*taskCreateBodyFlag, *taskCreateTokenFlag)
 			case "update":
 				endpoint = c.Update()
-				data, err = taskc.BuildUpdatePayload(*taskUpdateBodyFlag, *taskUpdateIDFlag)
+				data, err = taskc.BuildUpdatePayload(*taskUpdateBodyFlag, *taskUpdateIDFlag, *taskUpdateTokenFlag)
 			case "done":
 				endpoint = c.Done()
-				data, err = taskc.BuildDonePayload(*taskDoneBodyFlag, *taskDoneIDFlag)
+				data, err = taskc.BuildDonePayload(*taskDoneBodyFlag, *taskDoneIDFlag, *taskDoneTokenFlag)
 			case "delete":
 				endpoint = c.Delete()
-				data, err = taskc.BuildDeletePayload(*taskDeleteIDFlag)
+				data, err = taskc.BuildDeletePayload(*taskDeleteIDFlag, *taskDeleteTokenFlag)
 			}
 		}
 	}
@@ -242,8 +248,8 @@ Login to the system
 
 Example:
     %[1]s auth login --body '{
-      "password": "Dolorum laboriosam fugit nesciunt quas corrupti.",
-      "username": "Deleniti earum praesentium."
+      "password": "Eaque tenetur.",
+      "username": "Id eos repudiandae voluptates nihil repellat impedit."
    }'
 `, os.Args[0])
 }
@@ -256,8 +262,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Repudiandae voluptates nihil repellat impedit reiciendis.",
-      "username": "Laboriosam consequatur odio dolorem in voluptas id."
+      "password": "Mollitia odio incidunt ut ducimus.",
+      "username": "Omnis mollitia."
    }'
 `, os.Args[0])
 }
@@ -281,82 +287,88 @@ Additional help:
 `, os.Args[0])
 }
 func taskListUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32 -created-by STRING -name STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task list -limit UINT32 -offset UINT32 -created-by STRING -name STRING -token STRING
 
 List all tasks
     -limit UINT32: 
     -offset UINT32: 
     -created-by STRING: 
     -name STRING: 
+    -token STRING: 
 
 Example:
-    %[1]s task list --limit 100 --offset 0 --created-by "marutaku" --name "task1"
+    %[1]s task list --limit 100 --offset 0 --created-by "marutaku" --name "task1" --token "Molestias est qui."
 `, os.Args[0])
 }
 
 func taskShowUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task show -id UINT32
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task show -id UINT32 -token STRING
 
 Show a task
     -id UINT32: ID of task to show
+    -token STRING: 
 
 Example:
-    %[1]s task show --id 3668896785
+    %[1]s task show --id 1002290988 --token "Voluptas et ab qui maiores cumque."
 `, os.Args[0])
 }
 
 func taskCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task create -body JSON
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task create -body JSON -token STRING
 
 Create a task
     -body JSON: 
+    -token STRING: 
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Molestias est qui.",
-      "description": "Omnis rerum dolor.",
-      "id": 1252493658,
-      "name": "Odio incidunt ut ducimus et consequatur."
-   }'
+      "created_by": "Minus et officia quo veritatis fuga.",
+      "description": "Odit dolores reprehenderit sit mollitia quis.",
+      "id": 3657027561,
+      "name": "Est velit."
+   }' --token "Sit ut numquam repellendus vel."
 `, os.Args[0])
 }
 
 func taskUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task update -body JSON -id UINT32
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task update -body JSON -id UINT32 -token STRING
 
 Update a task
     -body JSON: 
     -id UINT32: ID of task to update
+    -token STRING: 
 
 Example:
     %[1]s task update --body '{
-      "description": "Qui maiores.",
-      "name": "Qui non optio molestias est voluptas et."
-   }' --id 971170566
+      "description": "Aliquam doloremque dolore in maxime quidem consequuntur.",
+      "name": "Quis ratione id nesciunt suscipit vel et."
+   }' --id 1919994714 --token "Reprehenderit distinctio ut."
 `, os.Args[0])
 }
 
 func taskDoneUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task done -body JSON -id UINT32
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task done -body JSON -id UINT32 -token STRING
 
 Mark a task as done
     -body JSON: 
     -id UINT32: ID of task to mark as done
+    -token STRING: 
 
 Example:
     %[1]s task done --body '{
-      "done_by": "Est voluptatem."
-   }' --id 1939311253
+      "done_by": "Placeat accusamus odio consectetur debitis aut."
+   }' --id 350216255 --token "Voluptatum repellat."
 `, os.Args[0])
 }
 
 func taskDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] task delete -id UINT32
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] task delete -id UINT32 -token STRING
 
 Delete a task
     -id UINT32: ID of task to delete
+    -token STRING: 
 
 Example:
-    %[1]s task delete --id 3044408807
+    %[1]s task delete --id 1246750099 --token "Fugiat asperiores illo sed consequuntur voluptas."
 `, os.Args[0])
 }

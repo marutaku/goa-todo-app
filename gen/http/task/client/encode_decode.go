@@ -15,6 +15,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	goahttp "goa.design/goa/v3/http"
 )
@@ -42,6 +43,14 @@ func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 		if !ok {
 			return goahttp.ErrInvalidType("task", "list", "*task.ListPayload", v)
 		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
 		values := req.URL.Query()
 		values.Add("limit", fmt.Sprintf("%v", p.Limit))
 		values.Add("offset", fmt.Sprintf("%v", p.Offset))
@@ -55,6 +64,9 @@ func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // DecodeListResponse returns a decoder for responses returned by the task list
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
+// DecodeListResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -85,6 +97,20 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewListResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body ListTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "list", err)
+			}
+			err = ValidateListTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "list", err)
+			}
+			return nil, NewListTokenVerificationFailed(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "list", resp.StatusCode, string(body))
@@ -117,10 +143,31 @@ func (c *Client) BuildShowRequest(ctx context.Context, v any) (*http.Request, er
 	return req, nil
 }
 
+// EncodeShowRequest returns an encoder for requests sent to the task show
+// server.
+func EncodeShowRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
+	return func(req *http.Request, v any) error {
+		p, ok := v.(*task.ShowPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("task", "show", "*task.ShowPayload", v)
+		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		return nil
+	}
+}
+
 // DecodeShowResponse returns a decoder for responses returned by the task show
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
 // DecodeShowResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
 //   - "no_match" (type task.NoMatch): http.StatusNotFound
 //   - error: internal error
 func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
@@ -153,6 +200,20 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewShowResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body ShowTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "show", err)
+			}
+			err = ValidateShowTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "show", err)
+			}
+			return nil, NewShowTokenVerificationFailed(&body)
 		case http.StatusNotFound:
 			var (
 				body string
@@ -193,6 +254,14 @@ func EncodeCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 		if !ok {
 			return goahttp.ErrInvalidType("task", "create", "*task.CreatePayload", v)
 		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
 		body := NewCreateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("task", "create", err)
@@ -204,6 +273,9 @@ func EncodeCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // DecodeCreateResponse returns a decoder for responses returned by the task
 // create endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
+// DecodeCreateResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -234,6 +306,20 @@ func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			}
 			res := NewCreateResultCreated(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body CreateTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "create", err)
+			}
+			err = ValidateCreateTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "create", err)
+			}
+			return nil, NewCreateTokenVerificationFailed(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "create", resp.StatusCode, string(body))
@@ -274,6 +360,14 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 		if !ok {
 			return goahttp.ErrInvalidType("task", "update", "*task.UpdatePayload", v)
 		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
 		body := NewUpdateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("task", "update", err)
@@ -285,6 +379,9 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // DecodeUpdateResponse returns a decoder for responses returned by the task
 // update endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
+// DecodeUpdateResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -315,6 +412,20 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			}
 			res := NewUpdateResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body UpdateTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "update", err)
+			}
+			err = ValidateUpdateTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "update", err)
+			}
+			return nil, NewUpdateTokenVerificationFailed(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "update", resp.StatusCode, string(body))
@@ -355,6 +466,14 @@ func EncodeDoneRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 		if !ok {
 			return goahttp.ErrInvalidType("task", "done", "*task.DonePayload", v)
 		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
 		body := NewDoneRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("task", "done", err)
@@ -366,6 +485,9 @@ func EncodeDoneRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // DecodeDoneResponse returns a decoder for responses returned by the task done
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
+// DecodeDoneResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -396,6 +518,20 @@ func DecodeDoneResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewDoneResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body DoneTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "done", err)
+			}
+			err = ValidateDoneTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "done", err)
+			}
+			return nil, NewDoneTokenVerificationFailed(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "done", resp.StatusCode, string(body))
@@ -428,9 +564,32 @@ func (c *Client) BuildDeleteRequest(ctx context.Context, v any) (*http.Request, 
 	return req, nil
 }
 
+// EncodeDeleteRequest returns an encoder for requests sent to the task delete
+// server.
+func EncodeDeleteRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, any) error {
+	return func(req *http.Request, v any) error {
+		p, ok := v.(*task.DeletePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("task", "delete", "*task.DeletePayload", v)
+		}
+		if p.Token != nil {
+			head := *p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		return nil
+	}
+}
+
 // DecodeDeleteResponse returns a decoder for responses returned by the task
 // delete endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
+// DecodeDeleteResponse may return the following errors:
+//   - "token_verification_failed" (type *task.AuthFailed): http.StatusBadRequest
+//   - error: internal error
 func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
 		if restoreBody {
@@ -448,6 +607,20 @@ func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 		switch resp.StatusCode {
 		case http.StatusOK:
 			return nil, nil
+		case http.StatusBadRequest:
+			var (
+				body DeleteTokenVerificationFailedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "delete", err)
+			}
+			err = ValidateDeleteTokenVerificationFailedResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "delete", err)
+			}
+			return nil, NewDeleteTokenVerificationFailed(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "delete", resp.StatusCode, string(body))

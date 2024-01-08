@@ -38,12 +38,14 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (r *UserRepository) FindByName(ctx context.Context, name string) (*domain.User, error) {
-	var record AuthRecord
-	result := r.db.WithContext(ctx).Where("name = ?", name).First(&record)
+	var records []*AuthRecord
+	result := r.db.WithContext(ctx).Where("name = ?", name).Limit(1).Find(&records)
 	if result.Error != nil {
 		return nil, result.Error
+	} else if result.RowsAffected == 0 {
+		return nil, nil
 	}
-	user, err := record.ToDomain()
+	user, err := records[0].ToDomain()
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +58,10 @@ func (r *UserRepository) Create(ctx context.Context, user *domain.User) (*domain
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt.Format(time.RFC3339),
 	}
-	r.db.WithContext(ctx).Create(&record)
+	result := r.db.WithContext(ctx).Create(&record)
+	if result.Error != nil {
+		return nil, result.Error
+	}
 	user, err := record.ToDomain()
 	if err != nil {
 		return nil, err

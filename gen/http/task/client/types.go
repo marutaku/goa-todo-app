@@ -77,6 +77,51 @@ type DoneResponseBody struct {
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
+// ListTokenVerificationFailedResponseBody is the type of the "task" service
+// "list" endpoint HTTP response body for the "token_verification_failed" error.
+type ListTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// ShowTokenVerificationFailedResponseBody is the type of the "task" service
+// "show" endpoint HTTP response body for the "token_verification_failed" error.
+type ShowTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// CreateTokenVerificationFailedResponseBody is the type of the "task" service
+// "create" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type CreateTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// UpdateTokenVerificationFailedResponseBody is the type of the "task" service
+// "update" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type UpdateTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// DoneTokenVerificationFailedResponseBody is the type of the "task" service
+// "done" endpoint HTTP response body for the "token_verification_failed" error.
+type DoneTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// DeleteTokenVerificationFailedResponseBody is the type of the "task" service
+// "delete" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type DeleteTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
 // BackendStoredTaskCollectionResponseBody is used to define fields on response
 // body types.
 type BackendStoredTaskCollectionResponseBody []*BackendStoredTaskResponseBody
@@ -147,12 +192,32 @@ func NewListResultOK(body *ListResponseBody) *task.ListResult {
 	return v
 }
 
+// NewListTokenVerificationFailed builds a task service list endpoint
+// token_verification_failed error.
+func NewListTokenVerificationFailed(body *ListTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
 // NewShowResultOK builds a "task" service "show" endpoint result from a HTTP
 // "OK" response.
 func NewShowResultOK(body *ShowResponseBody) *task.ShowResult {
 	v := &task.ShowResult{}
 	if body.Task != nil {
 		v.Task = unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask(body.Task)
+	}
+
+	return v
+}
+
+// NewShowTokenVerificationFailed builds a task service show endpoint
+// token_verification_failed error.
+func NewShowTokenVerificationFailed(body *ShowTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
 	}
 
 	return v
@@ -176,6 +241,16 @@ func NewCreateResultCreated(body *CreateResponseBody) *task.CreateResult {
 	return v
 }
 
+// NewCreateTokenVerificationFailed builds a task service create endpoint
+// token_verification_failed error.
+func NewCreateTokenVerificationFailed(body *CreateTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
 // NewUpdateResultOK builds a "task" service "update" endpoint result from a
 // HTTP "OK" response.
 func NewUpdateResultOK(body *UpdateResponseBody) *task.UpdateResult {
@@ -187,12 +262,42 @@ func NewUpdateResultOK(body *UpdateResponseBody) *task.UpdateResult {
 	return v
 }
 
+// NewUpdateTokenVerificationFailed builds a task service update endpoint
+// token_verification_failed error.
+func NewUpdateTokenVerificationFailed(body *UpdateTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
 // NewDoneResultOK builds a "task" service "done" endpoint result from a HTTP
 // "OK" response.
 func NewDoneResultOK(body *DoneResponseBody) *task.DoneResult {
 	v := &task.DoneResult{}
 	if body.Task != nil {
 		v.Task = unmarshalBackendStoredTaskResponseBodyToTaskBackendStoredTask(body.Task)
+	}
+
+	return v
+}
+
+// NewDoneTokenVerificationFailed builds a task service done endpoint
+// token_verification_failed error.
+func NewDoneTokenVerificationFailed(body *DoneTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
+// NewDeleteTokenVerificationFailed builds a task service delete endpoint
+// token_verification_failed error.
+func NewDeleteTokenVerificationFailed(body *DeleteTokenVerificationFailedResponseBody) *task.AuthFailed {
+	v := &task.AuthFailed{
+		Message: *body.Message,
 	}
 
 	return v
@@ -244,6 +349,60 @@ func ValidateDoneResponseBody(body *DoneResponseBody) (err error) {
 		if err2 := ValidateBackendStoredTaskResponseBody(body.Task); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
+	}
+	return
+}
+
+// ValidateListTokenVerificationFailedResponseBody runs the validations defined
+// on list_token_verification_failed_response_body
+func ValidateListTokenVerificationFailedResponseBody(body *ListTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateShowTokenVerificationFailedResponseBody runs the validations defined
+// on show_token_verification_failed_response_body
+func ValidateShowTokenVerificationFailedResponseBody(body *ShowTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateCreateTokenVerificationFailedResponseBody runs the validations
+// defined on create_token_verification_failed_response_body
+func ValidateCreateTokenVerificationFailedResponseBody(body *CreateTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateUpdateTokenVerificationFailedResponseBody runs the validations
+// defined on update_token_verification_failed_response_body
+func ValidateUpdateTokenVerificationFailedResponseBody(body *UpdateTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateDoneTokenVerificationFailedResponseBody runs the validations defined
+// on done_token_verification_failed_response_body
+func ValidateDoneTokenVerificationFailedResponseBody(body *DoneTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateDeleteTokenVerificationFailedResponseBody runs the validations
+// defined on delete_token_verification_failed_response_body
+func ValidateDeleteTokenVerificationFailedResponseBody(body *DeleteTokenVerificationFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
 	}
 	return
 }

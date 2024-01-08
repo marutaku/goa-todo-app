@@ -16,7 +16,7 @@ import (
 
 // BuildListPayload builds the payload for the task list endpoint from CLI
 // flags.
-func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreatedBy string, taskListName string) (*task.ListPayload, error) {
+func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreatedBy string, taskListName string, taskListToken string) (*task.ListPayload, error) {
 	var err error
 	var limit uint32
 	{
@@ -52,18 +52,25 @@ func BuildListPayload(taskListLimit string, taskListOffset string, taskListCreat
 			name = taskListName
 		}
 	}
+	var token *string
+	{
+		if taskListToken != "" {
+			token = &taskListToken
+		}
+	}
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
 	v.CreatedBy = createdBy
 	v.Name = name
+	v.Token = token
 
 	return v, nil
 }
 
 // BuildShowPayload builds the payload for the task show endpoint from CLI
 // flags.
-func BuildShowPayload(taskShowID string) (*task.ShowPayload, error) {
+func BuildShowPayload(taskShowID string, taskShowToken string) (*task.ShowPayload, error) {
 	var err error
 	var id uint32
 	{
@@ -74,21 +81,34 @@ func BuildShowPayload(taskShowID string) (*task.ShowPayload, error) {
 			return nil, fmt.Errorf("invalid value for id, must be UINT32")
 		}
 	}
+	var token *string
+	{
+		if taskShowToken != "" {
+			token = &taskShowToken
+		}
+	}
 	v := &task.ShowPayload{}
 	v.ID = id
+	v.Token = token
 
 	return v, nil
 }
 
 // BuildCreatePayload builds the payload for the task create endpoint from CLI
 // flags.
-func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
+func BuildCreatePayload(taskCreateBody string, taskCreateToken string) (*task.CreatePayload, error) {
 	var err error
 	var body CreateRequestBody
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Molestias est qui.\",\n      \"description\": \"Omnis rerum dolor.\",\n      \"id\": 1252493658,\n      \"name\": \"Odio incidunt ut ducimus et consequatur.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Minus et officia quo veritatis fuga.\",\n      \"description\": \"Odit dolores reprehenderit sit mollitia quis.\",\n      \"id\": 3657027561,\n      \"name\": \"Est velit.\"\n   }'")
+		}
+	}
+	var token *string
+	{
+		if taskCreateToken != "" {
+			token = &taskCreateToken
 		}
 	}
 	v := &task.CreatePayload{
@@ -97,19 +117,20 @@ func BuildCreatePayload(taskCreateBody string) (*task.CreatePayload, error) {
 		Description: body.Description,
 		CreatedBy:   body.CreatedBy,
 	}
+	v.Token = token
 
 	return v, nil
 }
 
 // BuildUpdatePayload builds the payload for the task update endpoint from CLI
 // flags.
-func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.UpdatePayload, error) {
+func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string, taskUpdateToken string) (*task.UpdatePayload, error) {
 	var err error
 	var body UpdateRequestBody
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Qui maiores.\",\n      \"name\": \"Qui non optio molestias est voluptas et.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Aliquam doloremque dolore in maxime quidem consequuntur.\",\n      \"name\": \"Quis ratione id nesciunt suscipit vel et.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -121,24 +142,31 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string) (*task.Updat
 			return nil, fmt.Errorf("invalid value for id, must be UINT32")
 		}
 	}
+	var token *string
+	{
+		if taskUpdateToken != "" {
+			token = &taskUpdateToken
+		}
+	}
 	v := &task.UpdatePayload{
 		Name:        body.Name,
 		Description: body.Description,
 	}
 	v.ID = id
+	v.Token = token
 
 	return v, nil
 }
 
 // BuildDonePayload builds the payload for the task done endpoint from CLI
 // flags.
-func BuildDonePayload(taskDoneBody string, taskDoneID string) (*task.DonePayload, error) {
+func BuildDonePayload(taskDoneBody string, taskDoneID string, taskDoneToken string) (*task.DonePayload, error) {
 	var err error
 	var body DoneRequestBody
 	{
 		err = json.Unmarshal([]byte(taskDoneBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Est voluptatem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Placeat accusamus odio consectetur debitis aut.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -150,17 +178,24 @@ func BuildDonePayload(taskDoneBody string, taskDoneID string) (*task.DonePayload
 			return nil, fmt.Errorf("invalid value for id, must be UINT32")
 		}
 	}
+	var token *string
+	{
+		if taskDoneToken != "" {
+			token = &taskDoneToken
+		}
+	}
 	v := &task.DonePayload{
 		DoneBy: body.DoneBy,
 	}
 	v.ID = id
+	v.Token = token
 
 	return v, nil
 }
 
 // BuildDeletePayload builds the payload for the task delete endpoint from CLI
 // flags.
-func BuildDeletePayload(taskDeleteID string) (*task.DeletePayload, error) {
+func BuildDeletePayload(taskDeleteID string, taskDeleteToken string) (*task.DeletePayload, error) {
 	var err error
 	var id uint32
 	{
@@ -171,8 +206,15 @@ func BuildDeletePayload(taskDeleteID string) (*task.DeletePayload, error) {
 			return nil, fmt.Errorf("invalid value for id, must be UINT32")
 		}
 	}
+	var token *string
+	{
+		if taskDeleteToken != "" {
+			token = &taskDeleteToken
+		}
+	}
 	v := &task.DeletePayload{}
 	v.ID = id
+	v.Token = token
 
 	return v, nil
 }

@@ -77,6 +77,51 @@ type DoneResponseBody struct {
 	Task *BackendStoredTaskResponseBody `form:"task,omitempty" json:"task,omitempty" xml:"task,omitempty"`
 }
 
+// ListTokenVerificationFailedResponseBody is the type of the "task" service
+// "list" endpoint HTTP response body for the "token_verification_failed" error.
+type ListTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// ShowTokenVerificationFailedResponseBody is the type of the "task" service
+// "show" endpoint HTTP response body for the "token_verification_failed" error.
+type ShowTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// CreateTokenVerificationFailedResponseBody is the type of the "task" service
+// "create" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type CreateTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// UpdateTokenVerificationFailedResponseBody is the type of the "task" service
+// "update" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type UpdateTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// DoneTokenVerificationFailedResponseBody is the type of the "task" service
+// "done" endpoint HTTP response body for the "token_verification_failed" error.
+type DoneTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// DeleteTokenVerificationFailedResponseBody is the type of the "task" service
+// "delete" endpoint HTTP response body for the "token_verification_failed"
+// error.
+type DeleteTokenVerificationFailedResponseBody struct {
+	// Error message
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
 // BackendStoredTaskCollectionResponseBody is used to define fields on response
 // body types.
 type BackendStoredTaskCollectionResponseBody []*BackendStoredTaskResponseBody
@@ -155,62 +200,122 @@ func NewDoneResponseBody(res *task.DoneResult) *DoneResponseBody {
 	return body
 }
 
+// NewListTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "list" endpoint of the "task" service.
+func NewListTokenVerificationFailedResponseBody(res *task.AuthFailed) *ListTokenVerificationFailedResponseBody {
+	body := &ListTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewShowTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "show" endpoint of the "task" service.
+func NewShowTokenVerificationFailedResponseBody(res *task.AuthFailed) *ShowTokenVerificationFailedResponseBody {
+	body := &ShowTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewCreateTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "create" endpoint of the "task" service.
+func NewCreateTokenVerificationFailedResponseBody(res *task.AuthFailed) *CreateTokenVerificationFailedResponseBody {
+	body := &CreateTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewUpdateTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "update" endpoint of the "task" service.
+func NewUpdateTokenVerificationFailedResponseBody(res *task.AuthFailed) *UpdateTokenVerificationFailedResponseBody {
+	body := &UpdateTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewDoneTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "done" endpoint of the "task" service.
+func NewDoneTokenVerificationFailedResponseBody(res *task.AuthFailed) *DoneTokenVerificationFailedResponseBody {
+	body := &DoneTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewDeleteTokenVerificationFailedResponseBody builds the HTTP response body
+// from the result of the "delete" endpoint of the "task" service.
+func NewDeleteTokenVerificationFailedResponseBody(res *task.AuthFailed) *DeleteTokenVerificationFailedResponseBody {
+	body := &DeleteTokenVerificationFailedResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
 // NewListPayload builds a task service list endpoint payload.
-func NewListPayload(limit uint32, offset uint32, createdBy string, name string) *task.ListPayload {
+func NewListPayload(limit uint32, offset uint32, createdBy string, name string, token *string) *task.ListPayload {
 	v := &task.ListPayload{}
 	v.Limit = limit
 	v.Offset = offset
 	v.CreatedBy = createdBy
 	v.Name = name
+	v.Token = token
 
 	return v
 }
 
 // NewShowPayload builds a task service show endpoint payload.
-func NewShowPayload(id uint32) *task.ShowPayload {
+func NewShowPayload(id uint32, token *string) *task.ShowPayload {
 	v := &task.ShowPayload{}
 	v.ID = id
+	v.Token = token
 
 	return v
 }
 
 // NewCreatePayload builds a task service create endpoint payload.
-func NewCreatePayload(body *CreateRequestBody) *task.CreatePayload {
+func NewCreatePayload(body *CreateRequestBody, token *string) *task.CreatePayload {
 	v := &task.CreatePayload{
 		ID:          body.ID,
 		Name:        *body.Name,
 		Description: body.Description,
 		CreatedBy:   *body.CreatedBy,
 	}
+	v.Token = token
 
 	return v
 }
 
 // NewUpdatePayload builds a task service update endpoint payload.
-func NewUpdatePayload(body *UpdateRequestBody, id uint32) *task.UpdatePayload {
+func NewUpdatePayload(body *UpdateRequestBody, id uint32, token *string) *task.UpdatePayload {
 	v := &task.UpdatePayload{
 		Name:        body.Name,
 		Description: body.Description,
 	}
 	v.ID = id
+	v.Token = token
 
 	return v
 }
 
 // NewDonePayload builds a task service done endpoint payload.
-func NewDonePayload(body *DoneRequestBody, id uint32) *task.DonePayload {
+func NewDonePayload(body *DoneRequestBody, id uint32, token *string) *task.DonePayload {
 	v := &task.DonePayload{
 		DoneBy: *body.DoneBy,
 	}
 	v.ID = id
+	v.Token = token
 
 	return v
 }
 
 // NewDeletePayload builds a task service delete endpoint payload.
-func NewDeletePayload(id uint32) *task.DeletePayload {
+func NewDeletePayload(id uint32, token *string) *task.DeletePayload {
 	v := &task.DeletePayload{}
 	v.ID = id
+	v.Token = token
 
 	return v
 }

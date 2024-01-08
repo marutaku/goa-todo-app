@@ -9,6 +9,8 @@ package task
 
 import (
 	"context"
+
+	"goa.design/goa/v3/security"
 )
 
 // The task service manages task lists
@@ -25,6 +27,12 @@ type Service interface {
 	Done(context.Context, *DonePayload) (res *DoneResult, err error)
 	// Delete a task
 	Delete(context.Context, *DeletePayload) (err error)
+}
+
+// Auther defines the authorization functions to be implemented by the service.
+type Auther interface {
+	// JWTAuth implements the authorization logic for the JWT security scheme.
+	JWTAuth(ctx context.Context, token string, schema *security.JWTScheme) (context.Context, error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -61,6 +69,8 @@ type BackendStoredTaskCollection []*BackendStoredTask
 
 // CreatePayload is the payload type of the task service create method.
 type CreatePayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// ID of task to create
 	ID *uint32
 	// Name of the task
@@ -79,12 +89,16 @@ type CreateResult struct {
 
 // DeletePayload is the payload type of the task service delete method.
 type DeletePayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// ID of task to delete
 	ID uint32
 }
 
 // DonePayload is the payload type of the task service done method.
 type DonePayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// ID of task to mark as done
 	ID uint32
 	// Who did the task
@@ -99,6 +113,8 @@ type DoneResult struct {
 
 // ListPayload is the payload type of the task service list method.
 type ListPayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// Maximum number of tasks to return
 	Limit uint32
 	// Offset into the list of tasks to start at
@@ -117,6 +133,8 @@ type ListResult struct {
 
 // ShowPayload is the payload type of the task service show method.
 type ShowPayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// ID of task to show
 	ID uint32
 }
@@ -129,6 +147,8 @@ type ShowResult struct {
 
 // UpdatePayload is the payload type of the task service update method.
 type UpdatePayload struct {
+	// JWT token used to perform authorization
+	Token *string
 	// ID of task to update
 	ID uint32
 	// Name of the task
@@ -143,8 +163,30 @@ type UpdateResult struct {
 	Task *BackendStoredTask
 }
 
+type AuthFailed struct {
+	// Error message
+	Message string
+}
+
 // No task matched given criteria
 type NoMatch string
+
+// Error returns an error description.
+func (e *AuthFailed) Error() string {
+	return ""
+}
+
+// ErrorName returns "auth_failed".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e *AuthFailed) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "auth_failed".
+func (e *AuthFailed) GoaErrorName() string {
+	return "token_verification_failed"
+}
 
 // Error returns an error description.
 func (e NoMatch) Error() string {

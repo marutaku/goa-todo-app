@@ -14,6 +14,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
@@ -40,6 +41,7 @@ func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			offset    uint32
 			createdBy string
 			name      string
+			token     *string
 			err       error
 		)
 		{
@@ -72,12 +74,52 @@ func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 		if nameRaw != "" {
 			name = nameRaw
 		}
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewListPayload(limit, offset, createdBy, name)
+		payload := NewListPayload(limit, offset, createdBy, name, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
+	}
+}
+
+// EncodeListError returns an encoder for errors returned by the list task
+// endpoint.
+func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewListTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
 	}
 }
 
@@ -98,8 +140,9 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
 	return func(r *http.Request) (any, error) {
 		var (
-			id  uint32
-			err error
+			id    uint32
+			token *string
+			err   error
 
 			params = mux.Vars(r)
 		)
@@ -111,10 +154,21 @@ func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			}
 			id = uint32(v)
 		}
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewShowPayload(id)
+		payload := NewShowPayload(id, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
 	}
@@ -130,6 +184,19 @@ func EncodeShowError(encoder func(context.Context, http.ResponseWriter) goahttp.
 			return encodeError(ctx, w, v)
 		}
 		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewShowTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
 		case "no_match":
 			var res task.NoMatch
 			errors.As(v, &res)
@@ -175,9 +242,53 @@ func DecodeCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		if err != nil {
 			return nil, err
 		}
-		payload := NewCreatePayload(&body)
+
+		var (
+			token *string
+		)
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
+		payload := NewCreatePayload(&body, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
+	}
+}
+
+// EncodeCreateError returns an encoder for errors returned by the create task
+// endpoint.
+func EncodeCreateError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewCreateTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
 	}
 }
 
@@ -210,7 +321,8 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		}
 
 		var (
-			id uint32
+			id    uint32
+			token *string
 
 			params = mux.Vars(r)
 		)
@@ -222,12 +334,52 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 			}
 			id = uint32(v)
 		}
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewUpdatePayload(&body, id)
+		payload := NewUpdatePayload(&body, id, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
+	}
+}
+
+// EncodeUpdateError returns an encoder for errors returned by the update task
+// endpoint.
+func EncodeUpdateError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewUpdateTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
 	}
 }
 
@@ -264,7 +416,8 @@ func DecodeDoneRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 		}
 
 		var (
-			id uint32
+			id    uint32
+			token *string
 
 			params = mux.Vars(r)
 		)
@@ -276,12 +429,52 @@ func DecodeDoneRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 			}
 			id = uint32(v)
 		}
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewDonePayload(&body, id)
+		payload := NewDonePayload(&body, id, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
+	}
+}
+
+// EncodeDoneError returns an encoder for errors returned by the done task
+// endpoint.
+func EncodeDoneError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewDoneTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
 	}
 }
 
@@ -299,8 +492,9 @@ func EncodeDeleteResponse(encoder func(context.Context, http.ResponseWriter) goa
 func DecodeDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
 	return func(r *http.Request) (any, error) {
 		var (
-			id  uint32
-			err error
+			id    uint32
+			token *string
+			err   error
 
 			params = mux.Vars(r)
 		)
@@ -312,12 +506,52 @@ func DecodeDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 			}
 			id = uint32(v)
 		}
+		tokenRaw := r.Header.Get("Authorization")
+		if tokenRaw != "" {
+			token = &tokenRaw
+		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewDeletePayload(id)
+		payload := NewDeletePayload(id, token)
+		if payload.Token != nil {
+			if strings.Contains(*payload.Token, " ") {
+				// Remove authorization scheme prefix (e.g. "Bearer")
+				cred := strings.SplitN(*payload.Token, " ", 2)[1]
+				payload.Token = &cred
+			}
+		}
 
 		return payload, nil
+	}
+}
+
+// EncodeDeleteError returns an encoder for errors returned by the delete task
+// endpoint.
+func EncodeDeleteError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "token_verification_failed":
+			var res *task.AuthFailed
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewDeleteTokenVerificationFailedResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
 	}
 }
 

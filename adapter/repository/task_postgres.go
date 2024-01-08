@@ -3,7 +3,6 @@ package repository
 import (
 	"backend/domain"
 	"context"
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -110,7 +109,6 @@ func (t *TaskRepository) Create(ctx context.Context, newTask *domain.Task) (*dom
 	if err := t.db.WithContext(ctx).Create(&taskRecord).Error; err != nil {
 		return nil, err
 	}
-	fmt.Println(taskRecord)
 	return taskRecord.ToDomain()
 }
 

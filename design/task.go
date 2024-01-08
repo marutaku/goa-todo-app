@@ -4,9 +4,14 @@ import . "goa.design/goa/v3/dsl"
 
 var _ = Service("task", func() {
 	Description("The task service manages task lists")
+	Error("token_verification_failed", AuthFailedErrorResponse)
+	Security(JWT, func() {
+		Scope("api:read")
+	})
 	Method("list", func() {
 		Description("List all tasks")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("limit", UInt32, "Maximum number of tasks to return", func() {
 				Default(20)
 				Example(100)
@@ -34,12 +39,14 @@ var _ = Service("task", func() {
 			Param("createdBy")
 			Param("name")
 			Response(StatusOK)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 
 	Method("show", func() {
 		Description("Show a task")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("id", UInt32, "ID of task to show")
 			Required("id")
 		})
@@ -52,12 +59,14 @@ var _ = Service("task", func() {
 			GET("/tasks/{id}")
 			Response(StatusOK)
 			Response("no_match", StatusNotFound)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 
 	Method("create", func() {
 		Description("Create a task")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("id", UInt32, "ID of task to create")
 			Attribute("name", String, "Name of the task")
 			Attribute("description", String, "Description of the task")
@@ -70,11 +79,13 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			POST("/tasks")
 			Response(StatusCreated)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 	Method("update", func() {
 		Description("Update a task")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("id", UInt32, "ID of task to update")
 			Attribute("name", String, "Name of the task")
 			Attribute("description", String, "Description of the task")
@@ -87,11 +98,13 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			PUT("/tasks/{id}")
 			Response(StatusOK)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 	Method("done", func() {
 		Description("Mark a task as done")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("id", UInt32, "ID of task to mark as done")
 			Attribute("done_by", String, "Who did the task")
 			Required("id", "done_by")
@@ -103,11 +116,13 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			PUT("/tasks/{id}/done")
 			Response(StatusOK)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 	Method("delete", func() {
 		Description("Delete a task")
 		Payload(func() {
+			Token("token", String, "JWT token used to perform authorization")
 			Attribute("id", UInt32, "ID of task to delete")
 			Required("id")
 		})
@@ -115,6 +130,7 @@ var _ = Service("task", func() {
 		HTTP(func() {
 			DELETE("/tasks/{id}")
 			Response(StatusOK)
+			Response("token_verification_failed", StatusBadRequest)
 		})
 	})
 })

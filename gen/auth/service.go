@@ -76,5 +76,5 @@ func (e *AuthFailed) ErrorName() string {
 
 // GoaErrorName returns "auth_failed".
 func (e *AuthFailed) GoaErrorName() string {
-	return "login_failed"
+	return "token_verification_failed"
 }

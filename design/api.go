@@ -4,7 +4,7 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
-var Auth = JWTSecurity("jwt", func() {
+var JWT = JWTSecurity("jwt", func() {
 	Description("JWT Authentication for the API")
 	Scope("api:read", "Provides read access")
 	Scope("api:write", "Provides write access")
@@ -71,6 +71,7 @@ var StoredTask = ResultType("applicaiton/vnd.backend.stored-task", func() {
 
 var _ = API("Task", func() {
 	Title("Task Service")
+	Error("token_verification_failed", AuthFailedErrorResponse, "Token verification failed")
 	Description("Service for managing tasks")
 	Server("task", func() {
 		Host("local", func() {

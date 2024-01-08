@@ -5,20 +5,23 @@ import (
 	"backend/adapter/repository"
 	taskService "backend/gen/task"
 	"backend/infrastructure/database"
+	"backend/service"
 	"backend/usecase"
 	"context"
 	"fmt"
 	"log"
 
+	"goa.design/goa/v3/security"
 	"gorm.io/gorm"
 )
 
 // task service example implementation.
 // The example methods log the requests and return zero values.
 type taskController struct {
-	logger    *log.Logger
-	usecase   usecase.TaskUseCase
-	presenter *presenter.TaskPresenter
+	logger      *log.Logger
+	usecase     usecase.TaskUseCase
+	authService *service.JWTAuthService
+	presenter   *presenter.TaskPresenter
 }
 
 // NewTask returns the task service implementation.
@@ -30,10 +33,20 @@ func NewTaskController(logger *log.Logger) *taskController {
 	}
 	repository := repository.NewTaskRepository(db)
 	return &taskController{
-		logger:    logger,
-		usecase:   usecase.NewTaskInteractor(repository),
-		presenter: presenter.NewTaskPresenter(),
+		logger:      logger,
+		usecase:     usecase.NewTaskInteractor(repository),
+		authService: service.NewJwTAuthService(),
+		presenter:   presenter.NewTaskPresenter(),
 	}
+}
+
+func (c *taskController) JWTAuth(ctx context.Context, token string, schema *security.JWTScheme) (context.Context, error) {
+	userId, err := c.authService.VerifyToken(token)
+	if err != nil {
+		return nil, &taskService.AuthFailed{Message: err.Error()}
+	}
+	ctx = context.WithValue(ctx, "userId", userId)
+	return ctx, nil
 }
 
 // List all tasks

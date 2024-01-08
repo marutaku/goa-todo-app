@@ -36,6 +36,9 @@ func NewClient(list, show, create, update, done, delete_ goa.Endpoint) *Client {
 }
 
 // List calls the "list" endpoint of the "task" service.
+// List may return the following errors:
+//   - "token_verification_failed" (type *AuthFailed)
+//   - error: internal error
 func (c *Client) List(ctx context.Context, p *ListPayload) (res *ListResult, err error) {
 	var ires any
 	ires, err = c.ListEndpoint(ctx, p)
@@ -48,6 +51,7 @@ func (c *Client) List(ctx context.Context, p *ListPayload) (res *ListResult, err
 // Show calls the "show" endpoint of the "task" service.
 // Show may return the following errors:
 //   - "no_match" (type NoMatch)
+//   - "token_verification_failed" (type *AuthFailed)
 //   - error: internal error
 func (c *Client) Show(ctx context.Context, p *ShowPayload) (res *ShowResult, err error) {
 	var ires any
@@ -59,6 +63,9 @@ func (c *Client) Show(ctx context.Context, p *ShowPayload) (res *ShowResult, err
 }
 
 // Create calls the "create" endpoint of the "task" service.
+// Create may return the following errors:
+//   - "token_verification_failed" (type *AuthFailed)
+//   - error: internal error
 func (c *Client) Create(ctx context.Context, p *CreatePayload) (res *CreateResult, err error) {
 	var ires any
 	ires, err = c.CreateEndpoint(ctx, p)
@@ -71,6 +78,7 @@ func (c *Client) Create(ctx context.Context, p *CreatePayload) (res *CreateResul
 // Update calls the "update" endpoint of the "task" service.
 // Update may return the following errors:
 //   - "no_match" (type NoMatch)
+//   - "token_verification_failed" (type *AuthFailed)
 //   - error: internal error
 func (c *Client) Update(ctx context.Context, p *UpdatePayload) (res *UpdateResult, err error) {
 	var ires any
@@ -84,6 +92,7 @@ func (c *Client) Update(ctx context.Context, p *UpdatePayload) (res *UpdateResul
 // Done calls the "done" endpoint of the "task" service.
 // Done may return the following errors:
 //   - "no_match" (type NoMatch)
+//   - "token_verification_failed" (type *AuthFailed)
 //   - error: internal error
 func (c *Client) Done(ctx context.Context, p *DonePayload) (res *DoneResult, err error) {
 	var ires any
@@ -97,6 +106,7 @@ func (c *Client) Done(ctx context.Context, p *DonePayload) (res *DoneResult, err
 // Delete calls the "delete" endpoint of the "task" service.
 // Delete may return the following errors:
 //   - "no_match" (type NoMatch)
+//   - "token_verification_failed" (type *AuthFailed)
 //   - error: internal error
 func (c *Client) Delete(ctx context.Context, p *DeletePayload) (err error) {
 	_, err = c.DeleteEndpoint(ctx, p)

@@ -126,7 +126,7 @@ func NewListHandler(
 	var (
 		decodeRequest  = DecodeListRequest(mux, decoder)
 		encodeResponse = EncodeListResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeListError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -228,7 +228,7 @@ func NewCreateHandler(
 	var (
 		decodeRequest  = DecodeCreateRequest(mux, decoder)
 		encodeResponse = EncodeCreateResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeCreateError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -279,7 +279,7 @@ func NewUpdateHandler(
 	var (
 		decodeRequest  = DecodeUpdateRequest(mux, decoder)
 		encodeResponse = EncodeUpdateResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeUpdateError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -330,7 +330,7 @@ func NewDoneHandler(
 	var (
 		decodeRequest  = DecodeDoneRequest(mux, decoder)
 		encodeResponse = EncodeDoneResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeDoneError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -381,7 +381,7 @@ func NewDeleteHandler(
 	var (
 		decodeRequest  = DecodeDeleteRequest(mux, decoder)
 		encodeResponse = EncodeDeleteResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeDeleteError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))

@@ -97,10 +97,15 @@ func (c *Client) List() goa.Endpoint {
 // server.
 func (c *Client) Show() goa.Endpoint {
 	var (
+		encodeRequest  = EncodeShowRequest(c.encoder)
 		decodeResponse = DecodeShowResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v any) (any, error) {
 		req, err := c.BuildShowRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}
@@ -188,10 +193,15 @@ func (c *Client) Done() goa.Endpoint {
 // delete server.
 func (c *Client) Delete() goa.Endpoint {
 	var (
+		encodeRequest  = EncodeDeleteRequest(c.encoder)
 		decodeResponse = DecodeDeleteResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v any) (any, error) {
 		req, err := c.BuildDeleteRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}

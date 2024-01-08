@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/adapter/presenter"
 	"backend/adapter/repository"
+	"backend/domain"
 	authService "backend/gen/auth"
 	"backend/infrastructure/database"
 	"backend/usecase"
@@ -51,7 +52,7 @@ func (c *authController) Register(ctx context.Context, params *authService.Regis
 		Password: params.Password,
 	})
 	if err != nil {
-		var authErr *usecase.AuthError
+		var authErr *domain.AuthError
 		if errors.As(err, &authErr) {
 			return nil, &authService.AuthFailed{Message: authErr.Error()}
 		}
