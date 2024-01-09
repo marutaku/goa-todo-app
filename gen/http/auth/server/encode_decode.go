@@ -66,15 +66,10 @@ func EncodeLoginError(encoder func(context.Context, http.ResponseWriter) goahttp
 		}
 		switch en.GoaErrorName() {
 		case "login_failed":
-			var res *auth.AuthFailed
+			var res auth.LoginFailed
 			errors.As(v, &res)
 			enc := encoder(ctx, w)
-			var body any
-			if formatter != nil {
-				body = formatter(ctx, res)
-			} else {
-				body = NewLoginLoginFailedResponseBody(res)
-			}
+			body := res
 			w.Header().Set("goa-error", res.GoaErrorName())
 			w.WriteHeader(http.StatusUnauthorized)
 			return enc.Encode(body)
@@ -132,15 +127,10 @@ func EncodeRegisterError(encoder func(context.Context, http.ResponseWriter) goah
 		}
 		switch en.GoaErrorName() {
 		case "register_failed":
-			var res *auth.AuthFailed
+			var res auth.RegisterFailed
 			errors.As(v, &res)
 			enc := encoder(ctx, w)
-			var body any
-			if formatter != nil {
-				body = formatter(ctx, res)
-			} else {
-				body = NewRegisterRegisterFailedResponseBody(res)
-			}
+			body := res
 			w.Header().Set("goa-error", res.GoaErrorName())
 			w.WriteHeader(http.StatusBadRequest)
 			return enc.Encode(body)

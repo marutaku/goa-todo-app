@@ -16,7 +16,7 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to login with")
 			Required("username", "password")
 		})
-		Error("login_failed", AuthFailedErrorResponse, "User not found")
+		Error("login_failed", String, "User not found")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
 			Required("token")
@@ -34,7 +34,7 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to register with")
 			Required("username", "password")
 		})
-		Error("register_failed", AuthFailedErrorResponse, "Username already exists")
+		Error("register_failed", String, "Username already exists")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
 			Required("token")

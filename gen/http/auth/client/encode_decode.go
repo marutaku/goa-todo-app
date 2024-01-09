@@ -53,7 +53,7 @@ func EncodeLoginRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.
 // login endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeLoginResponse may return the following errors:
-//   - "login_failed" (type *auth.AuthFailed): http.StatusUnauthorized
+//   - "login_failed" (type auth.LoginFailed): http.StatusUnauthorized
 //   - error: internal error
 func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -87,18 +87,14 @@ func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 			return res, nil
 		case http.StatusUnauthorized:
 			var (
-				body LoginLoginFailedResponseBody
+				body string
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("auth", "login", err)
 			}
-			err = ValidateLoginLoginFailedResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("auth", "login", err)
-			}
-			return nil, NewLoginLoginFailed(&body)
+			return nil, NewLoginLoginFailed(body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "login", resp.StatusCode, string(body))
@@ -141,7 +137,7 @@ func EncodeRegisterRequest(encoder func(*http.Request) goahttp.Encoder) func(*ht
 // register endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeRegisterResponse may return the following errors:
-//   - "register_failed" (type *auth.AuthFailed): http.StatusBadRequest
+//   - "register_failed" (type auth.RegisterFailed): http.StatusBadRequest
 //   - error: internal error
 func DecodeRegisterResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -175,18 +171,14 @@ func DecodeRegisterResponse(decoder func(*http.Response) goahttp.Decoder, restor
 			return res, nil
 		case http.StatusBadRequest:
 			var (
-				body RegisterRegisterFailedResponseBody
+				body string
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("auth", "register", err)
 			}
-			err = ValidateRegisterRegisterFailedResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("auth", "register", err)
-			}
-			return nil, NewRegisterRegisterFailed(&body)
+			return nil, NewRegisterRegisterFailed(body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "register", resp.StatusCode, string(body))

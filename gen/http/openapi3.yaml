@@ -32,13 +32,13 @@ paths:
                             example:
                                 token: Illo non quibusdam magni.
                 "401":
-                    description: 'login_failed: User not found'
+                    description: 'login_failed: Unauthorized response.'
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AuthFailed'
-                            example:
-                                message: Minima dolorum non officiis minima voluptatem.
+                                type: string
+                                example: Aperiam atque quia et repudiandae magnam.
+                            example: Veritatis labore.
     /auth/register:
         post:
             tags:
@@ -69,9 +69,9 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AuthFailed'
-                            example:
-                                message: Rerum dolor.
+                                type: string
+                                example: Error recusandae quae.
+                            example: Aliquam dolores in possimus praesentium.
     /tasks:
         get:
             tags:
@@ -142,7 +142,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/AuthFailed'
                             example:
-                                message: Quis qui non.
+                                message: Qui maiores.
             security:
                 - jwt_header_Authorization:
                     - api:read
@@ -160,9 +160,9 @@ paths:
                             $ref: '#/components/schemas/CreateRequestBody'
                         example:
                             created_by: Minus et officia quo veritatis fuga.
-                            description: Odit dolores reprehenderit sit mollitia quis.
-                            id: 3657027561
-                            name: Est velit.
+                            description: Mollitia quis.
+                            id: 1440569929
+                            name: Velit recusandae odit dolores reprehenderit.
             responses:
                 "201":
                     description: Created response.
@@ -206,8 +206,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to delete
-                    example: 142906845
-                  example: 237025083
+                    example: 3285924192
+                  example: 740688311
             responses:
                 "200":
                     description: OK response.
@@ -236,8 +236,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to show
-                    example: 4040530079
-                  example: 2481265800
+                    example: 4120516442
+                  example: 2505659836
             responses:
                 "200":
                     description: OK response.
@@ -262,15 +262,15 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/AuthFailed'
                             example:
-                                message: Harum minima qui.
+                                message: Minima qui quo.
                 "404":
                     description: 'no_match: Not Found response.'
                     content:
                         application/json:
                             schema:
                                 type: string
-                                example: Commodi blanditiis.
-                            example: Omnis mollitia repudiandae.
+                                example: Ut veniam corrupti et dicta.
+                            example: Tenetur tempore ut veniam.
             security:
                 - jwt_header_Authorization:
                     - api:read
@@ -288,8 +288,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to update
-                    example: 3688128913
-                  example: 2075038317
+                    example: 3870867060
+                  example: 4122343436
             requestBody:
                 required: true
                 content:
@@ -342,8 +342,8 @@ paths:
                   schema:
                     type: integer
                     description: ID of task to mark as done
-                    example: 4033005453
-                  example: 24208775
+                    example: 3129800038
+                  example: 4136256653
             requestBody:
                 required: true
                 content:
@@ -388,10 +388,9 @@ components:
                 message:
                     type: string
                     description: Error message
-                    example: Omnis qui porro.
-            description: User not found
+                    example: Sit quia aut est commodi.
             example:
-                message: Aperiam atque quia et repudiandae magnam.
+                message: Quis eos in molestias.
             required:
                 - message
         BackendStoredTask:
@@ -400,48 +399,48 @@ components:
                 createdAt:
                     type: string
                     description: When the todo was created in ISO format
-                    example: Possimus dignissimos dolor rerum.
+                    example: Dignissimos dolor rerum nobis.
                 createdBy:
                     type: string
                     description: Who created the todo
-                    example: Fugiat placeat non iste.
+                    example: Placeat non iste quia earum.
                 description:
                     type: string
                     description: Description of the todo
-                    example: Provident ducimus blanditiis ut et quaerat.
+                    example: Ut et quaerat voluptas.
                 done:
                     type: boolean
                     description: Whether or not the todo is done
                     default: false
-                    example: true
+                    example: false
                 doneAt:
                     type: string
                     description: When the todo was done in ISO format
                     default: ""
-                    example: Minus tempore aspernatur et.
+                    example: Tempore aspernatur et molestias in perspiciatis accusantium.
                 doneBy:
                     type: string
                     description: Who did the todo
                     default: ""
-                    example: In perspiciatis accusantium et natus.
+                    example: Natus quis.
                 id:
                     type: integer
                     description: Unique ID
-                    example: 2434934798
+                    example: 2480186026
                 name:
                     type: string
                     description: Name of the todo
-                    example: Recusandae quae tempora enim.
+                    example: Illo provident ducimus.
             description: A task
             example:
-                createdAt: Et rerum autem aut.
-                createdBy: Nihil qui aut sit quia.
-                description: Vel voluptatem neque aut numquam.
+                createdAt: Et harum et.
+                createdBy: Ea et rerum autem aut et nihil.
+                description: Placeat vel voluptatem neque.
                 done: false
-                doneAt: Consequuntur deleniti dolore.
-                doneBy: Enim aut eos et harum et hic.
-                id: 2795260614
-                name: Iste provident enim eligendi voluptas.
+                doneAt: Optio facilis consequuntur deleniti.
+                doneBy: Consectetur enim aut.
+                id: 1897455474
+                name: Enim eligendi.
             required:
                 - id
                 - name
@@ -484,24 +483,24 @@ components:
                 created_by:
                     type: string
                     description: Who created the task
-                    example: Quo quas.
+                    example: Nostrum vero debitis debitis consequatur qui.
                 description:
                     type: string
                     description: Description of the task
-                    example: Dicta quo.
+                    example: Et qui rerum molestiae iste.
                 id:
                     type: integer
                     description: ID of task to create
-                    example: 1954038641
+                    example: 4236972402
                 name:
                     type: string
                     description: Name of the task
-                    example: In molestias id ut veniam corrupti.
+                    example: Quo quas.
             example:
-                created_by: Consequatur qui dolore et deleniti nisi et.
-                description: Vero debitis.
-                id: 1356624342
-                name: Qui rerum molestiae iste cupiditate.
+                created_by: Ut ullam quia voluptatem a molestiae.
+                description: Consequatur aut quasi architecto.
+                id: 3564562113
+                name: Deleniti nisi et iusto odio.
             required:
                 - name
                 - created_by
@@ -511,9 +510,9 @@ components:
                 done_by:
                     type: string
                     description: Who did the task
-                    example: Velit dolorem totam a ea porro adipisci.
+                    example: Repellat sed voluptatibus et praesentium tempore.
             example:
-                done_by: Quidem fugiat ullam accusantium rerum omnis.
+                done_by: Qui quia enim.
             required:
                 - done_by
         ListResponseBody:
@@ -545,14 +544,14 @@ components:
                 password:
                     type: string
                     description: Password to login with
-                    example: Aut ut optio qui maiores.
+                    example: Suscipit officiis ad quibusdam.
                 username:
                     type: string
                     description: Username to login with
-                    example: Atque odit veniam est.
+                    example: Aut ut optio qui maiores.
             example:
-                password: Distinctio ex.
-                username: Suscipit officiis ad quibusdam.
+                password: Quo quam voluptatibus illum eaque et.
+                username: Distinctio ex.
             required:
                 - username
                 - password
@@ -562,9 +561,9 @@ components:
                 token:
                     type: string
                     description: JWT token to use for authentication
-                    example: Quo quam voluptatibus illum eaque et.
+                    example: Ut qui sint voluptatibus fugiat quasi distinctio.
             example:
-                token: Ut qui sint voluptatibus fugiat quasi distinctio.
+                token: Omnis qui porro.
             required:
                 - token
         ShowResponseBody:
@@ -588,14 +587,14 @@ components:
                 description:
                     type: string
                     description: Description of the task
-                    example: Ex ut.
+                    example: Velit dolorem totam a ea porro adipisci.
                 name:
                     type: string
                     description: Name of the task
-                    example: Odio impedit consequatur aut quasi.
+                    example: Quibusdam aut earum iste sit.
             example:
-                description: Quibusdam aut earum iste sit.
-                name: Quia voluptatem a molestiae.
+                description: Ducimus soluta omnis mollitia repudiandae aliquid est.
+                name: Quidem fugiat ullam accusantium rerum omnis.
     securitySchemes:
         jwt_header_Authorization:
             type: http

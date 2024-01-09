@@ -57,24 +57,42 @@ type RegisterResult struct {
 	Token string
 }
 
-type AuthFailed struct {
-	// Error message
-	Message string
-}
+// User not found
+type LoginFailed string
+
+// Username already exists
+type RegisterFailed string
 
 // Error returns an error description.
-func (e *AuthFailed) Error() string {
-	return ""
+func (e LoginFailed) Error() string {
+	return "User not found"
 }
 
-// ErrorName returns "auth_failed".
+// ErrorName returns "login_failed".
 //
 // Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
-func (e *AuthFailed) ErrorName() string {
+func (e LoginFailed) ErrorName() string {
 	return e.GoaErrorName()
 }
 
-// GoaErrorName returns "auth_failed".
-func (e *AuthFailed) GoaErrorName() string {
-	return "token_verification_failed"
+// GoaErrorName returns "login_failed".
+func (e LoginFailed) GoaErrorName() string {
+	return "login_failed"
+}
+
+// Error returns an error description.
+func (e RegisterFailed) Error() string {
+	return "Username already exists"
+}
+
+// ErrorName returns "register_failed".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e RegisterFailed) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "register_failed".
+func (e RegisterFailed) GoaErrorName() string {
+	return "register_failed"
 }

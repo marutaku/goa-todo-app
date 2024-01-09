@@ -34,7 +34,7 @@ func UsageExamples() string {
       "password": "Eaque tenetur.",
       "username": "Id eos repudiandae voluptates nihil repellat impedit."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 100 --offset 0 --name "task1" --token "Molestias est qui."` + "\n" +
+		os.Args[0] + ` task list --limit 100 --offset 0 --name "task1" --token "Quis qui non."` + "\n" +
 		""
 }
 
@@ -295,7 +295,7 @@ List all tasks
     -token STRING: 
 
 Example:
-    %[1]s task list --limit 100 --offset 0 --name "task1" --token "Molestias est qui."
+    %[1]s task list --limit 100 --offset 0 --name "task1" --token "Quis qui non."
 `, os.Args[0])
 }
 
@@ -307,7 +307,7 @@ Show a task
     -token STRING: 
 
 Example:
-    %[1]s task show --id 1002290988 --token "Voluptas et ab qui maiores cumque."
+    %[1]s task show --id 1398126313 --token "Est voluptatem."
 `, os.Args[0])
 }
 
@@ -321,9 +321,9 @@ Create a task
 Example:
     %[1]s task create --body '{
       "created_by": "Minus et officia quo veritatis fuga.",
-      "description": "Odit dolores reprehenderit sit mollitia quis.",
-      "id": 3657027561,
-      "name": "Est velit."
+      "description": "Mollitia quis.",
+      "id": 1440569929,
+      "name": "Velit recusandae odit dolores reprehenderit."
    }' --token "Sit ut numquam repellendus vel."
 `, os.Args[0])
 }

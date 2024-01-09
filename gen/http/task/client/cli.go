@@ -95,7 +95,7 @@ func BuildCreatePayload(taskCreateBody string, taskCreateToken string) (*task.Cr
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Minus et officia quo veritatis fuga.\",\n      \"description\": \"Odit dolores reprehenderit sit mollitia quis.\",\n      \"id\": 3657027561,\n      \"name\": \"Est velit.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Minus et officia quo veritatis fuga.\",\n      \"description\": \"Mollitia quis.\",\n      \"id\": 1440569929,\n      \"name\": \"Velit recusandae odit dolores reprehenderit.\"\n   }'")
 		}
 	}
 	var token *string
