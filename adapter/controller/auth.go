@@ -41,10 +41,10 @@ func (c *authController) Login(ctx context.Context, params *authService.LoginPay
 		var authErr *domain.AuthError
 		if err == gorm.ErrRecordNotFound {
 			c.logger.Print("auth.login failed with ErrRecordNotFound")
-			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "Login failed with no user found"}
+			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "username or password is incorrect"}
 		} else if errors.As(err, &authErr) {
 			c.logger.Print("auth.login failed with AuthError")
-			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "login failed with invalid password"}
+			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "username or password is incorrect"}
 		}
 		c.logger.Print("auth.login failed with unknown error")
 		return nil, err
