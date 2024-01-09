@@ -45,6 +45,24 @@ type RegisterResponseBody struct {
 	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
 }
 
+// LoginLoginFailedResponseBody is the type of the "auth" service "login"
+// endpoint HTTP response body for the "login_failed" error.
+type LoginLoginFailedResponseBody struct {
+	// reason for failure
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Name of the error
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// RegisterRegisterFailedResponseBody is the type of the "auth" service
+// "register" endpoint HTTP response body for the "register_failed" error.
+type RegisterRegisterFailedResponseBody struct {
+	// reason for failure
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Name of the error
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
 // NewLoginRequestBody builds the HTTP request body from the payload of the
 // "login" endpoint of the "auth" service.
 func NewLoginRequestBody(p *auth.LoginPayload) *LoginRequestBody {
@@ -76,8 +94,11 @@ func NewLoginResultOK(body *LoginResponseBody) *auth.LoginResult {
 }
 
 // NewLoginLoginFailed builds a auth service login endpoint login_failed error.
-func NewLoginLoginFailed(body string) auth.LoginFailed {
-	v := auth.LoginFailed(body)
+func NewLoginLoginFailed(body *LoginLoginFailedResponseBody) *auth.AuthFlowFailed {
+	v := &auth.AuthFlowFailed{
+		Message: *body.Message,
+		Name:    *body.Name,
+	}
 
 	return v
 }
@@ -94,8 +115,11 @@ func NewRegisterResultOK(body *RegisterResponseBody) *auth.RegisterResult {
 
 // NewRegisterRegisterFailed builds a auth service register endpoint
 // register_failed error.
-func NewRegisterRegisterFailed(body string) auth.RegisterFailed {
-	v := auth.RegisterFailed(body)
+func NewRegisterRegisterFailed(body *RegisterRegisterFailedResponseBody) *auth.AuthFlowFailed {
+	v := &auth.AuthFlowFailed{
+		Message: *body.Message,
+		Name:    *body.Name,
+	}
 
 	return v
 }
@@ -113,6 +137,30 @@ func ValidateLoginResponseBody(body *LoginResponseBody) (err error) {
 func ValidateRegisterResponseBody(body *RegisterResponseBody) (err error) {
 	if body.Token == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
+	}
+	return
+}
+
+// ValidateLoginLoginFailedResponseBody runs the validations defined on
+// login_login_failed_response_body
+func ValidateLoginLoginFailedResponseBody(body *LoginLoginFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
+// ValidateRegisterRegisterFailedResponseBody runs the validations defined on
+// register_register_failed_response_body
+func ValidateRegisterRegisterFailedResponseBody(body *RegisterRegisterFailedResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	return
 }

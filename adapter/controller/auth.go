@@ -41,10 +41,10 @@ func (c *authController) Login(ctx context.Context, params *authService.LoginPay
 		var authErr *domain.AuthError
 		if err == gorm.ErrRecordNotFound {
 			c.logger.Print("auth.login failed with ErrRecordNotFound")
-			return nil, authService.LoginFailed("Login failed with no user found")
+			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "Login failed with no user found"}
 		} else if errors.As(err, &authErr) {
 			c.logger.Print("auth.login failed with AuthError")
-			return nil, authService.LoginFailed("login failed with invalid password")
+			return nil, &authService.AuthFlowFailed{Name: "login_failed", Message: "login failed with invalid password"}
 		}
 		c.logger.Print("auth.login failed with unknown error")
 		return nil, err
@@ -61,7 +61,8 @@ func (c *authController) Register(ctx context.Context, params *authService.Regis
 	if err != nil {
 		var authErr *domain.AuthError
 		if errors.As(err, &authErr) {
-			return nil, authService.RegisterFailed(authErr.Error())
+			return nil, &authService.AuthFlowFailed{Name: "register_failed", Message: authErr.Error()}
+
 		}
 	}
 	return c.presenter.RegisterOutput(token), nil

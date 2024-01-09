@@ -29,7 +29,8 @@ func NewClient(login, register goa.Endpoint) *Client {
 
 // Login calls the "login" endpoint of the "auth" service.
 // Login may return the following errors:
-//   - "login_failed" (type LoginFailed)
+//   - "login_failed" (type *AuthFlowFailed): User not found
+//   - "auth_failed" (type *AuthFailed): Username already exists
 //   - error: internal error
 func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResult, err error) {
 	var ires any
@@ -42,7 +43,8 @@ func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResult, 
 
 // Register calls the "register" endpoint of the "auth" service.
 // Register may return the following errors:
-//   - "register_failed" (type RegisterFailed)
+//   - "register_failed" (type *AuthFlowFailed): Username already exists
+//   - "auth_failed" (type *AuthFailed): Username already exists
 //   - error: internal error
 func (c *Client) Register(ctx context.Context, p *RegisterPayload) (res *RegisterResult, err error) {
 	var ires any

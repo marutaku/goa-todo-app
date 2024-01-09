@@ -29,6 +29,14 @@ const ServiceName = "auth"
 // MethodKey key.
 var MethodNames = [2]string{"login", "register"}
 
+// AuthFlowFailed is the error returned when the auth flow fails.
+type AuthFlowFailed struct {
+	// reason for failure
+	Message string
+	// Name of the error
+	Name string
+}
+
 // LoginPayload is the payload type of the auth service login method.
 type LoginPayload struct {
 	// Username to login with
@@ -57,42 +65,41 @@ type RegisterResult struct {
 	Token string
 }
 
-// User not found
-type LoginFailed string
-
-// Username already exists
-type RegisterFailed string
-
-// Error returns an error description.
-func (e LoginFailed) Error() string {
-	return "User not found"
-}
-
-// ErrorName returns "login_failed".
-//
-// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
-func (e LoginFailed) ErrorName() string {
-	return e.GoaErrorName()
-}
-
-// GoaErrorName returns "login_failed".
-func (e LoginFailed) GoaErrorName() string {
-	return "login_failed"
+type AuthFailed struct {
+	// Error message
+	Message string
 }
 
 // Error returns an error description.
-func (e RegisterFailed) Error() string {
-	return "Username already exists"
+func (e *AuthFlowFailed) Error() string {
+	return "AuthFlowFailed is the error returned when the auth flow fails."
 }
 
-// ErrorName returns "register_failed".
+// ErrorName returns "AuthFlowFailed".
 //
 // Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
-func (e RegisterFailed) ErrorName() string {
+func (e *AuthFlowFailed) ErrorName() string {
 	return e.GoaErrorName()
 }
 
-// GoaErrorName returns "register_failed".
-func (e RegisterFailed) GoaErrorName() string {
-	return "register_failed"
+// GoaErrorName returns "AuthFlowFailed".
+func (e *AuthFlowFailed) GoaErrorName() string {
+	return e.Name
+}
+
+// Error returns an error description.
+func (e *AuthFailed) Error() string {
+	return ""
+}
+
+// ErrorName returns "auth_failed".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e *AuthFailed) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "auth_failed".
+func (e *AuthFailed) GoaErrorName() string {
+	return "token_verification_failed"
 }

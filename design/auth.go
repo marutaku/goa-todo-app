@@ -7,7 +7,19 @@ var AuthFailedErrorResponse = Type("auth_failed", func() {
 	Required("message")
 })
 
+var AuthFlowFailed = Type("AuthFlowFailed", func() {
+	Description("AuthFlowFailed is the error returned when the auth flow fails.")
+	Field(1, "message", String, "reason for failure")
+	Field(2, "name", String, "Name of the error", func() {
+		// Tell Goa to use the `name` field to match the error definition.
+		Meta("struct:error:name")
+	})
+
+	Required("message", "name")
+})
+
 var _ = Service("auth", func() {
+	Error("auth_failed", AuthFailedErrorResponse, "Username already exists")
 	Description("The auth service manages authentication")
 	Method("login", func() {
 		Description("Login to the system")
@@ -16,7 +28,7 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to login with")
 			Required("username", "password")
 		})
-		Error("login_failed", String, "User not found")
+		Error("login_failed", AuthFlowFailed, "User not found")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
 			Required("token")
@@ -34,7 +46,7 @@ var _ = Service("auth", func() {
 			Attribute("password", String, "Password to register with")
 			Required("username", "password")
 		})
-		Error("register_failed", String, "Username already exists")
+		Error("register_failed", AuthFlowFailed, "Username already exists")
 		Result(func() {
 			Attribute("token", String, "JWT token to use for authentication")
 			Required("token")

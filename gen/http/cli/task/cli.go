@@ -34,7 +34,7 @@ func UsageExamples() string {
       "password": "Eaque tenetur.",
       "username": "Id eos repudiandae voluptates nihil repellat impedit."
    }'` + "\n" +
-		os.Args[0] + ` task list --limit 100 --offset 0 --name "task1" --token "Quis qui non."` + "\n" +
+		os.Args[0] + ` task list --limit 100 --offset 0 --name "task1" --token "Qui maiores."` + "\n" +
 		""
 }
 
@@ -261,8 +261,8 @@ Register a new user
 
 Example:
     %[1]s auth register --body '{
-      "password": "Mollitia odio incidunt ut ducimus.",
-      "username": "Omnis mollitia."
+      "password": "Rerum dolor.",
+      "username": "Consequatur aut."
    }'
 `, os.Args[0])
 }
@@ -295,7 +295,7 @@ List all tasks
     -token STRING: 
 
 Example:
-    %[1]s task list --limit 100 --offset 0 --name "task1" --token "Quis qui non."
+    %[1]s task list --limit 100 --offset 0 --name "task1" --token "Qui maiores."
 `, os.Args[0])
 }
 
@@ -307,7 +307,7 @@ Show a task
     -token STRING: 
 
 Example:
-    %[1]s task show --id 1398126313 --token "Est voluptatem."
+    %[1]s task show --id 3131252912 --token "Cumque est velit recusandae odit dolores."
 `, os.Args[0])
 }
 
@@ -320,11 +320,11 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Minus et officia quo veritatis fuga.",
-      "description": "Mollitia quis.",
-      "id": 1440569929,
-      "name": "Velit recusandae odit dolores reprehenderit."
-   }' --token "Sit ut numquam repellendus vel."
+      "created_by": "Quis ratione id nesciunt suscipit vel et.",
+      "description": "Accusamus sit delectus ipsum.",
+      "id": 3284785714,
+      "name": "Tempora ad."
+   }' --token "Aliquam doloremque dolore in maxime quidem consequuntur."
 `, os.Args[0])
 }
 
@@ -338,9 +338,9 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Aliquam doloremque dolore in maxime quidem consequuntur.",
-      "name": "Quis ratione id nesciunt suscipit vel et."
-   }' --id 1919994714 --token "Reprehenderit distinctio ut."
+      "description": "Placeat accusamus odio consectetur debitis aut.",
+      "name": "Velit numquam adipisci nam."
+   }' --id 350216255 --token "Voluptatum repellat."
 `, os.Args[0])
 }
 
@@ -354,8 +354,8 @@ Mark a task as done
 
 Example:
     %[1]s task done --body '{
-      "done_by": "Placeat accusamus odio consectetur debitis aut."
-   }' --id 350216255 --token "Voluptatum repellat."
+      "done_by": "Pariatur fugiat asperiores illo sed."
+   }' --id 3721423088 --token "Maxime nulla odio neque itaque ea."
 `, os.Args[0])
 }
 
@@ -367,6 +367,6 @@ Delete a task
     -token STRING: 
 
 Example:
-    %[1]s task delete --id 1246750099 --token "Fugiat asperiores illo sed consequuntur voluptas."
+    %[1]s task delete --id 4166768845 --token "Quaerat et."
 `, os.Args[0])
 }

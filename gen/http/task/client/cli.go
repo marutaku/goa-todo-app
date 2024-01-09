@@ -95,7 +95,7 @@ func BuildCreatePayload(taskCreateBody string, taskCreateToken string) (*task.Cr
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Minus et officia quo veritatis fuga.\",\n      \"description\": \"Mollitia quis.\",\n      \"id\": 1440569929,\n      \"name\": \"Velit recusandae odit dolores reprehenderit.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Quis ratione id nesciunt suscipit vel et.\",\n      \"description\": \"Accusamus sit delectus ipsum.\",\n      \"id\": 3284785714,\n      \"name\": \"Tempora ad.\"\n   }'")
 		}
 	}
 	var token *string
@@ -123,7 +123,7 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string, taskUpdateTo
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Aliquam doloremque dolore in maxime quidem consequuntur.\",\n      \"name\": \"Quis ratione id nesciunt suscipit vel et.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Placeat accusamus odio consectetur debitis aut.\",\n      \"name\": \"Velit numquam adipisci nam.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -159,7 +159,7 @@ func BuildDonePayload(taskDoneBody string, taskDoneID string, taskDoneToken stri
 	{
 		err = json.Unmarshal([]byte(taskDoneBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Placeat accusamus odio consectetur debitis aut.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Pariatur fugiat asperiores illo sed.\"\n   }'")
 		}
 	}
 	var id uint32
