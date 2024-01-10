@@ -2,6 +2,17 @@ package design
 
 import . "goa.design/goa/v3/dsl"
 
+var TaskNotFound = Type("TaskNotFound", func() {
+	Description("Task was not found")
+	Field(1, "message", String, "reason for failure")
+	Field(2, "name", String, "Name of the error", func() {
+		// Tell Goa to use the `name` field to match the error definition.
+		Meta("struct:error:name")
+	})
+
+	Required("message", "name")
+})
+
 var _ = Service("task", func() {
 	Description("The task service manages task lists")
 	Error("token_verification_failed", AuthFailedErrorResponse)
@@ -47,7 +58,7 @@ var _ = Service("task", func() {
 		Result(func() {
 			Attribute("task", StoredTask, "task to show")
 		})
-		Error("no_match", String, "No task matched given criteria")
+		Error("no_match", TaskNotFound, "task not found")
 
 		HTTP(func() {
 			GET("/tasks/{id}")
@@ -84,13 +95,14 @@ var _ = Service("task", func() {
 			Attribute("description", String, "Description of the task")
 			Required("id")
 		})
-		Error("no_match", String, "No task matched given criteria")
+		Error("no_match", TaskNotFound, "Task not found")
 		Result(func() {
 			Attribute("task", StoredTask, "Updated task")
 		})
 		HTTP(func() {
 			PUT("/tasks/{id}")
 			Response(StatusOK)
+			Response("no_match", StatusNotFound)
 			Response("token_verification_failed", StatusUnauthorized)
 		})
 	})
@@ -102,7 +114,7 @@ var _ = Service("task", func() {
 			Attribute("done_by", String, "Who did the task")
 			Required("id", "done_by")
 		})
-		Error("no_match", String, "No task matched given criteria")
+		Error("no_match", String, "task not found")
 		Result(func() {
 			Attribute("task", StoredTask, "Finished task")
 		})
@@ -119,7 +131,7 @@ var _ = Service("task", func() {
 			Attribute("id", UInt32, "ID of task to delete")
 			Required("id")
 		})
-		Error("no_match", String, "No task matched given criteria")
+		Error("no_match", String, "task not found")
 		HTTP(func() {
 			DELETE("/tasks/{id}")
 			Response(StatusOK)

@@ -95,7 +95,7 @@ func BuildCreatePayload(taskCreateBody string, taskCreateToken string) (*task.Cr
 	{
 		err = json.Unmarshal([]byte(taskCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Quis ratione id nesciunt suscipit vel et.\",\n      \"description\": \"Accusamus sit delectus ipsum.\",\n      \"id\": 3284785714,\n      \"name\": \"Tempora ad.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"created_by\": \"Architecto quaerat reprehenderit distinctio ut incidunt.\",\n      \"description\": \"Doloremque dolore in maxime quidem.\",\n      \"id\": 85019628,\n      \"name\": \"Nesciunt suscipit vel et blanditiis.\"\n   }'")
 		}
 	}
 	var token *string
@@ -123,7 +123,7 @@ func BuildUpdatePayload(taskUpdateBody string, taskUpdateID string, taskUpdateTo
 	{
 		err = json.Unmarshal([]byte(taskUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Placeat accusamus odio consectetur debitis aut.\",\n      \"name\": \"Velit numquam adipisci nam.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"description\": \"Pariatur eos ut.\",\n      \"name\": \"Aut quos culpa voluptatum repellat minus ratione.\"\n   }'")
 		}
 	}
 	var id uint32
@@ -159,7 +159,7 @@ func BuildDonePayload(taskDoneBody string, taskDoneID string, taskDoneToken stri
 	{
 		err = json.Unmarshal([]byte(taskDoneBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Pariatur fugiat asperiores illo sed.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"done_by\": \"Veritatis doloremque ad.\"\n   }'")
 		}
 	}
 	var id uint32

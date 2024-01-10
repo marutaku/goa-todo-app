@@ -143,6 +143,14 @@ type ShowResult struct {
 	Task *BackendStoredTask
 }
 
+// Task was not found
+type TaskNotFound struct {
+	// reason for failure
+	Message string
+	// Name of the error
+	Name string
+}
+
 // UpdatePayload is the payload type of the task service update method.
 type UpdatePayload struct {
 	// JWT token used to perform authorization
@@ -166,8 +174,25 @@ type AuthFailed struct {
 	Message string
 }
 
-// No task matched given criteria
+// task not found
 type NoMatch string
+
+// Error returns an error description.
+func (e *TaskNotFound) Error() string {
+	return "Task was not found"
+}
+
+// ErrorName returns "TaskNotFound".
+//
+// Deprecated: Use GoaErrorName - https://github.com/goadesign/goa/issues/3105
+func (e *TaskNotFound) ErrorName() string {
+	return e.GoaErrorName()
+}
+
+// GoaErrorName returns "TaskNotFound".
+func (e *TaskNotFound) GoaErrorName() string {
+	return e.Name
+}
 
 // Error returns an error description.
 func (e *AuthFailed) Error() string {
@@ -188,7 +213,7 @@ func (e *AuthFailed) GoaErrorName() string {
 
 // Error returns an error description.
 func (e NoMatch) Error() string {
-	return "No task matched given criteria"
+	return "task not found"
 }
 
 // ErrorName returns "no_match".

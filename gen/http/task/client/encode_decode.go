@@ -167,7 +167,7 @@ func EncodeShowRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.R
 // after having been read.
 // DecodeShowResponse may return the following errors:
 //   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
-//   - "no_match" (type task.NoMatch): http.StatusNotFound
+//   - "task_not_found" (type *task.TaskNotFound): http.StatusNotFound
 //   - error: internal error
 func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -215,14 +215,18 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			return nil, NewShowTokenVerificationFailed(&body)
 		case http.StatusNotFound:
 			var (
-				body string
+				body ShowTaskNotFoundResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("task", "show", err)
 			}
-			return nil, NewShowNoMatch(body)
+			err = ValidateShowTaskNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "show", err)
+			}
+			return nil, NewShowTaskNotFound(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "show", resp.StatusCode, string(body))
@@ -380,6 +384,7 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // restored after having been read.
 // DecodeUpdateResponse may return the following errors:
 //   - "token_verification_failed" (type *task.AuthFailed): http.StatusUnauthorized
+//   - "task_not_found" (type *task.TaskNotFound): http.StatusNotFound
 //   - error: internal error
 func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
 	return func(resp *http.Response) (any, error) {
@@ -425,6 +430,20 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 				return nil, goahttp.ErrValidationError("task", "update", err)
 			}
 			return nil, NewUpdateTokenVerificationFailed(&body)
+		case http.StatusNotFound:
+			var (
+				body UpdateTaskNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("task", "update", err)
+			}
+			err = ValidateUpdateTaskNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("task", "update", err)
+			}
+			return nil, NewUpdateTaskNotFound(&body)
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("task", "update", resp.StatusCode, string(body))

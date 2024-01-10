@@ -91,6 +91,15 @@ type ShowTokenVerificationFailedResponseBody struct {
 	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
 }
 
+// ShowTaskNotFoundResponseBody is the type of the "task" service "show"
+// endpoint HTTP response body for the "task_not_found" error.
+type ShowTaskNotFoundResponseBody struct {
+	// reason for failure
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Name of the error
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
 // CreateTokenVerificationFailedResponseBody is the type of the "task" service
 // "create" endpoint HTTP response body for the "token_verification_failed"
 // error.
@@ -105,6 +114,15 @@ type CreateTokenVerificationFailedResponseBody struct {
 type UpdateTokenVerificationFailedResponseBody struct {
 	// Error message
 	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// UpdateTaskNotFoundResponseBody is the type of the "task" service "update"
+// endpoint HTTP response body for the "task_not_found" error.
+type UpdateTaskNotFoundResponseBody struct {
+	// reason for failure
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Name of the error
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // DoneTokenVerificationFailedResponseBody is the type of the "task" service
@@ -223,9 +241,12 @@ func NewShowTokenVerificationFailed(body *ShowTokenVerificationFailedResponseBod
 	return v
 }
 
-// NewShowNoMatch builds a task service show endpoint no_match error.
-func NewShowNoMatch(body string) task.NoMatch {
-	v := task.NoMatch(body)
+// NewShowTaskNotFound builds a task service show endpoint task_not_found error.
+func NewShowTaskNotFound(body *ShowTaskNotFoundResponseBody) *task.TaskNotFound {
+	v := &task.TaskNotFound{
+		Message: *body.Message,
+		Name:    *body.Name,
+	}
 
 	return v
 }
@@ -267,6 +288,17 @@ func NewUpdateResultOK(body *UpdateResponseBody) *task.UpdateResult {
 func NewUpdateTokenVerificationFailed(body *UpdateTokenVerificationFailedResponseBody) *task.AuthFailed {
 	v := &task.AuthFailed{
 		Message: *body.Message,
+	}
+
+	return v
+}
+
+// NewUpdateTaskNotFound builds a task service update endpoint task_not_found
+// error.
+func NewUpdateTaskNotFound(body *UpdateTaskNotFoundResponseBody) *task.TaskNotFound {
+	v := &task.TaskNotFound{
+		Message: *body.Message,
+		Name:    *body.Name,
 	}
 
 	return v
@@ -371,6 +403,18 @@ func ValidateShowTokenVerificationFailedResponseBody(body *ShowTokenVerification
 	return
 }
 
+// ValidateShowTaskNotFoundResponseBody runs the validations defined on
+// show_task_not_found_response_body
+func ValidateShowTaskNotFoundResponseBody(body *ShowTaskNotFoundResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
 // ValidateCreateTokenVerificationFailedResponseBody runs the validations
 // defined on create_token_verification_failed_response_body
 func ValidateCreateTokenVerificationFailedResponseBody(body *CreateTokenVerificationFailedResponseBody) (err error) {
@@ -385,6 +429,18 @@ func ValidateCreateTokenVerificationFailedResponseBody(body *CreateTokenVerifica
 func ValidateUpdateTokenVerificationFailedResponseBody(body *UpdateTokenVerificationFailedResponseBody) (err error) {
 	if body.Message == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateUpdateTaskNotFoundResponseBody runs the validations defined on
+// update_task_not_found_response_body
+func ValidateUpdateTaskNotFoundResponseBody(body *UpdateTaskNotFoundResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	return
 }

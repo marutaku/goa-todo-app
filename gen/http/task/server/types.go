@@ -91,6 +91,15 @@ type ShowTokenVerificationFailedResponseBody struct {
 	Message string `form:"message" json:"message" xml:"message"`
 }
 
+// ShowTaskNotFoundResponseBody is the type of the "task" service "show"
+// endpoint HTTP response body for the "task_not_found" error.
+type ShowTaskNotFoundResponseBody struct {
+	// reason for failure
+	Message string `form:"message" json:"message" xml:"message"`
+	// Name of the error
+	Name string `form:"name" json:"name" xml:"name"`
+}
+
 // CreateTokenVerificationFailedResponseBody is the type of the "task" service
 // "create" endpoint HTTP response body for the "token_verification_failed"
 // error.
@@ -105,6 +114,15 @@ type CreateTokenVerificationFailedResponseBody struct {
 type UpdateTokenVerificationFailedResponseBody struct {
 	// Error message
 	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// UpdateTaskNotFoundResponseBody is the type of the "task" service "update"
+// endpoint HTTP response body for the "task_not_found" error.
+type UpdateTaskNotFoundResponseBody struct {
+	// reason for failure
+	Message string `form:"message" json:"message" xml:"message"`
+	// Name of the error
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // DoneTokenVerificationFailedResponseBody is the type of the "task" service
@@ -218,6 +236,16 @@ func NewShowTokenVerificationFailedResponseBody(res *task.AuthFailed) *ShowToken
 	return body
 }
 
+// NewShowTaskNotFoundResponseBody builds the HTTP response body from the
+// result of the "show" endpoint of the "task" service.
+func NewShowTaskNotFoundResponseBody(res *task.TaskNotFound) *ShowTaskNotFoundResponseBody {
+	body := &ShowTaskNotFoundResponseBody{
+		Message: res.Message,
+		Name:    res.Name,
+	}
+	return body
+}
+
 // NewCreateTokenVerificationFailedResponseBody builds the HTTP response body
 // from the result of the "create" endpoint of the "task" service.
 func NewCreateTokenVerificationFailedResponseBody(res *task.AuthFailed) *CreateTokenVerificationFailedResponseBody {
@@ -232,6 +260,16 @@ func NewCreateTokenVerificationFailedResponseBody(res *task.AuthFailed) *CreateT
 func NewUpdateTokenVerificationFailedResponseBody(res *task.AuthFailed) *UpdateTokenVerificationFailedResponseBody {
 	body := &UpdateTokenVerificationFailedResponseBody{
 		Message: res.Message,
+	}
+	return body
+}
+
+// NewUpdateTaskNotFoundResponseBody builds the HTTP response body from the
+// result of the "update" endpoint of the "task" service.
+func NewUpdateTaskNotFoundResponseBody(res *task.TaskNotFound) *UpdateTaskNotFoundResponseBody {
+	body := &UpdateTaskNotFoundResponseBody{
+		Message: res.Message,
+		Name:    res.Name,
 	}
 	return body
 }

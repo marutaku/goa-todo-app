@@ -320,11 +320,11 @@ Create a task
 
 Example:
     %[1]s task create --body '{
-      "created_by": "Quis ratione id nesciunt suscipit vel et.",
-      "description": "Accusamus sit delectus ipsum.",
-      "id": 3284785714,
-      "name": "Tempora ad."
-   }' --token "Aliquam doloremque dolore in maxime quidem consequuntur."
+      "created_by": "Architecto quaerat reprehenderit distinctio ut incidunt.",
+      "description": "Doloremque dolore in maxime quidem.",
+      "id": 85019628,
+      "name": "Nesciunt suscipit vel et blanditiis."
+   }' --token "Quae velit numquam adipisci nam recusandae."
 `, os.Args[0])
 }
 
@@ -338,9 +338,9 @@ Update a task
 
 Example:
     %[1]s task update --body '{
-      "description": "Placeat accusamus odio consectetur debitis aut.",
-      "name": "Velit numquam adipisci nam."
-   }' --id 350216255 --token "Voluptatum repellat."
+      "description": "Pariatur eos ut.",
+      "name": "Aut quos culpa voluptatum repellat minus ratione."
+   }' --id 1246750099 --token "Fugiat asperiores illo sed consequuntur voluptas."
 `, os.Args[0])
 }
 
@@ -354,8 +354,8 @@ Mark a task as done
 
 Example:
     %[1]s task done --body '{
-      "done_by": "Pariatur fugiat asperiores illo sed."
-   }' --id 3721423088 --token "Maxime nulla odio neque itaque ea."
+      "done_by": "Veritatis doloremque ad."
+   }' --id 2713596456 --token "Corrupti assumenda dolorem voluptatem asperiores consequatur."
 `, os.Args[0])
 }
 
@@ -367,6 +367,6 @@ Delete a task
     -token STRING: 
 
 Example:
-    %[1]s task delete --id 4166768845 --token "Quaerat et."
+    %[1]s task delete --id 2301327348 --token "Voluptatem ut aperiam et."
 `, os.Args[0])
 }
