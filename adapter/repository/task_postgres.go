@@ -96,7 +96,7 @@ func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, 
 
 func (t *TaskRepository) FindOne(ctx context.Context, id domain.TaskId) (*domain.Task, error) {
 	var taskRecord TaskRecord
-	if err := t.db.WithContext(ctx).Where("created_by = ?", ctx.Value("user_id")).First(&taskRecord, id.UInt32()).Error; err != nil {
+	if err := t.db.WithContext(ctx).Where("created_by = ?", ctx.Value("userId")).First(&taskRecord, id.UInt32()).Error; err != nil {
 		return nil, err
 	}
 	return taskRecord.ToDomain()

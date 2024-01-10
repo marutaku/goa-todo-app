@@ -60,7 +60,7 @@ func (t *taskInteractor) Create(ctx context.Context, params TaskCreateParams) (*
 		nil,
 		nil,
 		time.Now(),
-		ctx.Value("user_id").(domain.UserId),
+		ctx.Value("userId").(domain.UserId),
 	)
 	if err != nil {
 		return nil, err
@@ -101,6 +101,6 @@ func (t *taskInteractor) Done(ctx context.Context, id uint32) (*domain.Task, err
 	task.Done = true
 	doneAt := time.Now()
 	task.DoneAt = &doneAt
-	task.DoneBy = ctx.Value("user_id").(*domain.UserId)
+	task.DoneBy = ctx.Value("userId").(*domain.UserId)
 	return t.taskRepo.Update(ctx, task)
 }
