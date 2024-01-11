@@ -10,11 +10,9 @@ import (
 	"backend/usecase"
 	"context"
 	"errors"
-	"fmt"
 	"log"
 
 	"goa.design/goa/v3/security"
-	"gorm.io/gorm"
 )
 
 // task service example implementation.
@@ -74,7 +72,7 @@ func (c *taskController) Show(ctx context.Context, p *taskService.ShowPayload) (
 	if err != nil {
 		var taskNotFoundError *domain.TaskNotFoundError
 		if errors.As(err, &taskNotFoundError) {
-			return nil, &taskService.TaskNotFound{Name: "no_match", Message: "task not found"}
+			return nil, &taskService.TaskNotFound{Name: "task_not_found", Message: "task not found"}
 		}
 		return nil, err
 	}
@@ -100,8 +98,9 @@ func (c *taskController) Update(ctx context.Context, p *taskService.UpdatePayloa
 		Description: p.Description,
 	})
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, taskService.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		var taskNotFoundError *domain.TaskNotFoundError
+		if errors.As(err, &taskNotFoundError) {
+			return nil, &taskService.TaskNotFound{Name: "task_not_found", Message: "task not found"}
 		}
 		return nil, err
 	}
@@ -112,8 +111,9 @@ func (c *taskController) Done(ctx context.Context, p *taskService.DonePayload) (
 	c.logger.Print("task.done")
 	task, err := c.usecase.Done(ctx, p.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, taskService.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		var taskNotFoundError *domain.TaskNotFoundError
+		if errors.As(err, &taskNotFoundError) {
+			return nil, &taskService.TaskNotFound{Name: "task_not_found", Message: "task not found"}
 		}
 		return nil, err
 	}
@@ -124,8 +124,9 @@ func (c *taskController) Delete(ctx context.Context, p *taskService.DeletePayloa
 	c.logger.Print("task.delete")
 	err = c.usecase.Delete(ctx, p.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return taskService.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		var taskNotFoundError *domain.TaskNotFoundError
+		if errors.As(err, &taskNotFoundError) {
+			return &taskService.TaskNotFound{Name: "task_not_found", Message: "task not found"}
 		}
 		return err
 	}
