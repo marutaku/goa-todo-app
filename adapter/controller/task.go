@@ -9,6 +9,7 @@ import (
 	"backend/service"
 	"backend/usecase"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -71,8 +72,9 @@ func (c *taskController) List(ctx context.Context, p *taskService.ListPayload) (
 func (c *taskController) Show(ctx context.Context, p *taskService.ShowPayload) (res *taskService.ShowResult, err error) {
 	task, err := c.usecase.Show(ctx, p.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, taskService.NoMatch(fmt.Sprintf("no task found with id %d", p.ID))
+		var taskNotFoundError *domain.TaskNotFoundError
+		if errors.As(err, &taskNotFoundError) {
+			return nil, &taskService.TaskNotFound{Name: "no_match", Message: "task not found"}
 		}
 		return nil, err
 	}

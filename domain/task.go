@@ -41,3 +41,11 @@ func NewTask(id TaskId, name string, description string, done bool, doneAt *time
 func (t Task) IsSaved() bool {
 	return t.ID != 0
 }
+
+type TaskNotFoundError struct {
+	Err error
+}
+
+func (e *TaskNotFoundError) Error() string {
+	return e.Err.Error()
+}
