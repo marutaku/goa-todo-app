@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/adapter/presenter"
 	"backend/adapter/repository"
+	"backend/constants"
 	"backend/domain"
 	taskService "backend/gen/task"
 	"backend/infrastructure/database"
@@ -46,7 +47,7 @@ func (c *taskController) JWTAuth(ctx context.Context, token string, schema *secu
 	if err != nil {
 		return nil, &taskService.AuthFailed{Message: err.Error()}
 	}
-	ctx = context.WithValue(ctx, "userId", userId)
+	ctx = context.WithValue(ctx, constants.UserIdKey, userId)
 	return ctx, nil
 }
 
@@ -54,7 +55,7 @@ func (c *taskController) JWTAuth(ctx context.Context, token string, schema *secu
 func (c *taskController) List(ctx context.Context, p *taskService.ListPayload) (res *taskService.ListResult, err error) {
 	c.logger.Print("task.list")
 	criteria := usecase.TaskCriteria{
-		CreatedBy: domain.UserId(ctx.Value("userId").(uint32)),
+		CreatedBy: domain.UserId(ctx.Value(constants.UserIdKey).(uint32)),
 	}
 	if p.Name != "" {
 		criteria.Name = &p.Name

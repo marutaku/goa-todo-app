@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"backend/adapter/repository"
+	"backend/constants"
 	"backend/domain"
 	"context"
 	"time"
@@ -60,7 +61,7 @@ func (t *taskInteractor) Create(ctx context.Context, params TaskCreateParams) (*
 		nil,
 		nil,
 		time.Now(),
-		ctx.Value("userId").(domain.UserId),
+		ctx.Value(constants.UserIdKey).(domain.UserId),
 	)
 	if err != nil {
 		return nil, err
@@ -101,6 +102,6 @@ func (t *taskInteractor) Done(ctx context.Context, id uint32) (*domain.Task, err
 	task.Done = true
 	doneAt := time.Now()
 	task.DoneAt = &doneAt
-	task.DoneBy = ctx.Value("userId").(*domain.UserId)
+	task.DoneBy = ctx.Value(constants.UserIdKey).(*domain.UserId)
 	return t.taskRepo.Update(ctx, task)
 }

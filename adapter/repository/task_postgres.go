@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/constants"
 	"backend/domain"
 	"context"
 	"log"
@@ -62,7 +63,10 @@ func (t *TaskRecord) ToDomain() (*domain.Task, error) {
 }
 
 func NewTaskRepository(db *gorm.DB, logger *log.Logger) *TaskRepository {
-	db.AutoMigrate(&TaskRecord{})
+	err := db.AutoMigrate(&TaskRecord{})
+	if err != nil {
+		panic(err)
+	}
 	return &TaskRepository{
 		db:     db,
 		logger: logger,
@@ -96,7 +100,7 @@ func (t *TaskRepository) FindAll(ctx context.Context, name *string, done *bool, 
 
 func (t *TaskRepository) FindOne(ctx context.Context, id domain.TaskId) (*domain.Task, error) {
 	var taskRecord TaskRecord
-	if err := t.db.WithContext(ctx).Where("created_by = ?", ctx.Value("userId")).First(&taskRecord, id.UInt32()).Error; err != nil {
+	if err := t.db.WithContext(ctx).Where("created_by = ?", ctx.Value(constants.UserIdKey)).First(&taskRecord, id.UInt32()).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, &domain.TaskNotFoundError{Err: err}
 		}
