@@ -1,6 +1,9 @@
 .PHONY: gen setup build run gen-migration migrate test lint clean
 
-include .env
+IS_ENVFILE_EXISTS =  $(shell ls | grep .env)
+ifeq ($(IS_ENVFILE_EXISTS), .env)
+	include .env
+endif
 DIST_PATH = ./dist
 PRODUCTION_BUILD_FLAGS = -ldflags='-s -w'
 ENV ?= development
