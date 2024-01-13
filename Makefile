@@ -1,9 +1,13 @@
-.PHONY: gen build run gen-migration migrate
+.PHONY: gen setup build run gen-migration migrate
 
 include .env
 
-POSTGRES_DSN = "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable"
+# hostがlocalhostなのはローカルからの実行のみを想定しているため
+POSTGRES_DSN = "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable&search_path=public"
 DEV_URL = "docker://postgres/15/dev?search_path=public"
+
+setup:
+	go mod download
 
 gen: 
 	goa gen backend/design
@@ -17,10 +21,10 @@ run:
 	air -c .air.toml
 
 gen-migration:
-	atlas migrate diff --env gorm  
+	atlas migrate diff --env gorm --var dsn=$(POSTGRES_DSN)
 
 validate-migration:
-	atlas migrate validate --dir "./migrations" --dev-url $(POSTGRES_DSN)
+	atlas migrate validate --env gorm --var dsn=$(POSTGRES_DSN)
 
 migrate:
-	atlas migrate apply --dir "./migrations" --url $(DEV_URL) --env gorm
+	atlas schema apply --env gorm --var dsn=$(POSTGRES_DSN)
