@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"testing"
 	"time"
 )
@@ -48,5 +49,12 @@ func TestIsSaved(t *testing.T) {
 	task.ID = 0
 	if task.IsSaved() != false {
 		t.Error("IsSaved is not false")
+	}
+}
+
+func TestTaskNotFoundError(t *testing.T) {
+	err := &TaskNotFoundError{Err: errors.New("test")}
+	if err.Error() != "test" {
+		t.Error("Error is not test")
 	}
 }
