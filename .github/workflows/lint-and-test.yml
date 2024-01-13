@@ -23,7 +23,7 @@ jobs:
         with:
           version: v1.54
       - name: setup-atlas
-        uses: ariga/setup-atlas
+        uses: ariga/setup-atlas@v0
       - name: lint-migrations
         uses: ariga/atlas-action/migrate/lint@v1
         with:
