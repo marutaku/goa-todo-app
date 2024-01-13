@@ -25,10 +25,7 @@ jobs:
       - name: setup-atlas
         uses: ariga/setup-atlas@v0
       - name: lint-migrations
-        uses: ariga/atlas-action/migrate/lint@v1
-        with:
-          env: gorm
-          dir-name: migrations
+        run: make validate-migrations
   test:
     name: test
     runs-on: ubuntu-latest
