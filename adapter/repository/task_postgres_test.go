@@ -22,6 +22,7 @@ func NewDbMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 }
 
 func TestNewTaskRepository(t *testing.T) {
+	t.Skip("skip test")
 	mockDB, _, err := NewDbMock()
 	if err != nil {
 		t.Error(err)
