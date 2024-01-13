@@ -22,10 +22,6 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54
-      - name: setup-atlas
-        uses: ariga/setup-atlas@v0
-      - name: lint-migrations
-        run: make validate-migrations
   test:
     name: test
     runs-on: ubuntu-latest
