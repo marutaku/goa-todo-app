@@ -28,6 +28,7 @@ jobs:
         uses: ariga/atlas-action/migrate/lint@v1
         with:
           env: gorm
+          dir-name: migrations
   test:
     name: test
     runs-on: ubuntu-latest
