@@ -1,14 +1,23 @@
-.PHONY: gen build run test lint clean
+.PHONY: gen setup build run gen-migration migrate test lint clean
 
+include .env
 DIST_PATH = ./dist
 PRODUCTION_BUILD_FLAGS = -ldflags='-s -w'
 ENV ?= development
+# hostがlocalhostなのはローカルからの実行のみを想定しているため
+POSTGRES_DSN = "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable&search_path=public"
+DEV_URL = "docker://postgres/15/dev?search_path=public"
 
 ifeq ($(ENV), production)
 	BUILD_COMMAND="go build ${PRODUCTION_BUILD_FLAGS} -o ${DIST_PATH}/task ./cmd/task"
 else
 	BUILD_COMMAND="go build -o ${DIST_PATH}/task ./cmd/task"
 endif
+
+
+
+setup:
+	go mod download
 
 gen: 
 	goa gen backend/design
@@ -32,3 +41,13 @@ lint:
 
 clean:
 	rm -rf ${DIST_PATH}
+	air -c .air.toml
+
+gen-migration:
+	atlas migrate diff --env gorm --var dsn=$(POSTGRES_DSN)
+
+validate-migration:
+	atlas migrate validate --env gorm
+
+migrate:
+	atlas schema apply --env gorm --var dsn=$(POSTGRES_DSN)
