@@ -13,6 +13,7 @@ data "external_schema" "gorm" {
 variable "dsn" {
   type        = string
   description = "The name of the tenant (schema) to create"
+  default     = ""
 }
 
 env "gorm" {

@@ -24,7 +24,7 @@ gen-migration:
 	atlas migrate diff --env gorm --var dsn=$(POSTGRES_DSN)
 
 validate-migration:
-	atlas migrate validate --env gorm --var dsn=$(POSTGRES_DSN)
+	atlas migrate validate --env gorm
 
 migrate:
 	atlas schema apply --env gorm --var dsn=$(POSTGRES_DSN)
