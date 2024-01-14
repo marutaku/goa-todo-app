@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	ariga.io/atlas-provider-gorm v0.2.0
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/lib/pq v1.10.9
 	goa.design/goa/v3 v3.14.1
