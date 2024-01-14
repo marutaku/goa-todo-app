@@ -35,10 +35,6 @@ func (r *AuthRecord) ToDomain() (*domain.User, error) {
 }
 
 func NewUserRepository(db *gorm.DB, logger *log.Logger) *UserRepository {
-	err := db.AutoMigrate(&AuthRecord{})
-	if err != nil {
-		panic(err)
-	}
 	return &UserRepository{db: db, logger: logger}
 }
 

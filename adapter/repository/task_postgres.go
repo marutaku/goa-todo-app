@@ -63,10 +63,6 @@ func (t *TaskRecord) ToDomain() (*domain.Task, error) {
 }
 
 func NewTaskRepository(db *gorm.DB, logger *log.Logger) *TaskRepository {
-	err := db.AutoMigrate(&TaskRecord{})
-	if err != nil {
-		panic(err)
-	}
 	return &TaskRepository{
 		db:     db,
 		logger: logger,
