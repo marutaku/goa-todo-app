@@ -22,7 +22,13 @@ func NewDbMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 	mockDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{})
-	mockDB.AutoMigrate(&TaskRecord{})
+	if err != nil {
+		return nil, nil, err
+	}
+	err = mockDB.AutoMigrate(&TaskRecord{})
+	if err != nil {
+		return nil, nil, err
+	}
 	return mockDB, mock, err
 }
 
