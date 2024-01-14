@@ -25,10 +25,6 @@ func NewDbMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	err = mockDB.AutoMigrate(&TaskRecord{})
-	if err != nil {
-		return nil, nil, err
-	}
 	return mockDB, mock, err
 }
 
